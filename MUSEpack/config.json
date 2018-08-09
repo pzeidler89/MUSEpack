@@ -1,0 +1,34 @@
+{
+  "global": {
+    "withrvcorr": true,
+    "auto_sort_data": true,
+    "using_specific_exposure_time": false,
+    "dither_multiple_OBs": false,
+    "n_CPU": 24,
+    "rootpath": null,
+    "OB": null,
+    "OB_list": null
+  },
+  "calibration":{
+    "excecute": true,
+    "using_ESO_calibration": true
+  },
+  "sci_basic":{
+    "excecute": true,
+    "skyreject": "15.,15.,1"
+  },
+  "std_flux":{
+    "excecute": true
+  },
+  "sky":{
+    "excecute": true,
+    "modified": true
+  },
+  "sci_post":{
+    "excecute": true,
+	"skysub": "include"
+  },
+  "exp_combine":{
+    "excecute": true
+  }
+}
