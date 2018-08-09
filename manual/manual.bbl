@@ -1,0 +1,29 @@
+\begin{thebibliography}{}
+
+\bibitem[{Freudling} et~al., 2013]{Freudling_13}
+{Freudling}, W., {Romaniello}, M., {Bramich}, D.~M., {Ballester}, P., {Forchi},
+  V., {Garc{\'{\i}}a-Dabl{\'o}}, C.~E., {Moehler}, S., and {Neeser}, M.~J.
+  (2013).
+\newblock {Automated data reduction workflows for astronomy. The ESO Reflex
+  environment}.
+\newblock {\em \aap}, \href
+  {http://adsabs.harvard.edu/abs/2013A%26A...559A..96F} {559, A96}.
+
+\bibitem[{Weilbacher} et~al., 2012]{Weilbacher_12}
+{Weilbacher}, P.~M., {Streicher}, O., {Urrutia}, T., {Jarno}, A.,
+  {P{\'e}contal-Rousset}, A., {Bacon}, R., and {B{\"o}hm}, P. (2012).
+\newblock {Design and capabilities of the MUSE data reduction software and
+  pipeline}.
+\newblock In {\em Software and Cyberinfrastructure for Astronomy II}, volume
+  8451 of {\em \procspie}, page 84510B.
+
+\bibitem[{Weilbacher} et~al., 2014]{Weilbacher_14}
+{Weilbacher}, P.~M., {Streicher}, O., {Urrutia}, T., {P{\'e}contal-Rousset},
+  A., {Jarno}, A., and {Bacon}, R. (2014).
+\newblock {The MUSE Data Reduction Pipeline: Status after Preliminary
+  Acceptance Europe}.
+\newblock In {Manset}, N. and {Forshay}, P., editors, {\em Astronomical Data
+  Analysis Software and Systems XXIII}, volume 485 of {\em Astronomical Society
+  of the Pacific Conference Series}, page 451.
+
+\end{thebibliography}

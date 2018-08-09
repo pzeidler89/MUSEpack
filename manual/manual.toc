@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {0.1}MUSEreduce}{8}{section.0.1}
+\contentsline {subsubsection}{GLOBAL}{8}{section.0.1}
+\contentsline {subsubsection}{CALIBRATION}{8}{section.0.1}
+\contentsline {subsubsection}{SCIBASIC}{8}{section.0.1}
+\contentsline {subsubsection}{STD\_FLUX}{8}{section.0.1}
+\contentsline {subsubsection}{SKY}{8}{section.0.1}
+\contentsline {subsubsection}{SCI\_POST}{8}{section.0.1}
+\contentsline {subsubsection}{EXP\_COMBINE}{8}{section.0.1}
