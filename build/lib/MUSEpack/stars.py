@@ -6,9 +6,9 @@ from astropy.io import fits,ascii
 from astropy.table import Table, Column
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+from astropy.wcs import WCS
 
-
-def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame = None):
+def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame = None, wcsname = 'Pampelmuse'):
 
     '''
     input_fits: str
@@ -21,10 +21,13 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
         I/O path, Default: current directory
 
     output_file: str, optional
-        outputfile name, Default: inputname_corr.fits
+        outputfile name, Default: update fitsheader of input fits
     
     output_frame: str, optional
         coordinate frame of the output cube in case one want to change, default: input frame
+    
+    wcsname: str, optiona l
+        the name of the new wcsname, default: Pampelmuse
 
     '''
 
@@ -41,8 +44,14 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     x0=np.nanmedian(pmr[4].data[4][1])
     y0=np.nanmedian(pmr[4].data[5][1])
     
+    
     CD=np.array([[A,C],[B,D]])
     r=np.array([[x0,0.],[0.,y0]])
+    
+    w = WCS(sechdr)
+    w.wcs.name = 'MUSE'
+    orig_hdr = w.to_header(relax = False, key = 'A')
+    orig_hdr.remove('RADESYSA')
 
     #### coord sys change
     if out_frame != None:
@@ -53,12 +62,9 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
         
         sechdr['CRVAL1'] = trans_ref_coord.ra.value
         sechdr['CRVAL2'] = trans_ref_coord.dec.value
-        prihdr['RA'] = trans_ref_coord.ra.value
-        prihdr['DEC'] = trans_ref_coord.dec.value
-        prihdr['RADECSYS'] = out_frame.upper()
-        sechdr.set('RADESYSa', out_frame.upper())
-        
-    #### inverse
+        sechdr.set('RADESYS', out_frame.upper())
+
+
     ref_xy = np.array([sechdr['CRPIX1'],sechdr['CRPIX2']])
     ref_xy_new = (np.dot(r,np.ones(ref_xy.T.shape)) + np.dot(CD,ref_xy.T)).swapaxes(-1,-0)
     
@@ -67,18 +73,22 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
 
     sechdr['CRPIX1']=ref_shift_x
     sechdr['CRPIX2']=ref_shift_y
-    
+
     sechdr['CD1_1'] = -A*0.2/3600.
     sechdr['CD1_2'] = C*0.2/3600.
     sechdr['CD2_1'] = -B*0.2/3600.
     sechdr['CD2_2'] = D*0.2/3600.
     
-    if output_file == None:
-        outfile = input_fits+'_corr.fits'
-    else:
-        outfile = output_file
+    sechdr.set('WCSNAME', wcsname)
     
-    cube.writeto(path+'/'+input_fits+'_corr.fits',overwrite=True)
+    sechdr.extend(orig_hdr)
+
+    if output_file == None:
+        cube.writeto(path+'/'+input_fits+'.fits',overwrite=True)
+    else:
+        cube.writeto(path+'/'+output_fits+'.fits',overwrite=True)
+    
+    
 
 
 def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=os.getcwd(),sat = 0.,mag_sat = None,ifs_sat = None,mag_limit = None):
