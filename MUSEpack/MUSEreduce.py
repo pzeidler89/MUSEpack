@@ -243,7 +243,7 @@ def bias(rootpath,working_dir,exposure_list,exposure_list_DARK,exposure_list_TWI
                 sys.exit('CAUTION CALIBRATION FILES ARE DIFFERENT: PLEASE CHECK')
         else:
             os.rename(calibration_dir+'SCIENCE/bias_temp.sof',calibration_dir+'SCIENCE/bias.sof')
-            
+
             os.chdir(calibration_dir+'SCIENCE/')
             os.system('export OMP_NUM_THREADS='+str(n_CPU))
             os.system('esorex --log-file=bias.log --log-level=debug muse_bias --nifu=-1 --merge bias.sof')
@@ -271,7 +271,7 @@ def bias(rootpath,working_dir,exposure_list,exposure_list_DARK,exposure_list_TWI
                 sys.exit('CAUTION DARK FILES ARE DIFFERENT: PLEASE CHECK')
         else:
             os.rename(calibration_dir+'DARK/bias_temp.sof',calibration_dir+'DARK/bias.sof')
-            
+
             os.chdir(calibration_dir+'DARK/')
             os.system('export OMP_NUM_THREADS='+str(n_CPU))
             os.system('esorex --log-file=bias.log --log-level=debug muse_bias --nifu=-1 --merge bias.sof')
@@ -329,7 +329,7 @@ def flat(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_d
         #optional
         # f.write(calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
         f.close()
-    
+
         if os.path.isfile(calibration_dir+'SCIENCE/flat.sof'):
             if filecmp.cmp(calibration_dir+'SCIENCE/flat.sof',calibration_dir+'SCIENCE/flat_temp.sof'):
                 print('science files are identical: proceed without error')
@@ -338,7 +338,7 @@ def flat(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_d
                 sys.exit('CAUTION SCIENCE FILES ARE DIFFERENT: PLEASE CHECK')
         else:
             os.rename(calibration_dir+'SCIENCE/flat_temp.sof',calibration_dir+'SCIENCE/flat.sof')
-    
+
             os.chdir(calibration_dir+'SCIENCE/')
             os.system('export OMP_NUM_THREADS='+str(n_CPU))
             os.system('esorex --log-file=flat.log --log-level=debug muse_flat --samples=true --nifu=-1 --merge flat.sof')
@@ -454,8 +454,8 @@ def lsf(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_di
         # f.write(exposure_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
         f.write(calibration_dir+'SCIENCE/MASTER_FLAT.fits MASTER_FLAT\n')
         f.close()
-    
-    
+
+
         if os.path.isfile(calibration_dir+'SCIENCE/lsf.sof'):
             if filecmp.cmp(calibration_dir+'SCIENCE/lsf.sof',calibration_dir+'SCIENCE/lsf_temp.sof'):
                 print('science files are identical: proceed without error')
@@ -464,7 +464,7 @@ def lsf(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_di
                 sys.exit('CAUTION SCIENCE FILES ARE DIFFERENT: PLEASE CHECK')
         else:
             os.rename(calibration_dir+'SCIENCE/lsf_temp.sof',calibration_dir+'SCIENCE/lsf.sof')
-        
+
             os.chdir(calibration_dir+'SCIENCE/')
             os.system('export OMP_NUM_THREADS='+str(n_CPU))
             os.system('esorex --log-file=lsf.log --log-level=debug muse_lsf --nifu=-1 --merge --save_subtracted lsf.sof')
