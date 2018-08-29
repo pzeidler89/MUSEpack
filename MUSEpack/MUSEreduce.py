@@ -138,17 +138,23 @@ def sort_data(rootpath,raw_data_dir,working_dir,ESO_calibration_dir):
                 
                 
     rot_angles=np.zeros(len(science_files))
+    points=np.zeros(len(science_files),dtype=object)
     rot_angles_ident=np.zeros(len(science_files))
     
     for files in range(len(science_files)):
         
         hdu = fits.open(raw_data_dir+science_files[files])[0]
+        RA=hdu.header['RA']
+        DEC=hdu.header['DEC']
+        EXPTIME=hdu.header['EXPTIME']
+        
+        points[files] = SkyCoord(ra=RA*u.degree, dec=DEC*u.degree, frame='fk5').to_string('hmsdms',sep='',precision=0).translate(str.maketrans('', '', string.whitespace))+'_'+str(int(EXPTIME)).rjust(4, '0')
         rot_angles[files]=hdu.header['HIERARCH ESO INS DROT POSANG']
         
     for idx in range(len(rot_angles)):
         ident = 0
         for idx2 in range(len(rot_angles)):
-            if rot_angles[idx] == rot_angles[idx2]:
+            if rot_angles[idx] == rot_angles[idx2] and points[idx] == points[idx2]:
                 rot_angles_ident[idx2] = ident
                 ident +=1
                 
@@ -431,7 +437,6 @@ def wavecal(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibratio
             os.system('esorex --log-file=wavecal.log --log-level=debug muse_wavecal --nifu=-1 --residuals --merge wavecal.sof')
             os.chdir(rootpath)
     
-
 def lsf(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_dir,static_calibration_dir,n_CPU=24):
     print('... Creating the LINE SPREAD FUNCTION')
     
@@ -900,12 +905,12 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                     print(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits ==> '+combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                     shutil.move(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits',combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
     
-def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,n_CPU=24):
+def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,n_CPU=24):
     print('... CUBE ALIGNMENT')
     
     unique_pointings=np.array([])
     unique_tester=' '
-    
+    print(exposure_list)
     for expnum in range(len(exposure_list)):
         if unique_tester.find(exposure_list[expnum][:-20])==-1:
             unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-20])
@@ -916,12 +921,13 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,n_
         print(' ')
         print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
         print(' ')
-        
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-21:]
+        print(unique_pointings)
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]#was -21 but didn't work for multilpe OBs ??????
         combined_exposure_dir=unique_pointings[unique_pointing_num]
         
         if dithering_multiple_OBs:
             if withrvcorr:
+                print(unique_pointings_ID)
                 if skysub != 'exclude': combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
                 if skysub != 'include': combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
                 
@@ -970,12 +976,12 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,n_
             os.system('esorex --log-file=exp_align.log --log-level=debug muse_exp_align exp_align.sof')
             os.chdir(rootpath)
           
-def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,n_CPU=24):
+def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,n_CPU=24):
     print('... EXPOSURE COMBINATION')
     
     unique_pointings=np.array([])
     unique_tester=' '
-    
+    2
     for expnum in range(len(exposure_list)):
         if unique_tester.find(exposure_list[expnum][:-20])==-1:
             unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-20])
@@ -987,7 +993,7 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
         print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
         print(' ')
         
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-21:]
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]#was -21 but didn't work for multilpe OBs ??????
         combined_exposure_dir=unique_pointings[unique_pointing_num]
                 
         if dithering_multiple_OBs:
@@ -1144,6 +1150,7 @@ def musereduce(configfile=None):
         else:
             raw_data_dir=rootpath+'raw/'+OB+'/' #path of the raw data
             working_dir=rootpath+'reduced/'+OB+'/' #path of the working directory
+            combining_OBs_dir = None
         calibration_dir=working_dir+'calibrations/' #path of the calibration file directory (in case of self prepared calibrations)
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
@@ -1252,8 +1259,9 @@ def musereduce(configfile=None):
         if config['sci_post']['excecute'] == True:
             scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,n_CPU=n_CPU)
     if config['exp_combine']['excecute'] == True:
-        exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,n_CPU=n_CPU)
-        exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,n_CPU=n_CPU)
+        print(n_CPU)
+        exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,n_CPU=n_CPU)
+        exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,n_CPU=n_CPU)
     
     endtime=time.time()
     print('>>> The total execution time of the script was: ',timedelta(seconds=endtime-startime))
