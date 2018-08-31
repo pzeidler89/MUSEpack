@@ -759,7 +759,7 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
 ### SCIENCE POST-PROCESSING ###
 
-def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,n_CPU=24):
+def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB,n_CPU=24):
     print('... SCIENCE POST-PROCESSING')
     
     unique_pointings=np.array([])
@@ -769,7 +769,6 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
         if unique_tester.find(exposure_list[expnum][:-20])==-1:
             unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-20])
             unique_tester=unique_tester+exposure_list[expnum][:-20]
-
     
     for unique_pointing_num in range(len(unique_pointings)):
         
@@ -777,10 +776,10 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
         print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
         print(' ')
         
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-21:]
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         combined_exposure_dir=unique_pointings[unique_pointing_num]
         exp_list=glob.glob(combined_exposure_dir+'*SCIENCE.list')
-                
+        
         if dithering_multiple_OBs:
             if withrvcorr:
                 combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
@@ -837,13 +836,13 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
             os.system('export OMP_NUM_THREADS='+str(n_CPU))
 
             if withrvcorr:
-                
+
                 if skysub != 'exclude':
                     print('without sky ...')
                     os.chdir(exp_list[exp_num][:-13])
                     os.system('esorex --log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=subtract-model --filter=white scipost.sof')
                     os.chdir(rootpath)
-                
+
                     print('copying files ...')
                     if dithering_multiple_OBs:
                         print(exp_list[exp_num][:-13]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
@@ -859,14 +858,14 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                         shutil.move(exp_list[exp_num][:-13]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.move(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                
+
                 if skysub != 'include':
                     print('with sky ...')
-                    
+
                     os.chdir(exp_list[exp_num][:-13])
                     os.system('esorex --log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=none --filter=white scipost.sof')
                     os.chdir(rootpath)
-                    
+
                     print('copying files ...')
                     if dithering_multiple_OBs:
                         print(exp_list[exp_num][:-13]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
@@ -882,13 +881,13 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                         shutil.move(exp_list[exp_num][:-13]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.move(exp_list[exp_num][:-13]+'/PIXTABLE_REDUCED_0001.fits',combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                
+
             else:
-                
+
                 os.chdir(exp_list[exp_num][:-13])
                 os.system('esorex --log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=none --rvcorr=none --filter=white scipost.sof') #with sky without_rvcorr
                 os.chdir(rootpath)
-            
+
                 print('copying files ...')
                 if dithering_multiple_OBs:
                     print(exp_list[exp_num][:-13]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir+'/DATACUBE_FINAL_'+OB+'.fits')
@@ -981,7 +980,7 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
     
     unique_pointings=np.array([])
     unique_tester=' '
-    2
+    2,
     for expnum in range(len(exposure_list)):
         if unique_tester.find(exposure_list[expnum][:-20])==-1:
             unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-20])
@@ -1146,7 +1145,7 @@ def musereduce(configfile=None):
             raw_data_dir=rootpath+'raw/'+dithername+'/'+OB+'/' #path of the raw data
             working_dir=rootpath+'reduced/'+dithername+'/'+OB+'/' #path of the working directory
             combining_OBs_dir=rootpath+'reduced/'+dithername+'/'
-            if os.path.exists(combining_OBs_dir)==False: os.mkdir(combining_OBs_dir)
+            if os.path.exists(combining_OBs_dir) == False: os.mkdir(combining_OBs_dir)
         else:
             raw_data_dir=rootpath+'raw/'+OB+'/' #path of the raw data
             working_dir=rootpath+'reduced/'+OB+'/' #path of the working directory
@@ -1257,9 +1256,8 @@ def musereduce(configfile=None):
                 
         ###s SCIENCE POST-PROCESSING ###
         if config['sci_post']['excecute'] == True:
-            scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,n_CPU=n_CPU)
+            scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB,n_CPU=n_CPU)
     if config['exp_combine']['excecute'] == True:
-        print(n_CPU)
         exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,n_CPU=n_CPU)
         exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,n_CPU=n_CPU)
     
