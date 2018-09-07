@@ -777,8 +777,8 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
         print(' ')
         
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
-        combined_exposure_dir=unique_pointings[unique_pointing_num]
-        exp_list=glob.glob(combined_exposure_dir+'*SCIENCE.list')
+        sec=unique_pointings[unique_pointing_num]
+        exp_list=glob.glob(sec+'*SCIENCE.list')
         
         if dithering_multiple_OBs:
             if withrvcorr:
@@ -789,10 +789,10 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
             
         if dithering_multiple_OBs == False:
             if withrvcorr:
-                combining_exposure_dir_withoutsky=combined_exposure_dir+'/withoutsky_withrvcorr'
-                combining_exposure_dir_withsky=combined_exposure_dir+'/withsky_withrvcorr'
+                combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
                 
-            else: combining_exposure_dir=combined_exposure_dir+'/withsky_withoutrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
                     
         if os.path.exists(combining_exposure_dir_withoutsky)==False: os.makedirs(combining_exposure_dir_withoutsky)
         if os.path.exists(combining_exposure_dir_withsky)==False: os.makedirs(combining_exposure_dir_withsky)
@@ -922,7 +922,7 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
         print(' ')
         print(unique_pointings)
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]#was -21 but didn't work for multilpe OBs ??????
-        combined_exposure_dir=unique_pointings[unique_pointing_num]
+        sec=unique_pointings[unique_pointing_num]
         
         if dithering_multiple_OBs:
             if withrvcorr:
@@ -934,10 +934,10 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
             
         if dithering_multiple_OBs == False:
             if withrvcorr:
-                if skysub != 'exclude': combining_exposure_dir_withoutsky=combined_exposure_dir+'/withoutsky_withrvcorr'
-                if skysub != 'include': combining_exposure_dir_withsky=combined_exposure_dir+'/withsky_withrvcorr'
+                if skysub != 'exclude': combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                if skysub != 'include': combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
                 
-            else: combining_exposure_dir=combined_exposure_dir+'/withsky_withoutrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
         
         if withrvcorr:
             if skysub != 'exclude':
@@ -993,7 +993,7 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
         print(' ')
         
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]#was -21 but didn't work for multilpe OBs ??????
-        combined_exposure_dir=unique_pointings[unique_pointing_num]
+        sec=unique_pointings[unique_pointing_num]
                 
         if dithering_multiple_OBs:
             if withrvcorr:
@@ -1004,10 +1004,10 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
             
         if dithering_multiple_OBs == False:
             if withrvcorr:
-                if skysub != 'exclude': combining_exposure_dir_withoutsky=combined_exposure_dir+'/withoutsky_withrvcorr'
-                if skysub != 'include': combining_exposure_dir_withsky=combined_exposure_dir+'/withsky_withrvcorr'
+                if skysub != 'exclude': combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                if skysub != 'include': combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
                 
-            else: combining_exposure_dir=combined_exposure_dir+'/withsky_withoutrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
         
         if withrvcorr:
             if skysub != 'exclude':
@@ -1129,7 +1129,35 @@ def musereduce(configfile=None):
     
     if len(OB_list) > 1:
         print('>>> Reducing more than one OB: ',str(len(OB_list)))
-    
+    print(' ')
+    print(' ')
+    print('... The following modules will be excecuted')
+    if config['calibration']['excecute'] == True and using_ESO_calibration == False:
+        print('>>> BIAS')
+        print('>>> DARK')
+        print('>>> FLAT')
+        print('>>> WAVECAL')
+        print('>>> LSF')
+        print('>>> TWILIGHT')
+    if config['sci_basic']['excecute'] == True:
+        print('>>> SCIBASIC')
+
+    if config['std_flux']['excecute'] == True:
+        print('>>> STANDARD')
+
+    if config['sky']['excecute'] == True:
+        print('>>> CREATE_SKY')
+
+    if config['sci_post']['excecute'] == True:
+        print('>>> SCI_POST')
+
+    if config['exp_combine']['excecute'] == True:
+        print('>>> EXP_ALIGN')
+        print('>>> EXP_COMBINE')
+        print(' ')
+        print(' ')
+
+
     for OB in OB_list:
         print(' ')
         print('... Creating directories')
@@ -1190,41 +1218,7 @@ def musereduce(configfile=None):
     ###################################################################################################
     ############################   END FILE AND DIRECTORY PREPARARTION   ##############################
     ###################################################################################################
-    print(' ')
-    print(' ')
-    print('##########################################################################################')
-    print('################################# Starting the pipeline ##################################')
-    print('##########################################################################################')
-    print(' ')
-    print(' ')
-    print('... The following modules will be excecuted')
-    if config['calibration']['excecute'] == True and using_ESO_calibration == False:
-        print('>>> BIAS')
-        print('>>> DARK')
-        print('>>> FLAT')
-        print('>>> WAVECAL')
-        print('>>> LSF')
-        print('>>> TWILIGHT')
-    if config['sci_basic']['excecute'] == True:
-        print('>>> SCIBASIC')
-
-    if config['std_flux']['excecute'] == True:
-        print('>>> STANDARD')
-
-    if config['sky']['excecute'] == True:
-        print('>>> CREATE_SKY')
-
-    if config['sci_post']['excecute'] == True:
-        print('>>> SCI_POST')
-
-    if config['exp_combine']['excecute'] == True:
-        print('>>> EXP_ALIGN')
-        print('>>> EXP_COMBINE')
-        
-    print(' ')
-    print(' ')
-    for OB in OB_list:
-        
+    
         print('>>>>>> reducing OB: '+OB+' <<<<<<')
         print(' ')
         ### CALIBRATION PRE-PROCESSING ###
