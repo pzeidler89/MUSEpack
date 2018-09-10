@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
-import sys,os
+import sys,os,shutil
 import numpy as np
 from astropy.io import fits,ascii
 from astropy.table import Table, Column
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
+from spectral_cube import SpectralCube
+import montage_wrapper as montage
 
-def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame = None, wcsname = 'Pampelmuse'):
+def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame = None, wcsname = 'Pampelmuse',correctiontype = 'full'):
 
     '''
     input_fits: str
@@ -26,8 +28,13 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     output_frame: str, optional
         coordinate frame of the output cube in case one want to change, default: input frame
     
-    wcsname: str, optiona l
+    wcsname: str, optional
         the name of the new wcsname, default: Pampelmuse
+    
+    correctiontype: str, optional
+        the type of distrotion correction: full: the full 2D CD matrix,
+                                           shift: shift in XY only.
+        default: full
 
     '''
 
@@ -74,10 +81,11 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     sechdr['CRPIX1']=ref_shift_x
     sechdr['CRPIX2']=ref_shift_y
 
-    sechdr['CD1_1'] = -A*0.2/3600.
-    sechdr['CD1_2'] = C*0.2/3600.
-    sechdr['CD2_1'] = -B*0.2/3600.
-    sechdr['CD2_2'] = D*0.2/3600.
+    if correctiontype == 'full':
+        sechdr['CD1_1'] = -A*0.2/3600.
+        sechdr['CD1_2'] = C*0.2/3600.
+        sechdr['CD2_1'] = -B*0.2/3600.
+        sechdr['CD2_2'] = D*0.2/3600.
     
     sechdr.set('WCSNAME', wcsname)
     
@@ -155,5 +163,70 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=os.getcwd(),sat = 0.,mag
     
     
     
+def linemaps(input_fits,path=os.getcwd(),elements = None, wavelengths = None):
+
+    '''
+    This module is intended to create linemaps of specified lines/elements
+
+    input_fits: str
+        The fully reduced datacube Pampelmuse has been run on
+
+    element: list,
+        list of elements the linemaps shall be produced, optional
+
+    wavelength: list,
+        list of wavelength for givene elements, optional, must be given if elemnts are given
     
+    path: str, optional
+        I/O path, Default: current directory
+
+    '''
+
+    #predefined elements and their wavelength
+    if elements == None:
+        wavelengths=[6562.80,6716.47,5006.84,6583.41]
+        elements=['Ha','SII_6716','OIII_5007','NII_6583']
+    
+    if elements != None and wavelengths == None:
+        print('Error: element but no wavelength given')
+        sys.exit()
+
+    if os.path.exists(path+'temp/') == False: os.mkdir(path+'temp/')
+
+    cube=SpectralCube.read(path+'/'+input_fits,hdu=1)
+    for wavelength, element in zip(wavelengths,elements):
+        slab = cube.spectral_slab((wavelength-3)*u.AA, (wavelength+3)*u.AA).sum(axis=0)
+        slab.hdu.writeto(path+'/'+element+'.fits',overwrite=True)
+
+    shutil.rmtree(path+'temp/')
+
+
+def mosaics(input_list,name,path=os.getcwd()):
+    
+    '''
+    This module is intended to create mosaics of specified lines/elements.
+    linemaps should have been created using the linemaps module
+
+    input_list: list
+        The list of specific linemaps to be used to mosaic
+    
+    name: str
+        Name of the created mosaic
+    
+    path: str, optional
+        I/O path, Default: current directory
+
+    '''
+    
+    if os.path.exists(path+'temp/') == False: os.mkdir(path+'temp/')
+    
+    for idx,f in enumerate(input_list):
+        shutil.copy(f,path+'temp/'+str(idx)+'.fits')
+        
+    
+    montage.mosaic(path+'temp/', path+'mosaic_temp/',background_match=True, exact_size=True, cleanup = True)
+    shutil.copy(path+'mosaic_temp/mosaic_area.fits',path+'/exp_'+name+'.fits')
+    shutil.copy(path+'mosaic_temp/mosaic.fits',path+'/'+name+'.fits')
+    shutil.rmtree(path+'mosaic_temp/')
+    shutil.rmtree(path+'temp/')
     
