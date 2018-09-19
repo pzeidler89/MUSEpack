@@ -1323,7 +1323,7 @@ def musereduce(configfile=None):
         if os.path.exists(calibration_dir+'SCIENCE/') == False: os.mkdir(calibration_dir+'SCIENCE/')
         if os.path.exists(static_calibration_dir) == True: shutil.rmtree(static_calibration_dir)
         os.mkdir(static_calibration_dir)
-        for itername in glob.glob('/usr/local/calib/muse*/cal/*.*'): shutil.copy(itername,static_calibration_dir+'.')
+        for itername in glob.glob('/usr/local/muse/calib/muse*/cal/*.*'): shutil.copy(itername,static_calibration_dir+'.')
         
         print('... Sorting the data')
         

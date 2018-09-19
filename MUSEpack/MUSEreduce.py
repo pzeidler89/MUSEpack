@@ -1323,7 +1323,7 @@ def musereduce(configfile=None):
         if os.path.exists(calibration_dir+'SCIENCE/') == False: os.mkdir(calibration_dir+'SCIENCE/')
         if os.path.exists(static_calibration_dir) == True: shutil.rmtree(static_calibration_dir)
         os.mkdir(static_calibration_dir)
-        for itername in glob.glob('/usr/local/calib/muse*/cal/*.*'): shutil.copy(itername,static_calibration_dir+'.')
+        for itername in glob.glob('/usr/local/muse/calib/muse*/cal/*.*'): shutil.copy(itername,static_calibration_dir+'.')
         
         print('... Sorting the data')
         
@@ -1367,7 +1367,7 @@ def musereduce(configfile=None):
                 lsf(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_dir,static_calibration_dir,creating_sof,n_CPU=n_CPU)
                 twilight(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,calibration_dir,static_calibration_dir,creating_sof,n_CPU=n_CPU)
                 
-                
+                weeee  
         ### OBSERVATION PRE-PROCESSING ###
         if config['sci_basic']['excecute'] == True:
             
