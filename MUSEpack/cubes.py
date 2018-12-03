@@ -94,7 +94,7 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     if output_file == None:
         cube.writeto(path+'/'+input_fits+'.fits',overwrite=True)
     else:
-        cube.writeto(path+'/'+output_fits+'.fits',overwrite=True)
+        cube.writeto(path+'/'+output_file+'.fits',overwrite=True)
     
     
 
@@ -218,15 +218,16 @@ def mosaics(input_list,name,path=os.getcwd()):
 
     '''
     
-    if os.path.exists(path+'temp/') == False: os.mkdir(path+'temp/')
-    
+    if os.path.exists(path+'/temp/') == False: os.mkdir(path+'/temp/')
+    if os.path.exists(path+'/mosaics/') == False: os.mkdir(path+'/mosaics/')
+
     for idx,f in enumerate(input_list):
-        shutil.copy(f,path+'temp/'+str(idx)+'.fits')
+        shutil.copy(f,path+'/temp/'+str(idx)+'.fits')
         
     
-    montage.mosaic(path+'temp/', path+'mosaic_temp/',background_match=True, exact_size=True, cleanup = True)
-    shutil.copy(path+'mosaic_temp/mosaic_area.fits',path+'/exp_'+name+'.fits')
-    shutil.copy(path+'mosaic_temp/mosaic.fits',path+'/'+name+'.fits')
-    shutil.rmtree(path+'mosaic_temp/')
-    shutil.rmtree(path+'temp/')
+    montage.mosaic(path+'/temp/', path+'/mosaic_temp/',background_match=True, exact_size=True, cleanup = True)
+    shutil.copy(path+'/mosaic_temp/mosaic_area.fits',path+'/mosaics/exp_'+name+'.fits')
+    shutil.copy(path+'/mosaic_temp/mosaic.fits',path+'/mosaics/'+name+'.fits')
+    shutil.rmtree(path+'/mosaic_temp/')
+    shutil.rmtree(path+'/temp/')
     

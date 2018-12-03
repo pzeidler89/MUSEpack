@@ -32,12 +32,20 @@ vers. 0.4.0: supports now pipeline 2.4.2 and the NFM-AO
              choosing if darks may be used
              only reduces STD once per OB
              general use of external SKY fields
-             files will now be copied in exp_align instead of scipost
-
+             collecting the files for exp_combine in an independent step
+             exp_align is an independent step now
+vers. 0.4.1: new file names to correct a problem where data gets replaced
+             in the scipost routine if you reduce the data with and
+             without sky
 
 '''                
 class MUSEreduce:
-    def __init__(self):  
+    def __init__(self):
+        self
+        
+
+import sys,shutil,os,subprocess,glob,string,filecmp
+import numpy as np
 from astropy.io import ascii,fits
 from astropy import units as u
 from astropy.coordinates import SkyCoord
@@ -209,6 +217,10 @@ def sort_data(rootpath,raw_data_dir,working_dir,ESO_calibration_dir):
         for calibfiles in range(len(calibration_files)):
             temp_date=fits.open(raw_data_dir+calibration_files[calibfiles])[0].header['MJD-OBS']
             if abs(temp_date - DATE) <= 1.: f_science.write(raw_data_dir+calibration_files[calibfiles]+'  '+calibration_type[calibfiles]+'\n')
+            if calibration_type[calibfiles] == 'STD' and abs(temp_date - DATE) > 1.:
+                f_science.write(raw_data_dir+calibration_files[calibfiles]+'  '+calibration_type[calibfiles]+'\n')
+                if calibration_type[calibfiles] == 'ILLUM' and abs(temp_date - DATE) > 1.: f_science.write(raw_data_dir+calibration_files[calibfiles]+'  '+calibration_type[calibfiles]+'\n')
+                print('WARNING: STD star and SCI observation more than 24 hours apart')
             if (abs(temp_date - dark_date) <= 1.).all(): f_dark.write(raw_data_dir+calibration_files[calibfiles]+'  '+calibration_type[calibfiles]+'\n')
             if (abs(temp_date - twilight_date) <= 1.).all(): f_twilight.write(raw_data_dir+calibration_files[calibfiles]+'  '+calibration_type[calibfiles]+'\n')
             
@@ -526,23 +538,37 @@ def twilight(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,cali
                
             raw_data_list = ascii.read(exposure_list[exposure_ID],format='no_header')
             raw_data_list_TWILIGHT = ascii.read(exposure_list_TWILIGHT[exposure_ID],format='no_header')
-    
-            for i in range(len(raw_data_list[1][:])):
-                if raw_data_list[i][1] == 'OBJECT': MJDobject=fits.open(raw_data_list[i][0])[0].header['MJD-OBS']
-    
+            
+            MJDsillum=np.array([])
+            MJDsskyflat=np.array([])
+            illum_index=np.array([])
+
+            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+                if raw_data_list_TWILIGHT[i][1] == 'SKYFLAT':
+                    skyflathdu=fits.open(raw_data_list_TWILIGHT[i][0])
+                    MJDskyflat=skyflathdu[0].header['MJD-OBS']
+                    MJDsskyflat=np.append(MJDsskyflat,MJDskyflat)
+                    
+                if raw_data_list_TWILIGHT[i][1] == 'ILLUM':
+                    illumhdu=fits.open(raw_data_list_TWILIGHT[i][0])
+                    MJDillum=illumhdu[0].header['MJD-OBS']
+                    MJDsillum=np.append(MJDsillum,MJDillum)
+                    illum_index=np.append(illum_index,i)
+                
+            choosen_illum=int(illum_index[np.argmin(np.abs(MJDsillum-np.min(MJDskyflat)))])
+
             f = open(calibration_dir+'TWILIGHT/twilight_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
                 if raw_data_list_TWILIGHT[i][1] == 'SKYFLAT': f.write(raw_data_list_TWILIGHT[i][0]+'  '+raw_data_list_TWILIGHT[i][1]+'\n')
-                if raw_data_list_TWILIGHT[i][1] == 'ILLUM': f.write(raw_data_list_TWILIGHT[i][0]+'  '+raw_data_list_TWILIGHT[i][1]+'\n')
-
-            if mode == 'WFM-AO' or mode == 'WFM-NOAO': f_write.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-            if mode == 'NFM-AO':f_write.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+            f.write(raw_data_list_TWILIGHT[choosen_illum][0]+'  '+raw_data_list_TWILIGHT[choosen_illum][1]+'\n')
+            if mode == 'WFM-AO' or mode == 'WFM-NOAO': f.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+            if mode == 'NFM-AO':f.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
             f.write(calibration_dir+'TWILIGHT/MASTER_BIAS.fits MASTER_BIAS\n')
             f.write(calibration_dir+'TWILIGHT/MASTER_FLAT.fits MASTER_FLAT\n')
             if dark: f.write(exposure_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.write(calibration_dir+'TWILIGHT/TRACE_TABLE.fits TRACE_TABLE\n')
             f.write(calibration_dir+'TWILIGHT/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-            if MJDobject < 57823.5: f.write(static_calibration_dir+'vignetting_mask.fits VIGNETTING_MASK\n')
+            if MJDsskyflat.all() < 57823.5: f.write(static_calibration_dir+'vignetting_mask.fits VIGNETTING_MASK\n')
         
             f.close()
 
@@ -565,9 +591,10 @@ def science_pre(rootpath,working_dir,exposure_list,dark,calibration_dir,ESO_cali
     print('... Science PREPROCESSING')
     
     esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject='+skyreject+' --merge  sci_basic_object.sof'
+    esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 --merge  sci_basic_std.sof'
     
-    # if creating_sof:
-    #     if os.path.exists(working_dir+'std/sci_basic_std.sof') == True: os.remove(working_dir+'std/sci_basic_std.sof')
+    
+    if os.path.exists(working_dir+'std/sci_basic_std.sof') == True: os.remove(working_dir+'std/sci_basic_std.sof')
         
     for exposure_ID in range(len(exposure_list)):
         print('>>> processing exposure: '+str(exposure_ID+1)+'/'+str(len(exposure_list)))
@@ -598,78 +625,69 @@ def science_pre(rootpath,working_dir,exposure_list,dark,calibration_dir,ESO_cali
         choosen_illum_object=int(illum_index[np.argmin(np.abs(MJDsillum-MJDobject))])
         choosen_illum_std=int(illum_index[np.argmin(np.abs(MJDsillum-MJDstd))])
             
-            
+        f_std = open(working_dir+'std/sci_basic_std_temp.sof', 'w')
+        
+        for i in range(len(raw_data_list[1][:])):
+            if raw_data_list[i][1] == 'STD': f_std.write(raw_data_list[i][0]+'  '+raw_data_list[i][1]+'\n')
+
+        f_std.write(raw_data_list[choosen_illum_std][0]+'  '+raw_data_list[choosen_illum_std][1]+'\n')
+        
+        if using_ESO_calibration == False:
+            f_std.write(calibration_dir+'SCIENCE/MASTER_BIAS.fits MASTER_BIAS\n')
+            f_std.write(calibration_dir+'SCIENCE/MASTER_FLAT.fits MASTER_FLAT\n')
+            f_std.write(calibration_dir+'TWILIGHT/TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
+            f_std.write(calibration_dir+'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
+            f_std.write(calibration_dir+'SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
+            if dark: f_std.write(calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
+
+        if using_ESO_calibration == True:
+            f_std.write(ESO_calibration_dir+'MASTER_BIAS.fits MASTER_BIAS\n')
+            f_std.write(ESO_calibration_dir+'MASTER_FLAT.fits MASTER_FLAT\n')
+            f_std.write(ESO_calibration_dir+'TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
+            f_std.write(ESO_calibration_dir+'TRACE_TABLE.fits TRACE_TABLE\n')
+            f_std.write(ESO_calibration_dir+'WAVECAL_TABLE.fits WAVECAL_TABLE\n')
+            if dark: f_std.write(ESO_calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
+
+        if mode == 'WFM-AO' or mode == 'WFM-NOAO': f_std.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+        if mode == 'NFM-AO': f_std.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+
+        f_std.write(static_calibration_dir+'badpix_table.fits BADPIX_TABLE\n')
+        f_std.close()
+        
         if creating_sof:
             
             if os.path.exists(exposure_dir+'sci_basic_object.sof') == True: os.remove(exposure_dir+'sci_basic_object.sof')
-            
             f_object = open(exposure_dir+'sci_basic_object.sof', 'w')
-            f_std = open(working_dir+'std/sci_basic_std_temp.sof', 'w')
-            
+
             for i in range(len(raw_data_list[1][:])):
                 if raw_data_list[i][1] == 'OBJECT': f_object.write(raw_data_list[i][0]+'  '+raw_data_list[i][1]+'\n')
                 if raw_data_list[i][1] == 'SKY': f_object.write(raw_data_list[i][0]+'  '+raw_data_list[i][1]+'\n')
-                if raw_data_list[i][1] == 'STD': f_std.write(raw_data_list[i][0]+'  '+raw_data_list[i][1]+'\n')
 
             f_object.write(raw_data_list[choosen_illum_object][0]+'  '+raw_data_list[choosen_illum_object][1]+'\n')
-            f_std.write(raw_data_list[choosen_illum_std][0]+'  '+raw_data_list[choosen_illum_std][1]+'\n')
             
             if using_ESO_calibration == False:
                 f_object.write(calibration_dir+'SCIENCE/MASTER_BIAS.fits MASTER_BIAS\n')
-                f_std.write(calibration_dir+'SCIENCE/MASTER_BIAS.fits MASTER_BIAS\n')
-        
                 f_object.write(calibration_dir+'SCIENCE/MASTER_FLAT.fits MASTER_FLAT\n')
-                f_std.write(calibration_dir+'SCIENCE/MASTER_FLAT.fits MASTER_FLAT\n')
-        
                 f_object.write(calibration_dir+'TWILIGHT/TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
-                f_std.write(calibration_dir+'TWILIGHT/TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
-        
                 f_object.write(calibration_dir+'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
-                f_std.write(calibration_dir+'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
-        
                 f_object.write(calibration_dir+'SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-                f_std.write(calibration_dir+'SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-        
-                if dark:
-                    f_object.write(calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
-                    f_std.write(calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
-                    
+                if dark: f_object.write(calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
 
             if using_ESO_calibration == True:
-                f_object.write(ESO_calibration_dir+'MASTER_BIAS.fits MASTER_BIAS\n')
-                f_std.write(ESO_calibration_dir+'MASTER_BIAS.fits MASTER_BIAS\n')
-            
+                f_object.write(ESO_calibration_dir+'MASTER_BIAS.fits MASTER_BIAS\n')            
                 f_object.write(ESO_calibration_dir+'MASTER_FLAT.fits MASTER_FLAT\n')
-                f_std.write(ESO_calibration_dir+'MASTER_FLAT.fits MASTER_FLAT\n')
-            
                 f_object.write(ESO_calibration_dir+'TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
-                f_std.write(ESO_calibration_dir+'TWILIGHT_CUBE.fits TWILIGHT_CUBE\n')
-            
                 f_object.write(ESO_calibration_dir+'TRACE_TABLE.fits TRACE_TABLE\n')
-                f_std.write(ESO_calibration_dir+'TRACE_TABLE.fits TRACE_TABLE\n')
-        
                 f_object.write(ESO_calibration_dir+'WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-                f_std.write(ESO_calibration_dir+'WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-        
-                if dark:
-                    f_object.write(ESO_calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
-                    f_std.write(ESO_calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
+                if dark: f_object.write(ESO_calibration_dir+'DARK/MASTER_DARK.fits MASTER_DARK\n')
 
-            if mode == 'WFM-AO' or mode == 'WFM-NOAO':
-                f_object.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-                f_std.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-            if mode == 'NFM-AO':
-                f_object.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-                f_std.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-    
+            if mode == 'WFM-AO' or mode == 'WFM-NOAO': f_object.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+            if mode == 'NFM-AO': f_object.write(static_calibration_dir+'geometry_table_wfm.fits GEOMETRY_TABLE\n')
             f_object.write(static_calibration_dir+'badpix_table.fits BADPIX_TABLE\n')
-            f_std.write(static_calibration_dir+'badpix_table.fits BADPIX_TABLE\n')
     
             f_object.close()
-            f_std.close()
     
         call_esorex(exposure_dir,rootpath,esorex_cmd,n_CPU)
-    
         if os.path.isfile(working_dir+'std/sci_basic_std.sof'):
             if filecmp.cmp(working_dir+'std/sci_basic_std.sof',working_dir+'std/sci_basic_std_temp.sof'):
                 os.remove(working_dir+'std/sci_basic_std_temp.sof')
@@ -677,7 +695,8 @@ def science_pre(rootpath,working_dir,exposure_list,dark,calibration_dir,ESO_cali
                 sys.exit('CAUTION DIFFERENT STD STARS FOR VARIOUS FIELDS: PLEASE CHECK')
         else:
             os.rename(working_dir+'std/sci_basic_std_temp.sof',working_dir+'std/sci_basic_std.sof')
-            call_esorex(exposure_dir,rootpath,esorex_cmd,n_CPU)
+    
+    call_esorex(working_dir+'std/',rootpath,esorex_cmd_std,n_CPU)
 
 ### OBSERVATION POST-PROCESSING ###
 
@@ -720,7 +739,6 @@ def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,s
         print('>>> processing: '+exposure_list_sky[exposure_ID])
         print(' ')
     
-
         raw_data_list = ascii.read(exposure_list_sky[exposure_ID],format='no_header')
         exposure_dir=exposure_list_sky[exposure_ID][:-9]+'/'
 
@@ -848,19 +866,13 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
             f.write(static_calibration_dir+'sky_lines.fits SKY_LINES\n')
         
             f.close()
-
-        os.chdir(exposure_dir)
-        os.system('export OMP_NUM_THREADS='+str(n_CPU))
         
         if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.75 --ignore=0.05 sky.sof',n_CPU)
         else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.005 --ignore=0.017 sky.sof',n_CPU)
-            
-        print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
-        shutil.copy('SKY_CONTINUUM_zero.fits','SKY_CONTINUUM.fits')
-        os.chdir(rootpath)
-        
         
         os.chdir(exposure_dir)
+        print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
+        shutil.copy('SKY_CONTINUUM_zero.fits','SKY_CONTINUUM.fits')
         hdu=fits.open('SKY_LINES.fits',checksum=True)
         data=hdu[1].data
 
@@ -907,24 +919,9 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
         print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
         print(' ')
         
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-14:]
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         sec=unique_pointings[unique_pointing_num]
         exp_list=glob.glob(sec+'*SCI.list')
-        
-        if dithering_multiple_OBs:
-            if withrvcorr:
-                combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
-                combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
-            else: combining_exposure_dir=combining_OBs_dir+unique_pointings_ID+'/withsky_withoutrvcorr'
-            
-        if dithering_multiple_OBs == False:
-            if withrvcorr:
-                combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
-                combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
-            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
-                    
-        if os.path.exists(combining_exposure_dir_withoutsky)==False: os.makedirs(combining_exposure_dir_withoutsky)
-        if os.path.exists(combining_exposure_dir_withsky)==False: os.makedirs(combining_exposure_dir_withsky)
 
         for exp_num in range(len(exp_list)):
             
@@ -935,7 +932,7 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
             PIXTABLE_OBJECT_list=get_filelist(exp_list[exp_num][:-9],rootpath,'PIXTABLE_OBJECT*.fits')
             
             if creating_sof:
-                
+
                 if os.path.exists(exp_list[exp_num][:-9]+'/scipost.sof') == True: os.remove(exp_list[exp_num][:-9]+'/scipost.sof')
                 
                 f = open(exp_list[exp_num][:-9]+'/scipost.sof', 'w')
@@ -946,10 +943,10 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                 
                 f.write(working_dir+'std/'+'STD_RESPONSE_0001.fits STD_RESPONSE\n')
                 f.write(working_dir+'std/'+'STD_TELLURIC_0001.fits STD_TELLURIC\n')
-                f.write(exp_list[exp_num][:-9]+'/'+'SKY_LINES.fits SKY_LINES\n')
-                f.write(exp_list[exp_num][:-9]+'/'+'SKY_CONTINUUM.fits SKY_CONTINUUM\n')
-                if mode ==' WFM-AO' or mode ==' WFM-NOAO': f.write(static_calibration_dir+'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
-                if mode ==' NFM-AO': print("CURRENTLY NO ASTRONOMY_WCS_NFM AVAILABLE !!!!")
+                if skysub != 'exclude':f.write(exp_list[exp_num][:-9]+'/'+'SKY_LINES.fits SKY_LINES\n')
+                if skysub != 'exclude':f.write(exp_list[exp_num][:-9]+'/'+'SKY_CONTINUUM.fits SKY_CONTINUUM\n')
+                if mode =='WFM-AO' or mode =='WFM-NOAO': f.write(static_calibration_dir+'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
+                if mode =='NFM-AO': print("CURRENTLY NO ASTRONOMY_WCS_NFM AVAILABLE !!!!")
 
                 f.write(static_calibration_dir+'extinct_table.fits EXTINCT_TABLE\n')
                 f.write(static_calibration_dir+'filter_list.fits FILTER_LIST\n')
@@ -960,28 +957,46 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                 if skysub != 'exclude':
                     print('without sky ...')
                     
-                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,raman --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
-                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
+                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
+                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
+                    
+                    os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wosky.fits')
+                    os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wosky.fits')
+                    os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wosky.fits')
+                    os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wosky.fits')
+                    os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wosky.fits')
+                    
                 if skysub != 'include':
                     print('with sky ...')
-                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,raman --skymethod=none --filter=white scipost.sof',n_CPU)
-                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned --skymethod=none --filter=white scipost.sof',n_CPU)
+                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=none --filter=white scipost.sof',n_CPU)
+                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=none --filter=white scipost.sof',n_CPU)
+                    
+                    os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wsky.fits')
+                    os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wsky.fits')
+                    os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wsky.fits')
+                    os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wsky.fits')
+                    os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wsky.fits')
             else:
-                if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,raman --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
-                if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
+                if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
+                if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
+                
+                os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wskynorvcorr.fits')
+                os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wskynorvcorr.fits')
+                os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wskynorvcorr.fits')
+                os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wskynorvcorr.fits')
+                os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wskynorvcorr.fits')
 
-def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,n_CPU=24):
-    print('... CUBE ALIGNMENT')
+def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB):
     
-    esorex_cmd = '--log-file=exp_align.log --log-level=debug muse_exp_align exp_align.sof'
-    
+    print('... COLLECT DITHER POSTITIONS')
+        
     unique_pointings=np.array([])
     unique_tester=' '
     
     sci = np.zeros_like(exposure_list,dtype=bool)
     for idx,exposure in enumerate(exposure_list):
         if exposure[-8:-5] == 'SCI': sci[idx] = True
-    exposure_list = exposure_list[sci]
+    exposure_list = np.array(exposure_list)[sci]
         
     print(' ')
     print('>>> Copying files:')
@@ -992,116 +1007,122 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
             unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
             unique_tester=unique_tester+exposure_list[expnum][:-16]
             
-        if withrvcorr:
-            if skysub != 'exclude':
-                if dithering_multiple_OBs:
-                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
-                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
-                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                else:
-                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-
-            if skysub != 'include':
-                if dithering_multiple_OBs:
-                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
-                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
-                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                else:
-                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-        else:
-            if dithering_multiple_OBs:
-                print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir+'/DATACUBE_FINAL_'+OB+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir+'/DATACUBE_FINAL_'+OB+'.fits')
-                print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir+'/IMAGE_FOV_'+OB+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir+'/IMAGE_FOV_'+OB+'.fits')
-                print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-            else:
-                print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits ==> '+combining_exposure_dir+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL.fits',combining_exposure_dir+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits ==> '+combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001.fits',combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits ==> '+combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001.fits',combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-            
             
     for unique_pointing_num in range(len(unique_pointings)):
-        
-        print(' ')
-        print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
-        print(' ')
-        print(unique_pointings)
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-14:]
+    
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         sec=unique_pointings[unique_pointing_num]
+        exp_list=glob.glob(sec+'*SCI.list')
         
         if dithering_multiple_OBs:
             if withrvcorr:
-                print(unique_pointings_ID)
-                if skysub != 'exclude': combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
-                if skysub != 'include': combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
+                combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
             else: combining_exposure_dir=combining_OBs_dir+unique_pointings_ID+'/withsky_withoutrvcorr'
-            
+        
         if dithering_multiple_OBs == False:
             if withrvcorr:
-                if skysub != 'exclude': combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
-                if skysub != 'include': combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
+                combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
             else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
+                
+        if not os.path.exists(combining_exposure_dir_withoutsky): os.makedirs(combining_exposure_dir_withoutsky)
+        if not os.path.exists(combining_exposure_dir_withsky): os.makedirs(combining_exposure_dir_withsky)
         
         if withrvcorr:
-            if skysub != 'exclude':
-                exp_list=get_filelist(combining_exposure_dir_withoutsky,rootpath,'IMAGE_FOV_*.fits')
-                if creating_sof:
-                    if os.path.exists(combining_exposure_dir_withoutsky+'/exp_align.sof') == True: os.remove(combining_exposure_dir_withoutsky+'/exp_align.sof')
-                    
-                    f = open(combining_exposure_dir_withoutsky+'/exp_align.sof', 'w')
-                    for i in range(len(exp_list)): f.write(combining_exposure_dir_withoutsky+'/'+exp_list[i]+' IMAGE_FOV\n')
-                    f.close()
-                    
-                call_esorex(combining_exposure_dir_withoutsky,rootpath,esorex_cmd,n_CPU)
-                
-            if skysub != 'include':
-                exp_list=get_filelist(combining_exposure_dir_withsky,rootpath,'IMAGE_FOV_*.fits')
-                if creating_sof:
-                    
-                    if os.path.exists(combining_exposure_dir_withsky+'/exp_align.sof') == True: os.remove(combining_exposure_dir_withsky+'/exp_align.sof')
-                    
-                    f = open(combining_exposure_dir_withsky+'/exp_align.sof', 'w')
-                    for i in range(len(exp_list)): f.write(combining_exposure_dir_withsky+'/'+exp_list[i]+' IMAGE_FOV\n')
-                    f.close()
-                    
-                call_esorex(combining_exposure_dir_withsky,rootpath,esorex_cmd,n_CPU)
+            files = glob.glob(combining_exposure_dir_withoutsky+'/*FOV_0001*')
+            if len(files) > 0:
+                for f in files: os.remove(f)
+            files = glob.glob(combining_exposure_dir_withsky+'/*FOV_0001*')
+            if len(files) > 0:
+                for f in files: os.remove(f)
+        if not withrvcorr:
+            files = glob.glob(combining_exposure_dir+'/*FOV_0001*')
+            if len(files) > 0:
+                for f in files: os.remove(f)
             
-        else:
-            exp_list=get_filelist(combining_exposure_dir,rootpath,'IMAGE_FOV_*.fits')
-            if creating_sof:
-                if os.path.exists(combining_exposure_dir+'/exp_align.sof') == True: os.remove(combining_exposure_dir+'/exp_align.sof')
-                
-                f = open(combining_exposure_dir+'/exp_align.sof', 'w')
-                for i in range(len(exp_list)): f.write(combining_exposure_dir+'/'+exp_list[i]+' IMAGE_FOV\n')
-                f.close()
             
-            call_esorex(combining_exposure_dir,rootpath,esorex_cmd,n_CPU)
-          
-def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,creating_sof,n_CPU=24):
-    print('... EXPOSURE COMBINATION')
+    for unique_pointing_num in range(len(unique_pointings)):
     
-    esorex_cmd = '--log-file=exp_combine.log --log-level=debug muse_exp_combine --filter=white --save=cube --crsigma=5. --weight=fwhm exp_combine.sof'
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
+        sec=unique_pointings[unique_pointing_num]
+        exp_list=glob.glob(sec+'*SCI.list')
+        
+        if dithering_multiple_OBs:
+            if withrvcorr:
+                combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
+            else: combining_exposure_dir=combining_OBs_dir+unique_pointings_ID+'/withsky_withoutrvcorr'
+        
+        if dithering_multiple_OBs == False:
+            if withrvcorr:
+                combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
+        
+        for exp_num in range(len(exp_list)):
+            if withrvcorr:
+                if skysub != 'exclude':
+                    if dithering_multiple_OBs:
+                        print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                    else:
+                        print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+
+                if skysub != 'include':
+                    if dithering_multiple_OBs:
+                        print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits ==> '+combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                    else:
+                        print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits ==> '+combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+            else:
+                if dithering_multiple_OBs:
+                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wskynorvcorr.fits ==> '+combining_exposure_dir+'/DATACUBE_FINAL_'+OB+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wskynorvcorr.fits',combining_exposure_dir+'/DATACUBE_FINAL_'+OB+'.fits')
+                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/IMAGE_FOV_'+OB+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits',combining_exposure_dir+'/IMAGE_FOV_'+OB+'.fits')
+                    print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',combining_exposure_dir+'/PIXTABLE_REDUCED_'+OB+'.fits')
+                else:
+                    print(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wskynorvcorr.fits ==> '+combining_exposure_dir+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wskynorvcorr.fits',combining_exposure_dir+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits',combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wskynorvcorr.fits',combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
+    
+def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,OB,n_CPU=24):
+    print('... CUBE ALIGNMENT')
+    
+    esorex_cmd = '--log-file=exp_align.log --log-level=debug muse_exp_align exp_align.sof'
     
     unique_pointings=np.array([])
     unique_tester=' '
@@ -1109,7 +1130,102 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
     sci = np.zeros_like(exposure_list,dtype=bool)
     for idx,exposure in enumerate(exposure_list):
         if exposure[-8:-5] == 'SCI': sci[idx] = True
-    exposure_list = exposure_list[sci]
+    exposure_list = np.array(exposure_list)[sci]
+    
+    for expnum in range(len(exposure_list)):
+        if unique_tester.find(exposure_list[expnum][:-16])==-1:
+            unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
+            unique_tester=unique_tester+exposure_list[expnum][:-16]
+            
+            
+    for unique_pointing_num in range(len(unique_pointings)):
+    
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
+        sec=unique_pointings[unique_pointing_num]
+        exp_list=glob.glob(sec+'*SCI.list')
+        
+        if dithering_multiple_OBs:
+            if withrvcorr:
+                combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
+            else: combining_exposure_dir=combining_OBs_dir+unique_pointings_ID+'/withsky_withoutrvcorr'
+        
+        if dithering_multiple_OBs == False:
+            if withrvcorr:
+                combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
+        
+    
+    for unique_pointing_num in range(len(unique_pointings)):
+    
+        print(' ')
+        print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
+        print(' ')
+
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
+        sec=unique_pointings[unique_pointing_num]
+    
+        if dithering_multiple_OBs:
+            if withrvcorr:
+                print(unique_pointings_ID)
+                if skysub != 'exclude': combining_exposure_dir_withoutsky=combining_OBs_dir+unique_pointings_ID+'/withoutsky_withrvcorr'
+                if skysub != 'include': combining_exposure_dir_withsky=combining_OBs_dir+unique_pointings_ID+'/withsky_withrvcorr'
+            else: combining_exposure_dir=combining_OBs_dir+unique_pointings_ID+'/withsky_withoutrvcorr'
+        
+        if dithering_multiple_OBs == False:
+            if withrvcorr:
+                if skysub != 'exclude': combining_exposure_dir_withoutsky=sec+'/withoutsky_withrvcorr'
+                if skysub != 'include': combining_exposure_dir_withsky=sec+'/withsky_withrvcorr'
+            else: combining_exposure_dir=sec+'/withsky_withoutrvcorr'
+    
+        if withrvcorr:
+            if skysub != 'exclude':
+                exp_list=get_filelist(combining_exposure_dir_withoutsky,rootpath,'IMAGE_FOV_*.fits')
+                if creating_sof:
+                    if os.path.exists(combining_exposure_dir_withoutsky+'/exp_align.sof') == True: os.remove(combining_exposure_dir_withoutsky+'/exp_align.sof')
+                
+                    f = open(combining_exposure_dir_withoutsky+'/exp_align.sof', 'w')
+                    for i in range(len(exp_list)): f.write(combining_exposure_dir_withoutsky+'/'+exp_list[i]+' IMAGE_FOV\n')
+                    f.close()
+                
+                call_esorex(combining_exposure_dir_withoutsky,rootpath,esorex_cmd,n_CPU)
+            
+            if skysub != 'include':
+                exp_list=get_filelist(combining_exposure_dir_withsky,rootpath,'IMAGE_FOV_*.fits')
+                if creating_sof:
+                
+                    if os.path.exists(combining_exposure_dir_withsky+'/exp_align.sof') == True: os.remove(combining_exposure_dir_withsky+'/exp_align.sof')
+                
+                    f = open(combining_exposure_dir_withsky+'/exp_align.sof', 'w')
+                    for i in range(len(exp_list)): f.write(combining_exposure_dir_withsky+'/'+exp_list[i]+' IMAGE_FOV\n')
+                    f.close()
+                
+                call_esorex(combining_exposure_dir_withsky,rootpath,esorex_cmd,n_CPU)
+        
+        else:
+            exp_list=get_filelist(combining_exposure_dir,rootpath,'IMAGE_FOV_*.fits')
+            if creating_sof:
+                if os.path.exists(combining_exposure_dir+'/exp_align.sof') == True: os.remove(combining_exposure_dir+'/exp_align.sof')
+            
+                f = open(combining_exposure_dir+'/exp_align.sof', 'w')
+                for i in range(len(exp_list)): f.write(combining_exposure_dir+'/'+exp_list[i]+' IMAGE_FOV\n')
+                f.close()
+        
+            call_esorex(combining_exposure_dir,rootpath,esorex_cmd,n_CPU)
+          
+def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,creating_sof,n_CPU=24):
+    print('... EXPOSURE COMBINATION')
+    
+    esorex_cmd = '--log-file=exp_combine.log --log-level=debug muse_exp_combine --filter=white --save=cube --crsigma=5. exp_combine.sof'
+    
+    unique_pointings=np.array([])
+    unique_tester=' '
+    
+    sci = np.zeros_like(exposure_list,dtype=bool)
+    for idx,exposure in enumerate(exposure_list):
+        if exposure[-8:-5] == 'SCI': sci[idx] = True
+    exposure_list = np.array(exposure_list)[sci]
     
     for expnum in range(len(exposure_list)):
         if unique_tester.find(exposure_list[expnum][:-16])==-1:
@@ -1122,7 +1238,7 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
         print('>>> processing pointing: '+str(unique_pointing_num+1)+'/'+str(len(unique_pointings)))
         print(' ')
         
-        unique_pointings_ID=unique_pointings[unique_pointing_num][-14:]
+        unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         sec=unique_pointings[unique_pointing_num]
                 
         if dithering_multiple_OBs:
@@ -1141,12 +1257,12 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
         
         if withrvcorr:
             if skysub != 'exclude':
-                pixtable_list=get_filelist(combining_exposure_dir_withoutsky,rootpath,'PIXTABLE_POSITIONED_*.fits')
+                pixtable_list=get_filelist(combining_exposure_dir_withoutsky,rootpath,'PIXTABLE_REDUCED_*.fits')
                 if creating_sof:
                     if os.path.exists(combining_exposure_dir_withoutsky+'/exp_combine.sof') == True: os.remove(combining_exposure_dir_withoutsky+'/exp_combine.sof')
                     
                     f = open(combining_exposure_dir_withoutsky+'/exp_combine.sof', 'w')
-                    for i in range(len(pixtable_list)): f.write(combining_exposure_dir_withoutsky+'/'+pixtable_list[i]+' PIXTABLE_POSITIONED\n')
+                    for i in range(len(pixtable_list)): f.write(combining_exposure_dir_withoutsky+'/'+pixtable_list[i]+' PIXTABLE_REDUCED\n')
                     f.write(combining_exposure_dir_withoutsky+'/'+'OFFSET_LIST.fits OFFSET_LIST\n')
                     f.write(static_calibration_dir+'filter_list.fits FILTER_LIST\n')
                     f.close()
@@ -1154,12 +1270,12 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
                 call_esorex(combining_exposure_dir_withoutsky,rootpath,esorex_cmd,n_CPU)
 
             if skysub != 'include':
-                pixtable_list=get_filelist(combining_exposure_dir_withsky,rootpath,'PIXTABLE_POSITIONED_*.fits')
+                pixtable_list=get_filelist(combining_exposure_dir_withsky,rootpath,'PIXTABLE_REDUCED_*.fits')
                 if creating_sof:
                     if os.path.exists(combining_exposure_dir_withsky+'/exp_combine.sof') == True: os.remove(combining_exposure_dir_withsky+'/exp_combine.sof')
                     
                     f = open(combining_exposure_dir_withsky+'/exp_combine.sof', 'w')
-                    for i in range(len(pixtable_list)): f.write(combining_exposure_dir_withsky+'/'+pixtable_list[i]+' PIXTABLE_POSITIONED\n')
+                    for i in range(len(pixtable_list)): f.write(combining_exposure_dir_withsky+'/'+pixtable_list[i]+' PIXTABLE_REDUCED\n')
                     f.write(combining_exposure_dir_withsky+'/'+'OFFSET_LIST.fits OFFSET_LIST\n')
                     f.write(static_calibration_dir+'filter_list.fits FILTER_LIST\n')
                     f.close()
@@ -1167,12 +1283,12 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
                 call_esorex(combining_exposure_dir_withsky,rootpath,esorex_cmd,n_CPU)
             
         else:
-            pixtable_list=get_filelist(combining_exposure_dir,rootpath,'PIXTABLE_POSITIONED_*.fits')
+            pixtable_list=get_filelist(combining_exposure_dir,rootpath,'PIXTABLE_REDUCED_*.fits')
             if creating_sof:
                 if os.path.exists(combining_exposure_dir+'/exp_combine.sof') == True: os.remove(combining_exposure_dir+'/exp_combine.sof')
                 
                 f = open(combining_exposure_dir+'/exp_combine.sof', 'w')
-                for i in range(len(pixtable_list)): f.write(combining_exposure_dir+'/'+pixtable_list[i]+' PIXTABLE_POSITIONED\n')
+                for i in range(len(pixtable_list)): f.write(combining_exposure_dir+'/'+pixtable_list[i]+' PIXTABLE_REDUCED\n')
                 f.write(combining_exposure_dir+'/'+'OFFSET_LIST.fits OFFSET_LIST\n')
                 f.write(static_calibration_dir+'filter_list.fits FILTER_LIST\n')
                 f.close()
@@ -1189,8 +1305,8 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Oct 02, 2018                                     #####')
-    print('#####                              Version: 0.4.0                                    #####')
+    print('#####                               Nov 29, 2018                                     #####')
+    print('#####                              Version: 0.4.1                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
     print(' ')
@@ -1223,7 +1339,7 @@ def musereduce(configfile=None):
     
     skysub=config['sci_post']['skysub'] #toggles whether you want skysubtraction or not in the case of the wavelength calibrated cube
     raman=config['sci_post']['raman'] #sets control if raman lines are masked.
-    
+        
     
     ###################################################################################################
     ########################################   END: User input   ######################################
@@ -1313,7 +1429,7 @@ def musereduce(configfile=None):
             raw_data_dir=rootpath+'raw/'+dithername+'/'+OB+'/' #path of the raw data
             working_dir=rootpath+'reduced/'+dithername+'/'+OB+'/' #path of the working directory
             combining_OBs_dir=rootpath+'reduced/'+dithername+'/'
-            if os.path.exists(combining_OBs_dir) == False: os.mkdir(combining_OBs_dir)
+            if not os.path.exists(combining_OBs_dir): os.mkdir(combining_OBs_dir)
         else:
             raw_data_dir=rootpath+'raw/'+OB+'/' #path of the raw data
             working_dir=rootpath+'reduced/'+OB+'/' #path of the working directory
@@ -1323,15 +1439,15 @@ def musereduce(configfile=None):
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
         
-        if os.path.exists(rootpath+'reduced/') == False: os.mkdir(rootpath+'reduced/')
-        if os.path.exists(working_dir) == False: os.mkdir(working_dir)
-        if os.path.exists(working_dir+'std/') == False: os.mkdir(working_dir+'std/')
-        if os.path.exists(calibration_dir) == False: os.mkdir(calibration_dir)
-        if os.path.exists(ESO_calibration_dir) == False: os.mkdir(ESO_calibration_dir)
-        if os.path.exists(calibration_dir+'DARK/') == False: os.mkdir(calibration_dir+'DARK/')
-        if os.path.exists(calibration_dir+'TWILIGHT/') == False: os.mkdir(calibration_dir+'TWILIGHT/')
-        if os.path.exists(calibration_dir+'SCIENCE/') == False: os.mkdir(calibration_dir+'SCIENCE/')
-        if os.path.exists(static_calibration_dir) == True: shutil.rmtree(static_calibration_dir)
+        if not os.path.exists(rootpath+'reduced/'): os.mkdir(rootpath+'reduced/')
+        if not os.path.exists(working_dir): os.mkdir(working_dir)
+        if not os.path.exists(working_dir+'std/'): os.mkdir(working_dir+'std/')
+        if not os.path.exists(calibration_dir): os.mkdir(calibration_dir)
+        if not os.path.exists(ESO_calibration_dir): os.mkdir(ESO_calibration_dir)
+        if not os.path.exists(calibration_dir+'DARK/'): os.mkdir(calibration_dir+'DARK/')
+        if not os.path.exists(calibration_dir+'TWILIGHT/'): os.mkdir(calibration_dir+'TWILIGHT/')
+        if not os.path.exists(calibration_dir+'SCIENCE/'): os.mkdir(calibration_dir+'SCIENCE/')
+        if os.path.exists(static_calibration_dir): shutil.rmtree(static_calibration_dir)
         os.mkdir(static_calibration_dir)
         for itername in glob.glob(config['global']['pipeline_path']+'calib/muse*/cal/*.*'): shutil.copy(itername,static_calibration_dir+'.')
         
@@ -1377,7 +1493,7 @@ def musereduce(configfile=None):
                 flat(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,calibration_dir,creating_sof,n_CPU=n_CPU)
                 wavecal(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,calibration_dir,static_calibration_dir,creating_sof,n_CPU=n_CPU)
                 lsf(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,calibration_dir,static_calibration_dir,creating_sof,n_CPU=n_CPU)
-                twilight(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,calibration_dir,static_calibration_dir,creating_sof,n_CPU=n_CPU)
+                twilight(rootpath,working_dir,exposure_list,exposure_list_TWILIGHT,dark,calibration_dir,static_calibration_dir,creating_sof,mode,n_CPU=n_CPU)
                 
                 
         ### OBSERVATION PRE-PROCESSING ###
@@ -1404,10 +1520,14 @@ def musereduce(configfile=None):
             creating_sof = config['sci_post']['creating_sof']
             scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB,creating_sof,raman,mode,n_CPU=n_CPU)
             
-    if config['exp_combine']['excecute'] == True:
+        if config['exp_combine']['copy_only'] or config['exp_combine']['excecute']: dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB)
+    
+    if config['exp_combine']['align']:
+        creating_sof = config['exp_combine']['creating_sof']
+        exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,OB,n_CPU=24)
+    if config['exp_combine']['excecute']:
         
         creating_sof = config['exp_combine']['creating_sof']
-        exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,n_CPU=n_CPU)
         exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,static_calibration_dir,combining_OBs_dir,creating_sof,n_CPU=n_CPU)
     
     endtime=time.time()
