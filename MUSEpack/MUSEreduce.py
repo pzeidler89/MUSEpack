@@ -39,6 +39,7 @@ vers. 0.4.1: new file names to correct a problem where data gets replaced
              without sky
 vers. 0.4.2: one can now change the ignore and fraction parameters in the
              JSON file
+vers. 0.4.3: one can auto remove and rewrite the statics
 
 
 '''                
@@ -1299,7 +1300,7 @@ def musereduce(configfile=None):
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
     print('#####                               Dec 14, 2018                                     #####')
-    print('#####                              Version: 0.4.2                                    #####')
+    print('#####                              Version: 0.4.3                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
     print(' ')
@@ -1325,6 +1326,8 @@ def musereduce(configfile=None):
     
     using_ESO_calibration = config['calibration']['using_ESO_calibration'] #Set True if you want to use the ESO provided calibration files (recommended)
     dark = config['calibration']['dark'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    renew_statics = config['calibration']['renew_statics'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    
     
     skyreject=config['sci_basic']['skyreject'] #sets to control the sigma clipping to detect skylines in SCI_BASIC: default: 15,15,1
     
@@ -1433,6 +1436,9 @@ def musereduce(configfile=None):
         calibration_dir=working_dir+'calibrations/' #path of the calibration file directory (in case of self prepared calibrations)
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
+        
+        if renew_statics and os.path.exists(static_calibration_dir): os.remove(static_calibration_dir)
+        if renew_statics and os.path.exists(ESO_calibration_dir): os.remove(ESO_calibration_dir)
         
         if not os.path.exists(rootpath+'reduced/'): os.mkdir(rootpath+'reduced/')
         if not os.path.exists(working_dir): os.mkdir(working_dir)
