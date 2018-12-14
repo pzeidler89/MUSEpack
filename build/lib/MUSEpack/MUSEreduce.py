@@ -40,6 +40,7 @@ vers. 0.4.1: new file names to correct a problem where data gets replaced
 vers. 0.4.2: one can now change the ignore and fraction parameters in the
              JSON file
 
+
 '''                
 class MUSEreduce:
     def __init__(self):
@@ -770,7 +771,7 @@ def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,s
             f.close()
         esorex_cmd = "--log-file=sky.log --log-level=debug muse_create_sky --fraction="+str(skyfraction)+" --ignore="+str(skyignore)+" sky.sof"
         if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,esorex_cmd,n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
     if skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exposure_list_sky,dtype=float)
@@ -833,8 +834,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
 
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
         ### continuum set to zero
         
@@ -869,8 +870,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
         
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
         os.chdir(exposure_dir)
         print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
