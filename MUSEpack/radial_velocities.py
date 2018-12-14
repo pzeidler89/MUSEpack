@@ -282,8 +282,8 @@ class RV_spectrum:
             
             self.cat.loc[result[0],'significance'] = result[12]
         
-            if self.cat.loc[result[0],'l_lab'] - self.cat.loc[result[0],'l_fit'] > llimits[0] or self.cat.loc[result[0],'l_fit'] - self.cat.loc[result[0],'l_lab'] > llimits[1]:
-                self.logger.warning(result[0]+' exceeds lambda limits: Please Check !')
+            if self.cat.loc[result[0],'l_lab'] - self.cat.loc[result[0],'l_fit'] > 0.8*llimits[0] or self.cat.loc[result[0],'l_fit'] - self.cat.loc[result[0],'l_lab'] > 0.8*llimits[1]:
+                self.logger.warning(result[0]+' exceeds 0.8 of lambda limits: Please Check !')
                 
         
         elapsed_time = time.time() - start_time
