@@ -37,6 +37,8 @@ vers. 0.4.0: supports now pipeline 2.4.2 and the NFM-AO
 vers. 0.4.1: new file names to correct a problem where data gets replaced
              in the scipost routine if you reduce the data with and
              without sky
+vers. 0.4.2: one can now change the ignore and fraction parameters in the
+             JSON file
 
 '''                
 class MUSEreduce:
@@ -719,7 +721,7 @@ def std_flux(rootpath,working_dir,exposure_list,calibration_dir,static_calibrati
     
     call_esorex(working_dir+'std/',rootpath,esorex_cmd,n_CPU)
     
-def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,n_CPU=24):
+def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,skyignore,skyfraction,n_CPU=24):
     print('... SKY CREATION')
     
     sky = np.zeros_like(exposure_list,dtype=bool)
@@ -766,9 +768,9 @@ def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,s
             f.write(static_calibration_dir+'sky_lines.fits SKY_LINES\n')
         
             f.close()
-        esorex_cmd = "--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.75 --ignore=0.05 sky.sof"
+        esorex_cmd = "--log-file=sky.log --log-level=debug muse_create_sky --fraction="+str(skyfraction)+" --ignore="+str(skyignore)+" sky.sof"
         if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,esorex_cmd,n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.005 --ignore=0.017 sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
         
     if skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exposure_list_sky,dtype=float)
@@ -782,7 +784,7 @@ def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,s
             flist = glob.glob(exposure_list_sky[ind][:-9]+'/SKY_*.fits')
             for f in flist: shutil.copy(f,exps[:-9]+'/.')
             
-def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,n_CPU=24):
+def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,skyignore,skyfraction,n_CPU=24):
 
     print('... SKY CREATION MODIFIED')
     
@@ -831,8 +833,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
 
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.75 --ignore=0.05 sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.005 --ignore=0.017 sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
         
         ### continuum set to zero
         
@@ -867,8 +869,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
         
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.75 --ignore=0.05 sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction=0.005 --ignore=0.017 sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
         
         os.chdir(exposure_dir)
         print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
@@ -957,34 +959,34 @@ def scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibratio
                 if skysub != 'exclude':
                     print('without sky ...')
                     
-                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
-                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
+                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual,raman --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
+                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=subtract-model --filter=white scipost.sof',n_CPU)
                     
+                    os.chdir(exp_list[exp_num][:-9])
                     os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wosky.fits')
                     os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wosky.fits')
-                    os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wosky.fits')
-                    os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wosky.fits')
                     os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wosky.fits')
+                    os.chdir(rootpath)
                     
                 if skysub != 'include':
                     print('with sky ...')
-                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=none --filter=white scipost.sof',n_CPU)
-                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=none --filter=white scipost.sof',n_CPU)
+                    if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual,raman --skymethod=none --filter=white scipost.sof',n_CPU)
+                    if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=none --filter=white scipost.sof',n_CPU)
                     
+                    os.chdir(exp_list[exp_num][:-9])
                     os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wsky.fits')
                     os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wsky.fits')
-                    os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wsky.fits')
-                    os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wsky.fits')
                     os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wsky.fits')
+                    os.chdir(rootpath)
             else:
-                if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual,raman --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
-                if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,positioned,individual --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
+                if raman == True: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual,raman --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
+                if raman == False: call_esorex(exp_list[exp_num][:-9],rootpath,'--log-file=scipost.log --log-level=debug muse_scipost --save=cube,skymodel,individual --skymethod=none --rvcorr=none --filter=white scipost.sof',n_CPU)
                 
+                os.chdir(exp_list[exp_num][:-9])
                 os.rename('DATACUBE_FINAL.fits','DATACUBE_FINAL_wskynorvcorr.fits')
                 os.rename('IMAGE_FOV_0001.fits','IMAGE_FOV_0001_wskynorvcorr.fits')
-                os.rename('OBJECT_RED_0001.fits','OBJECT_RED_0001_wskynorvcorr.fits')
-                os.rename('PIXTABLE_POSITIONED_0001.fits','PIXTABLE_POSITIONED_0001_wskynorvcorr.fits')
                 os.rename('PIXTABLE_REDUCED_0001.fits','PIXTABLE_REDUCED_0001_wskynorvcorr.fits')
+                os.chdir(rootpath)
 
 def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB):
     
@@ -1068,8 +1070,6 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                         shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+OB+'.fits')
                         print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+OB+'.fits')
-                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
                         print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
                     else:
@@ -1077,8 +1077,6 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                         shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wosky.fits',combining_exposure_dir_withoutsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wosky.fits',combining_exposure_dir_withoutsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits ==> '+combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wosky.fits',combining_exposure_dir_withoutsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
 
@@ -1088,8 +1086,6 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                         shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+OB+'.fits')
                         print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+OB+'.fits')
-                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
-                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+OB+'.fits')
                         print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+OB+'.fits')
                     else:
@@ -1097,8 +1093,6 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                         shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wsky.fits',combining_exposure_dir_withsky+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wsky.fits',combining_exposure_dir_withsky+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                        print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                        shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits ==> '+combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                         shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wsky.fits',combining_exposure_dir_withsky+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
             else:
@@ -1114,8 +1108,6 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                     shutil.copy(exp_list[exp_num][:-9]+'/DATACUBE_FINAL_wskynorvcorr.fits',combining_exposure_dir+'/DATACUBE_FINAL_'+str(exp_num+1).rjust(2, '0')+'.fits')
                     print(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
                     shutil.copy(exp_list[exp_num][:-9]+'/IMAGE_FOV_0001_wskynorvcorr.fits',combining_exposure_dir+'/IMAGE_FOV_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    print(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
-                    shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_POSITIONED_0001_wskynorvcorr.fits',combining_exposure_dir+'/PIXTABLE_POSITIONED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                     print(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '+combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
                     shutil.copy(exp_list[exp_num][:-9]+'/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',combining_exposure_dir+'/PIXTABLE_REDUCED_'+str(exp_num+1).rjust(2, '0')+'.fits')
     
@@ -1305,8 +1297,8 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Nov 29, 2018                                     #####')
-    print('#####                              Version: 0.4.1                                    #####')
+    print('#####                               Dec 12, 2018                                     #####')
+    print('#####                              Version: 0.4.2                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
     print(' ')
@@ -1336,6 +1328,8 @@ def musereduce(configfile=None):
     skyreject=config['sci_basic']['skyreject'] #sets to control the sigma clipping to detect skylines in SCI_BASIC: default: 15,15,1
     
     skyfield = config['sky']['sky_field'] #sets if a skyfield is used (if available): default: auto; str: auto, object
+    skyfraction = config['sky']['fraction'] # Sets the skyfraction to be used
+    skyignore = config['sky']['ignore'] #Sets how much sky will be ignored
     
     skysub=config['sci_post']['skysub'] #toggles whether you want skysubtraction or not in the case of the wavelength calibrated cube
     raman=config['sci_post']['raman'] #sets control if raman lines are masked.
@@ -1511,8 +1505,8 @@ def musereduce(configfile=None):
         if config['sky']['excecute'] == True:
             
             creating_sof = config['sky']['creating_sof']
-            if config['sky']['modified'] == False: sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,n_CPU=n_CPU)
-            if config['sky']['modified'] == True: modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,n_CPU=n_CPU)
+            if config['sky']['modified'] == False: sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,skyignore,skyfraction,n_CPU=n_CPU)
+            if config['sky']['modified'] == True: modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,static_calibration_dir,using_ESO_calibration,creating_sof,skyfield,skyignore,skyfraction,n_CPU=n_CPU)
         
         ###s SCIENCE POST-PROCESSING ###
         if config['sci_post']['excecute'] == True:

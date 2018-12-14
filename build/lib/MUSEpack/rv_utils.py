@@ -116,18 +116,42 @@ def voigt_FWHM(sigma_g, gamma_l):
 
 
 def spec_res_downgrade(l_in,spec_in,l_out):
-    line_width=1.25
+    dispersion=2.4
     templ_spec = spectrum.ArraySourceSpectrum(wave=l_in, flux=spec_in)
     white_filter = spectrum.ArraySpectralElement(l_out, np.ones(len(l_out)), waveunits='angstrom')
-    obs = observation.Observation(templ_spec, white_filter, binset=l_out, force='taper')
-
-    obs_dispersion=line_width/(2.*np.sqrt(2.*np.log(2)))
-    convolved_spec=gaussian_filter(obs.binflux,obs_dispersion)
-    
+    convolved_spec = observation.Observation(templ_spec, white_filter, binset=l_out, force='taper').binflux
     return convolved_spec
+
+def clipped_sigma_clip(self,x,line_significants,sigma = 3):
     
+    mask = np.ones_like(x,dtype = int)
+    ind_sig = np.where(self.cat.loc[:,'significance'].values.astype(np.float64) >= line_significants)
+    mask[ind_sig] = 0
     
-def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,adjust_preference):
+    if len(x) <= 3:
+        median = np.median(x)
+        mad = MAD(x)
+        
+    if len(x) > 3:
+        x_red = np.delete(x,[np.argmin(x),np.argmax(x)])
+        median = np.median(x_red)
+        mad = MAD(x_red)
+    ind = np.where((x >= mad- sigma*median) & (x <= mad + sigma*median))
+    mask[ind] = 0
+    
+    x_masked = np.ma.masked_array(x, mask=[mask])
+        
+    return x_masked
+    
+def clipped_MAD(x):
+    if len(x) <= 3: mad = MAD(x)
+    if len(x) > 3:
+        x = np.delete(x,[np.argmin(x),np.argmax(x)])
+        mad = MAD(x)
+    
+    return mad
+    
+def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,max_ladjust,adjust_preference):
 
     self.logger.info('Started line '+line_idx)
     
@@ -135,9 +159,13 @@ def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,adju
     lstart = self.cat.loc[line_idx,'l_start']
     lend = self.cat.loc[line_idx,'l_end']
     contorder = self.cat.loc[line_idx,'cont_order']
+
+    n_ladjust = 0
+    max_cont_reached = False
+    max_n_ladjust_reached = False
+    significant = True
     
     while resid_level < std_resid:
-        
         
         lines_select = linecat[np.where((linecat >= lstart) & (linecat < lend))]
         spec_select_idx = np.where((self.spec_lambda >= lstart) &\
@@ -189,8 +217,8 @@ def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,adju
                     self.logger.debug(line_idx+':Iteration: '+str(iterations)+' Chi2: '+str(chi2))
                     iterations += 1
         
-        
-        self.logger.info(line_idx+': Converged after '+str(iterations)+' iterations; Chi2: '+str(chi2))
+        if iterations < niter: self.logger.info(line_idx+': Converged after '+str(iterations)+' iterations; Chi2: '+str(chi2))
+        if iterations == niter:self.logger.info(line_idx+': Maximum number of iterations ('+str(iterations)+') reached; Chi2: '+str(chi2))
         
 
         par_extract_idx = []
@@ -230,7 +258,7 @@ def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,adju
                 
             if (i == par_extract_idx).any():
 
-                temp_a[temp_idx] = sp.specfit.parinfo[int(4*i+0)]['value']
+                temp_a[temp_idx] = sp.specfit.parinfo[int(4*i+0)]['value']/factor
                 temp_l[temp_idx] = sp.specfit.parinfo[int(4*i+1)]['value']
                 temp_sg[temp_idx] = sp.specfit.parinfo[int(4*i+2)]['value']
                 temp_sl[temp_idx] = sp.specfit.parinfo[int(4*i+3)]['value']
@@ -241,31 +269,61 @@ def line_fitting_dask(self,linecat,line_idx,niter,resid_level,max_contorder,adju
         baseline_sub_spec=sp.data/baseline_temp(temp_lambda-temp_lambda[0])
         continuum = baseline_temp(temp_lambda-temp_lambda[0])/factor
         resid = (self.spec_f[spec_select_idx] - fit_f[spec_select_idx])/continuum
-        
             
         std_resid = np.std(resid)
-        std_resid =0.01
-        if std_resid > resid_level:
-            max_contorder_reached = False
-
-            if  adjust_preference == 'contorder':
-                if contorder < max_contorder:
+        
+        if std_resid > resid_level:#OR THE CONTINUUM IS OFF
+            print(contorder,n_ladjust)
+            
+            if contorder == max_contorder: max_cont_reached = True
+            if n_ladjust == max_ladjust: max_n_ladjust_reached = True
+            
+            if max_cont_reached and max_n_ladjust_reached:
+                self.logger.warning(line_idx+": Maximum adjustments reached: Check the output")
+                break
+                
+            if adjust_preference == 'contorder':
+                
+                if not max_cont_reached:
                     contorder += 1
                     self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => Adjusting continuum order to: '+str(contorder))
+                    
+                if max_cont_reached and not max_n_ladjust_reached:
+                    lstart -= 5.
+                    lend += 5.
+                    self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+\
+                                     ' => maximum continuum order reached: Adjusting wavelength range to: ['+str(lstart)+','+str(lend)+']')
+                    contorder = self.cat.loc[line_idx,'cont_order']
+                     
+            if adjust_preference != 'contorder':
+            
+                contorder = self.cat.loc[line_idx,'cont_order']
+            
+                if not max_n_ladjust_reached:
+                    
+                    if adjust_preference == 'min_lambda' or adjust_preference == 'minmax_lambda':
+                        lstart -= 5.
+                        self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => Adjusting lower wavelength range to: '+str(lstart))
 
-                else:
-                    max_contorder_reached = True
-                    self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => maximum cont order reached: Adjusting wavelength range')
+                    if adjust_preference == 'max_lambda' or adjust_preference == 'minmax_lambda':
+                        lend += 5.
+                        self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => Adjusting upper wavelength range to: '+str(lend))
+                    
+                    n_ladjust += 1
+                if max_n_ladjust_reached and not max_cont_reached:
+                    
+                    contorder += 1
+                    self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+\
+                                     ' => maximum wavelength adjustment reached: Adjusting continuum order to: '+str(contorder))
+                                     
+                    lstart = self.cat.loc[line_idx,'l_start']
+                    lend = self.cat.loc[line_idx,'l_end']
+        
 
-            if  adjust_preference == 'min_lambda' or adjust_preference == 'minmax_lambda' or max_contorder_reached:
-                lstart += 5.
-                self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => Adjusting lower wavelength range to: '+str(lstart))
-
-            if  adjust_preference == 'max_lambda' or adjust_preference == 'minmax_lambda' or max_contorder_reached:
-                lend += 5.
-                self.logger.info(line_idx+': STD of residuals: '+str('{:2.4f}'.format(std_resid))+' => Adjusting upper wavelength range to: '+str(lend))
-    
+    significance = sp.specfit.parinfo[int(4*i+0)]['value']/np.median(temp_err)
+        
+    self.logger.info(line_idx+' significance: '+str('{:3.2f}'.format(significance)))
     self.logger.info('Finished line '+line_idx)
     
-    return line_idx,temp_l,temp_a,temp_sl,temp_sg,spec_select_idx,template_f,continuum,lstart,lend,contorder,fit_f
-
+    return line_idx,temp_l,temp_a,temp_sl,temp_sg,spec_select_idx,template_f,continuum,lstart,lend,contorder,fit_f,significance
+###            0      1        2    3       4           5           6           7         8     9       10      11      12
