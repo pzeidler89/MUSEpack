@@ -39,6 +39,7 @@ vers. 0.4.1: new file names to correct a problem where data gets replaced
              without sky
 vers. 0.4.2: one can now change the ignore and fraction parameters in the
              JSON file
+vers. 0.4.3: one can auto remove and rewrite the statics
 
 
 '''                
@@ -890,9 +891,9 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         skydate = np.ones_like(exposure_list_sky,dtype=float)
     
         for idx,exps in enumerate(exposure_list_sky):
-            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01')[0].header('MJD-OBS')
+            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01.fits')[0].header('MJD-OBS')
         for idx,exps in enumerate(np.array(exposure_list)[sci]):
-            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01')[0].header('MJD-OBS')
+            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01.fits')[0].header('MJD-OBS')
         
             ind = np.argmin(abs(skydate - scidate))
             flist = glob.glob(exposure_list_sky[ind][:-9]+'/SKY_*.fits')
@@ -1298,8 +1299,8 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 12, 2018                                     #####')
-    print('#####                              Version: 0.4.2                                    #####')
+    print('#####                               Dec 17, 2018                                     #####')
+    print('#####                              Version: 0.4.3                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
     print(' ')
@@ -1325,6 +1326,8 @@ def musereduce(configfile=None):
     
     using_ESO_calibration = config['calibration']['using_ESO_calibration'] #Set True if you want to use the ESO provided calibration files (recommended)
     dark = config['calibration']['dark'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    renew_statics = config['calibration']['renew_statics'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    
     
     skyreject=config['sci_basic']['skyreject'] #sets to control the sigma clipping to detect skylines in SCI_BASIC: default: 15,15,1
     
@@ -1433,6 +1436,9 @@ def musereduce(configfile=None):
         calibration_dir=working_dir+'calibrations/' #path of the calibration file directory (in case of self prepared calibrations)
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
+        
+        if renew_statics and os.path.exists(static_calibration_dir): os.remove(static_calibration_dir)
+        if renew_statics and os.path.exists(ESO_calibration_dir): os.remove(ESO_calibration_dir)
         
         if not os.path.exists(rootpath+'reduced/'): os.mkdir(rootpath+'reduced/')
         if not os.path.exists(working_dir): os.mkdir(working_dir)
