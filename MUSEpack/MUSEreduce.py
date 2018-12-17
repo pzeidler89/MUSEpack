@@ -891,9 +891,9 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         skydate = np.ones_like(exposure_list_sky,dtype=float)
     
         for idx,exps in enumerate(exposure_list_sky):
-            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01')[0].header('MJD-OBS')
+            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01.fits')[0].header('MJD-OBS')
         for idx,exps in enumerate(np.array(exposure_list)[sci]):
-            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01')[0].header('MJD-OBS')
+            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01.fits')[0].header('MJD-OBS')
         
             ind = np.argmin(abs(skydate - scidate))
             flist = glob.glob(exposure_list_sky[ind][:-9]+'/SKY_*.fits')
@@ -1299,7 +1299,7 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 14, 2018                                     #####')
+    print('#####                               Dec 17, 2018                                     #####')
     print('#####                              Version: 0.4.3                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
