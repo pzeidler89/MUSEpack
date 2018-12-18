@@ -39,6 +39,8 @@ vers. 0.4.1: new file names to correct a problem where data gets replaced
              without sky
 vers. 0.4.2: one can now change the ignore and fraction parameters in the
              JSON file
+vers. 0.4.3: one can auto remove and rewrite the statics
+
 
 '''                
 class MUSEreduce:
@@ -770,7 +772,7 @@ def sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibration_dir,s
             f.close()
         esorex_cmd = "--log-file=sky.log --log-level=debug muse_create_sky --fraction="+str(skyfraction)+" --ignore="+str(skyignore)+" sky.sof"
         if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,esorex_cmd,n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
     if skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exposure_list_sky,dtype=float)
@@ -833,8 +835,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
 
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
         ### continuum set to zero
         
@@ -869,8 +871,8 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         
             f.close()
         
-        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
-        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyfignore)+' sky.sof',n_CPU)
+        if skyfield == 'auto' and (sky == True).any(): call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
+        else: call_esorex(exposure_dir,rootpath,'--log-file=sky.log --log-level=debug muse_create_sky --fraction='+str(skyfraction)+' --ignore='+str(skyignore)+' sky.sof',n_CPU)
         
         os.chdir(exposure_dir)
         print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
@@ -889,9 +891,9 @@ def modified_sky(rootpath,working_dir,exposure_list,calibration_dir,ESO_calibrat
         skydate = np.ones_like(exposure_list_sky,dtype=float)
     
         for idx,exps in enumerate(exposure_list_sky):
-            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01')[0].header('MJD-OBS')
+            skydate[idx] = fits.open(exps[:-9]+'/PIXTABLE_SKY_0001-01.fits')[0].header['MJD-OBS']
         for idx,exps in enumerate(np.array(exposure_list)[sci]):
-            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01')[0].header('MJD-OBS')
+            scidate = fits.open(exps[:-9]+'/PIXTABLE_OBJECT_0001-01.fits')[0].header['MJD-OBS']
         
             ind = np.argmin(abs(skydate - scidate))
             flist = glob.glob(exposure_list_sky[ind][:-9]+'/SKY_*.fits')
@@ -1297,8 +1299,8 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 12, 2018                                     #####')
-    print('#####                              Version: 0.4.2                                    #####')
+    print('#####                               Dec 18, 2018                                     #####')
+    print('#####                              Version: 0.4.3                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
     print(' ')
@@ -1324,6 +1326,8 @@ def musereduce(configfile=None):
     
     using_ESO_calibration = config['calibration']['using_ESO_calibration'] #Set True if you want to use the ESO provided calibration files (recommended)
     dark = config['calibration']['dark'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    renew_statics = config['calibration']['renew_statics'] #sets if the dark will be reduce (usually not necessary): default: false, bool
+    
     
     skyreject=config['sci_basic']['skyreject'] #sets to control the sigma clipping to detect skylines in SCI_BASIC: default: 15,15,1
     
@@ -1433,6 +1437,9 @@ def musereduce(configfile=None):
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
         
+        if renew_statics and os.path.exists(static_calibration_dir): os.remove(static_calibration_dir)
+        if renew_statics and os.path.exists(ESO_calibration_dir): os.remove(ESO_calibration_dir)
+        
         if not os.path.exists(rootpath+'reduced/'): os.mkdir(rootpath+'reduced/')
         if not os.path.exists(working_dir): os.mkdir(working_dir)
         if not os.path.exists(working_dir+'std/'): os.mkdir(working_dir+'std/')
@@ -1514,10 +1521,10 @@ def musereduce(configfile=None):
             creating_sof = config['sci_post']['creating_sof']
             scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB,creating_sof,raman,mode,n_CPU=n_CPU)
             
-        if config['exp_combine']['copy_only'] or config['exp_combine']['excecute']: dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB)
+        if config['dither_collect']['excecute']: dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB)
     
-    if config['exp_combine']['align']:
-        creating_sof = config['exp_combine']['creating_sof']
+    if config['exp_align']['excecute']:
+        creating_sof = config['exp_align']['creating_sof']
         exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,OB,n_CPU=24)
     if config['exp_combine']['excecute']:
         
