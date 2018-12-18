@@ -1299,7 +1299,7 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                              Dec 17a, 2018                                     #####')
+    print('#####                               Dec 18, 2018                                     #####')
     print('#####                              Version: 0.4.3                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
