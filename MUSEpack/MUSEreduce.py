@@ -1521,10 +1521,10 @@ def musereduce(configfile=None):
             creating_sof = config['sci_post']['creating_sof']
             scipost(rootpath,working_dir,static_calibration_dir,exposure_list,calibration_dir,ESO_calibration_dir,using_ESO_calibration,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB,creating_sof,raman,mode,n_CPU=n_CPU)
             
-        if config['exp_combine']['copy_only'] or config['exp_combine']['excecute']: dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB)
+        if config['dither_collect']['excecute']: dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,OB)
     
-    if config['exp_combine']['align']:
-        creating_sof = config['exp_combine']['creating_sof']
+    if config['exp_align']['excecute']:
+        creating_sof = config['exp_align']['creating_sof']
         exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,combining_OBs_dir,creating_sof,OB,n_CPU=24)
     if config['exp_combine']['excecute']:
         
