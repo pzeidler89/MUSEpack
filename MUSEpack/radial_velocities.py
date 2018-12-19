@@ -25,6 +25,12 @@ Required non-standard packages: ppxf, pyspeckit, pysynphot
 
 """
 
+__version__ = '0.1.0'
+
+__revision__ = '20191218'
+
+
+
 import sys,os,shutil,warnings,pyspeckit,pickle
 import numpy as np
 from astropy.io import ascii
@@ -57,8 +63,7 @@ from MUSEpack.line_fitter import *
 
 
 
-__author__ = "Peter Zeidler (zeidler@stsci.edu)"
-__revision__ = 20191218
+
 
 
 

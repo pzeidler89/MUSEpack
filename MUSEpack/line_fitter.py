@@ -98,7 +98,7 @@ def line_fitter(self,linecat,line_idx,niter,input_resid_level,max_contorder,max_
                                     parinfo=None, reset_fitspec = True,plot=False, limits=linefit_limits, limited=linefit_limited)
             
             
-                if len(log_list) > 0 and log_list[0].message[:8] == 'gnorm=0.' and exclusion_level == max_exclusion_level:
+                if exclusion_level == max_exclusion_level:
                     self.logger.error(line_idx+': LINE FIT FAILED !!!!!: Exclusion level reached max of '+str(max_exclusion_level))
                     fit_failed = True
                     break

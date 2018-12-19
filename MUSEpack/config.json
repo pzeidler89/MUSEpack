@@ -1,14 +1,14 @@
 {
   "global": {
-  	"pipeline_path": "",
+  	"pipeline_path": ,
 	"mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
     "using_specific_exposure_time": false,
     "dither_multiple_OBs": false,
     "n_CPU": 24,
-    "rootpath": "",
-    "OB": "",
+    "rootpath": ,
+    "OB": ,
     "OB_list": []
   },
   "calibration":{
@@ -37,12 +37,13 @@
   },
   "sci_post":{
     "excecute": false,
-    "skysub": "exclude",
+    "subtract_sky": true,
     "raman": false,
     "creating_sof": true
   },
   "dither_collect":{
-    "excecute": false
+    "excecute": false,
+    "user_list": []
   },
   "exp_align":{
     "excecute": false,
