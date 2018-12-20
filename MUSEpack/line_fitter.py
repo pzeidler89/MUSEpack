@@ -98,14 +98,14 @@ def line_fitter(self,linecat,line_idx,niter,input_resid_level,max_contorder,max_
                                     parinfo=None, reset_fitspec = True,plot=False, limits=linefit_limits, limited=linefit_limited)
             
             
-                if exclusion_level == max_exclusion_level:
+                if exclusion_level >= max_exclusion_level:
                     self.logger.error(line_idx+': LINE FIT FAILED !!!!!: Exclusion level reached max of '+str(max_exclusion_level))
                     fit_failed = True
                     break
             
                 if len(log_list) > 0 and log_list[0].message[:8] == 'gnorm=0.' and exclusion_level < max_exclusion_level:
                     exclusion_level += 0.01
-                    self.logger.info(line_idx+': Adjusting exclusion level to: '+str(exclusion_level))
+                    self.logger.info(line_idx+': Adjusting exclusion level to: '+str('{:2.2f}'.format(exclusion_level)))
                     iterations = 0
                     sp = pyspeckit.Spectrum(data=temp_f,error=temp_err,xarr=temp_lambda, unit=r'flux [$10^{'+str(exponent)+'}$ erg$^{-1}$ s$^{-1}$ cm$^{-2}$ $\AA^{-1}$]',header={})
                     sp.xarr.set_unit(u.AA)
@@ -221,10 +221,10 @@ def line_fitter(self,linecat,line_idx,niter,input_resid_level,max_contorder,max_
                         lend = self.cat.loc[line_idx,'l_end']
 
     if fit_failed:
-        temp_l = np.nan
-        temp_a = np.nan
-        temp_sl = np.nan
-        temp_sg = np.nan
+        temp_l = 0.
+        temp_a = 0.
+        temp_sl = 0.
+        temp_sg = 0.
         
     significance = np.abs(temp_a)/np.median(temp_err/factor)
     
@@ -235,5 +235,5 @@ def line_fitter(self,linecat,line_idx,niter,input_resid_level,max_contorder,max_
         
     self.logger.info('Finished line '+line_idx)
     
-    return line_idx,temp_l,temp_a,temp_sl,temp_sg,spec_select_idx,template_f,continuum,lstart,lend,contorder,fit_f,significance
+    return line_idx,temp_l,temp_a,temp_sl,temp_sg,spec_select_idx,template_f,continuum,lstart,lend,contorder,fit_f,significance,fit_failed
 ###            0      1        2    3       4           5           6           7         8     9       10      11      12

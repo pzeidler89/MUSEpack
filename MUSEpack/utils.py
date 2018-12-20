@@ -115,17 +115,20 @@ def spec_res_downgrade(l_in,spec_in,l_out):
 def line_clipping(self,x,line_significants,sigma = 3):
     
     mask = np.zeros_like(x,dtype = int)
-    ind_sig = np.where(self.cat.loc[:,'significance'].values.astype(np.float64) < line_significants)
+    ind_sig = np.where((self.cat.loc[:,'significance'].values.astype(np.float64) < line_significants)\
+                       | (self.cat.loc[:,'used'].values == 'f'))
     mask[ind_sig] = 1
     
-    if len(x) >= 3:
+    x_red1 = np.delete(x,np.where(mask == 1))
+    
+    if len(x_red1) >= 3:
         
-        if len(x) == 3:
-            median = np.median(x)
-            mad = MAD(x)
+        if len(x_red1) == 3:
+            median = np.median(x_red1)
+            mad = MAD(x_red1)
         
         if len(x) > 3:
-            x_red = np.delete(x,[np.argmin(x),np.argmax(x)])
+            x_red = np.delete(x_red1,[np.argmin(x_red1),np.argmax(x_red1)])
             median = np.median(x_red)
             mad = MAD(x_red)
     

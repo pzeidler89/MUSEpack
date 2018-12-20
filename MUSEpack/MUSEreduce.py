@@ -1370,7 +1370,7 @@ def musereduce(configfile=None):
     skysub=config['sci_post']['subtract_sky'] #toggles whether you want skysubtraction or not in the case of the wavelength calibrated cube
     raman=config['sci_post']['raman'] #sets control if raman lines are masked.
     
-    user_list = np.array(config['dither_collect']['user_list'])
+    user_list = np.array(config['dither_collect']['user_list'],dtype=str)
     
     ###################################################################################################
     ########################################   END: User input   ######################################
@@ -1420,9 +1420,9 @@ def musereduce(configfile=None):
     else:
         print('>>> All exposures are located in one OB')
         OB_list=np.array([dithername])
-        if user_list:
+        if len(user_list) > 0:
             print('>>> Dithering exposures from manual input list')
-            print('==> Input list: '+user_list)
+            print('==> Input list: ',user_list)
     
     if dithering_multiple_OBs and user_list:
         print('Currently a user list of dithers cannot be provided with multiple OBs')
@@ -1474,8 +1474,8 @@ def musereduce(configfile=None):
         ESO_calibration_dir=working_dir+'ESO_calibrations/' #path of the ESO calibration file directory
         static_calibration_dir=working_dir+'static_calibration_files/' #path of the static calibration file directory
         
-        if renew_statics and os.path.exists(static_calibration_dir): os.remove(static_calibration_dir)
-        if renew_statics and os.path.exists(ESO_calibration_dir): os.remove(ESO_calibration_dir)
+        if renew_statics and os.path.exists(static_calibration_dir): os.rmdir(static_calibration_dir)
+        if renew_statics and os.path.exists(ESO_calibration_dir): os.rmdir(ESO_calibration_dir)
         
         if not os.path.exists(rootpath+'reduced/'): os.mkdir(rootpath+'reduced/')
         if not os.path.exists(working_dir): os.mkdir(working_dir)

@@ -27,7 +27,7 @@ Required non-standard packages: ppxf, pyspeckit, pysynphot
 
 __version__ = '0.1.0'
 
-__revision__ = '20191218'
+__revision__ = '20191220'
 
 
 
@@ -60,10 +60,6 @@ from scipy.ndimage.filters import gaussian_filter
 from MUSEpack.ppxf_MC import ppxf_MC
 from MUSEpack.utils import *
 from MUSEpack.line_fitter import *
-
-
-
-
 
 
 
@@ -238,7 +234,7 @@ class RV_spectrum:
         
         Args:
             input_cat (:array:'float'): input spectral line catalog wavelengths only in Angstrom
-            line_idxs (:array:'str'): str array of the linen ames for which RV fits 
+            line_idxs (:array:'str'): str array of the linen names for which RV fits 
                 should be performed, must be identical to "name" in init_cat
             niter (int, optional, default=5): maximum number of iterations for the line fitting
             contorder (:array:'int, optional, default=[1]): Array of the continuum orders per line fit.
@@ -260,8 +256,8 @@ class RV_spectrum:
         if len(contorder) == 1: contorder = np.full_like(line_idxs,fill_value=contorder,dtype=int)
         for ix, el in enumerate(line_idxs): self.cat.loc[el,'cont_order'] = contorder[ix]
         
-        
-        result = [dask.delayed(line_fitter)(self,input_cat,ldx,niter,resid_level,max_contorder,max_ladjust,adjust_preference,input_continuum_deviation,llimits,max_exclusion_level) for ldx in np.array(line_idxs)]
+        result = [dask.delayed(line_fitter)(self,input_cat,ldx,niter,resid_level,max_contorder,max_ladjust,\
+                  adjust_preference,input_continuum_deviation,llimits,max_exclusion_level) for ldx in np.array(line_idxs)]
         
         if self.loglevel == "DEBUG": results = dask.compute(*result,num_worker=8,scheduler='single-threaded')
         if not self.loglevel == "DEBUG": results = dask.compute(*result,num_worker=len(line_idxs),scheduler='processes')
@@ -269,7 +265,7 @@ class RV_spectrum:
         
         for result in results:
             
-            if not np.isnan(result[12]):
+            if not result[13]:
                 self.template_f[result[5]] = result[6][result[5]]
                 self.fit_f[result[5]] = result[11][result[5]]
                 self.cat.loc[result[0],'l_fit'] = result[1]
@@ -291,9 +287,9 @@ class RV_spectrum:
                 if self.cat.loc[result[0],'l_lab'] - self.cat.loc[result[0],'l_fit'] > 0.8*llimits[0] or self.cat.loc[result[0],'l_fit'] - self.cat.loc[result[0],'l_lab'] > 0.8*llimits[1]:
                     self.logger.warning(result[0]+' exceeds 0.8 of lambda limits: Please Check !')
             
-            if np.isnan(result[12]):
-                self.logger.warning(result[0]+' failed and will be removed from the catalog')
-                self.cat.drop(index = result[0])
+            if result[13]:
+                self.logger.warning(result[0]+' failed and will be marked in the catalog')
+                self.cat.loc[result[0],'used'] = 'f'
             
         
         elapsed_time = time.time() - start_time
@@ -358,6 +354,13 @@ class RV_spectrum:
         line_name = self.cat.index
         
         fwhm_g, fwhm_l, fwhm_v = voigt_FWHM(self.cat.loc[:,'sg_fit'].values.astype(np.float64),self.cat.loc[:,'sl_fit'].values.astype(np.float64))
+        
+        l_fit = np.delete(l_fit,np.where(self.cat.loc[:,'used'] == 'f'))
+        l_lab = np.delete(l_lab,np.where(self.cat.loc[:,'used'] == 'f'))
+        line_name = np.delete(line_name,np.where(self.cat.loc[:,'used'] == 'f'))
+        fwhm_g = np.delete(fwhm_g,np.where(self.cat.loc[:,'used'] == 'f'))
+        fwhm_l = np.delete(fwhm_l,np.where(self.cat.loc[:,'used'] == 'f'))
+        fwhm_v = np.delete(fwhm_v,np.where(self.cat.loc[:,'used'] == 'f'))
         
         v = np.zeros_like(l_lab)
         ev = np.zeros_like(l_lab)
