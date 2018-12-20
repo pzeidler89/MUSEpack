@@ -226,7 +226,7 @@ class RV_spectrum:
         plt.tight_layout(w_pad=-0.25,h_pad=-1.8)
         plt.savefig(self.spec_id+'_plot.png',dpi=600,overwrite=True)
         plt.close()
-        
+
     def line_fitting(self,input_cat,line_idxs,niter = 5, contorder = [1], n_CPU = -1, resid_level = None, max_contorder = 2,max_ladjust = 4, adjust_preference = 'contorder',input_continuum_deviation = 0.05, llimits = [2.,2.], max_exclusion_level = 0.3):
         
         """
@@ -295,8 +295,7 @@ class RV_spectrum:
         elapsed_time = time.time() - start_time
         self.logger.info('Finished line fitting')
         self.logger.info('Elapsed time: '+time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
-                
-    
+
     def rv_fit_peak(self,line_sigma = 3,line_significants = 5):
         
         self.logger.info('Calculating RVs based on peaks only')
@@ -312,7 +311,6 @@ class RV_spectrum:
             
             self.logger.info('Finished Calculating RVs based on peaks only: RV=('+str('{:4.2f}'.format(self.rv_peak))+\
                              '+-'+str('{:4.3f}'.format(self.erv_peak))+')km/s based on '+str(len(v[~remaining_lines.mask]))+'/'+str(len(v))+' lines')
-
 
     def rv_fit(self, guesses, niter = 10000, line_sigma = 3, n_CPU = -1, line_significants = 5):
         
