@@ -51,7 +51,7 @@ vers. 0.4.4: changed the sky subtraction keyword
 
 __version__ = '0.4.4'
 
-__revision__ = '20181219'
+__revision__ = '20181220'
 
 class MUSEreduce:
     def __init__(self):
@@ -1332,7 +1332,7 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 19, 2018                                     #####')
+    print('#####                               Dec 20, 2018                                     #####')
     print('#####                              Version: 0.4.4                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
@@ -1370,7 +1370,7 @@ def musereduce(configfile=None):
     skysub=config['sci_post']['subtract_sky'] #toggles whether you want skysubtraction or not in the case of the wavelength calibrated cube
     raman=config['sci_post']['raman'] #sets control if raman lines are masked.
     
-    user_list = config['dither_collect']['user_list']
+    user_list = np.array(config['dither_collect']['user_list'])
     
     ###################################################################################################
     ########################################   END: User input   ######################################
