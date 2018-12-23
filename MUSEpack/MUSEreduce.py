@@ -51,7 +51,7 @@ vers. 0.4.4: changed the sky subtraction keyword
 
 __version__ = '0.4.4'
 
-__revision__ = '20181221'
+__revision__ = '20181223'
 
 class MUSEreduce:
     def __init__(self):
@@ -1027,7 +1027,7 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if len(user_list) > 0: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
             
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
@@ -1155,7 +1155,7 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if len(user_list) > 0: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
     
             
     for unique_pointing_num in range(len(unique_pointings)):
@@ -1257,7 +1257,7 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if len(user_list) > 0: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
     
     for unique_pointing_num in range(len(unique_pointings)):
         
@@ -1325,6 +1325,19 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
 # if __name__=='__main__':
 def musereduce(configfile=None):
     
+    
+    print('##########################################################################################')
+    print('##########################################################################################')
+    print('### #### ##     ##   ####   #### ### #### ### ###### #### ###### ##     ##################')
+    print('###  ##  ## ###### ##  ## ##  ### # ###### # #######  ##  #####  ## ######################')
+    print('### #  # ##   ####    ###    ##### ######## ###   ## #### #### # ##     ##################')
+    print('### #### ## ###### ## ### ## ##### ####### # ####### #### ###    ###### ##################')
+    print('### #### ##     ## ### ## ### #### ###### ### ###### #### ## ### ##     ##################')
+    print('##########################################################################################')
+    print('##########################################################################################')
+    print('##########################################################################################')
+    
+    
     print(' ')
     print('##########################################################################################')
     print('#####                                                                                #####')
@@ -1332,7 +1345,7 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 21, 2018                                     #####')
+    print('#####                               Dec 23, 2018                                     #####')
     print('#####                              Version: 0.4.4                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
