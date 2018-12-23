@@ -51,7 +51,7 @@ vers. 0.4.4: changed the sky subtraction keyword
 
 __version__ = '0.4.4'
 
-__revision__ = '20181220'
+__revision__ = '20181223'
 
 class MUSEreduce:
     def __init__(self):
@@ -1021,21 +1021,21 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
     print('>>> Copying files:')
     print(' ')
 
-    if not user_list:
+    if len(user_list) == 0:
         for expnum in range(len(exposure_list)):
                 if unique_tester.find(exposure_list[expnum][:-16]) == -1:
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if user_list: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
             
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         sec=unique_pointings[unique_pointing_num]
             
             
-        if not user_list: exp_list=glob.glob(sec+'*SCI.list')
-        if user_list: exp_list = user_list+'_SCI.list'
+        if len(user_list) == 0: exp_list=glob.glob(sec+'*SCI.list')
+        if len(user_list) > 0: exp_list = user_list+'_SCI.list'
         
         if dithering_multiple_OBs:
             if withrvcorr:
@@ -1070,8 +1070,8 @@ def dither_collect(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_O
         unique_pointings_ID=unique_pointings[unique_pointing_num][-18:]
         sec=unique_pointings[unique_pointing_num]
 
-        if not user_list: exp_list=glob.glob(sec+'*SCI.list')
-        if user_list: exp_list = user_list+'_SCI.list'
+        if len(user_list) == 0: exp_list=glob.glob(sec+'*SCI.list')
+        if len(user_list) > 0: exp_list = user_list+'_SCI.list'
         
         if dithering_multiple_OBs:
             if withrvcorr:
@@ -1149,13 +1149,13 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
         if exposure[-8:-5] == 'SCI': sci[idx] = True
     exposure_list = np.array(exposure_list)[sci]
     
-    if not user_list:
+    if len(user_list) == 0:
         for expnum in range(len(exposure_list)):
                 if unique_tester.find(exposure_list[expnum][:-16]) == -1:
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if user_list: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
     
             
     for unique_pointing_num in range(len(unique_pointings)):
@@ -1164,8 +1164,8 @@ def exp_align(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,co
         sec=unique_pointings[unique_pointing_num]
         
         
-        if not user_list: exp_list=glob.glob(sec+'*SCI.list')
-        if user_list: exp_list = user_list+'_SCI.list'
+        if len(user_list) == 0: exp_list=glob.glob(sec+'*SCI.list')
+        if len(user_list) > 0: exp_list = user_list+'_SCI.list'
         
         
         if dithering_multiple_OBs:
@@ -1251,13 +1251,13 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
         if exposure[-8:-5] == 'SCI': sci[idx] = True
     exposure_list = np.array(exposure_list)[sci]
     
-    if not user_list:
+    if len(user_list) == 0:
         for expnum in range(len(exposure_list)):
                 if unique_tester.find(exposure_list[expnum][:-16]) == -1:
                     unique_pointings=np.append(unique_pointings,exposure_list[expnum][:-16])
                     unique_tester=unique_tester+exposure_list[expnum][:-16]
     
-    if user_list: unique_pointings = np.array(user_list[0]+'_usr')
+    if len(user_list) > 0: unique_pointings = np.array([user_list[0]+'_usr'])
     
     for unique_pointing_num in range(len(unique_pointings)):
         
@@ -1325,6 +1325,19 @@ def exp_combine(rootpath,exposure_list,withrvcorr,skysub,dithering_multiple_OBs,
 # if __name__=='__main__':
 def musereduce(configfile=None):
     
+    
+    print('##########################################################################################')
+    print('##########################################################################################')
+    print('### #### ##     ##   ####   #### ### #### ### ###### #### ###### ##     ##################')
+    print('###  ##  ## ###### ##  ## ##  ### # ###### # #######  ##  #####  ## ######################')
+    print('### #  # ##   ####    ###    ##### ######## ###   ## #### #### # ##     ##################')
+    print('### #### ## ###### ## ### ## ##### ####### # ####### #### ###    ###### ##################')
+    print('### #### ##     ## ### ## ### #### ###### ### ###### #### ## ### ##     ##################')
+    print('##########################################################################################')
+    print('##########################################################################################')
+    print('##########################################################################################')
+    
+    time.sleep(5)
     print(' ')
     print('##########################################################################################')
     print('#####                                                                                #####')
@@ -1332,7 +1345,7 @@ def musereduce(configfile=None):
     print('#####  This package is meant to be used together with ESORex and ESO MUSE pipeline   #####')
     print('#####    ftp://ftp.eso.org/pub/dfs/pipelines/muse/muse-pipeline-manual-2.4.2.pdf     #####')
     print('#####                 author: Peter Zeidler (zeidler@stsci.edu)                      #####')
-    print('#####                               Dec 20, 2018                                     #####')
+    print('#####                               Dec 23, 2018                                     #####')
     print('#####                              Version: 0.4.4                                    #####')
     print('#####                                                                                #####')
     print('##########################################################################################')
@@ -1424,7 +1437,7 @@ def musereduce(configfile=None):
             print('>>> Dithering exposures from manual input list')
             print('==> Input list: ',user_list)
     
-    if dithering_multiple_OBs and user_list:
+    if dithering_multiple_OBs and len(user_list) > 0:
         print('Currently a user list of dithers cannot be provided with multiple OBs')
         sys.exit()
 
