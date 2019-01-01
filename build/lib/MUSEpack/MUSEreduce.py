@@ -237,11 +237,11 @@ class musereduce:
 
             if self.dithering_multiple_OBs:
                 self.raw_data_dir = self.rootpath + 'raw/' +\
-                dithername + '/' + OB + '/'
+                self.dithername + '/' + OB + '/'
                 self.working_dir = self.rootpath + 'reduced/'\
-                + dithername + '/' + OB + '/'
+                + self.dithername + '/' + OB + '/'
                 self.combining_OBs_dir = self.rootpath + 'reduced/'\
-                + dithername + '/'
+                + self.dithername + '/'
                 if not os.path.exists(self.combining_OBs_dir):
                     os.mkdir(combining_OBs_dir)
             else:
@@ -458,7 +458,7 @@ def sort_data(self):
                     if not os.path.isfile(self.ESO_calibration_dir\
                     + cal_category):
                         shutil.copy(self.raw_data_dir + files,\
-                        self.ESO_calibration_dir + cal_category+'.fits')
+                        self.ESO_calibration_dir + cal_category + '.fits')
 
     rot_angles = np.zeros(len(science_files))
     points = np.zeros(len(science_files), dtype=object)
@@ -1641,8 +1641,8 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                     if self.raman:
                         if not self.debug:
                             call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual,raman \
+                            '--log-file=scipost.log --log-level=debug\
+                            muse_scipost --save=cube,skymodel,individual,raman\
                             --skymethod=subtract-model \
                             --filter=white scipost.sof')
 
@@ -1799,16 +1799,16 @@ def dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(sec + '*SCI.list')
         if len(self.user_list) > 0:
-            exp_list =  self.working_dir + self.user_list + '_SCI.list'
+            exp_list = self.working_dir + self.user_list + '_SCI.list'
 
         if self.dithering_multiple_OBs:
             if self.withrvcorr:
-                combining_exposure_dir_withoutsky = combining_OBs_dir\
+                combining_exposure_dir_withoutsky = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withoutsky_withrvcorr'
-                combining_exposure_dir_withsky = combining_OBs_dir\
+                combining_exposure_dir_withsky = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withrvcorr'
             else:
-                combining_exposure_dir = combining_OBs_dir\
+                combining_exposure_dir = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withoutrvcorr'
 
         if not self.dithering_multiple_OBs:
