@@ -27,7 +27,7 @@ Required non-standard packages: ppxf, pyspeckit, pysynphot
 
 __version__ = '0.1.0'
 
-__revision__ = '20191220'
+__revision__ = '20191226'
 
 
 
@@ -183,8 +183,8 @@ class RV_spectrum:
         
         non_inf_cont  = ~np.isinf(self.template_f/self.continuum)
         
-        exponent=int(np.log10(np.median(self.spec_f[non_inf_cont]))-1.)  ## to better plot larger numbers
-        factor=10**(-exponent)
+        exponent=int(np.log10(np.nanmedian(self.spec_f[non_inf_cont]))-1.)  ## to better plot larger numbers
+        factor=float(10**(-exponent))
         
         ax_spec.plot(self.spec_lambda[non_inf_cont],self.spec_f[non_inf_cont]*factor,c='black',label='data',linewidth=2)
         ax_spec.plot(self.spec_lambda[non_inf_cont],self.template_f[non_inf_cont]*factor,c='red',label='template',linewidth=2)
@@ -284,8 +284,15 @@ class RV_spectrum:
             
                 self.cat.loc[result[0],'significance'] = result[12]
         
-                if self.cat.loc[result[0],'l_lab'] - self.cat.loc[result[0],'l_fit'] > 0.8*llimits[0] or self.cat.loc[result[0],'l_fit'] - self.cat.loc[result[0],'l_lab'] > 0.8*llimits[1]:
-                    self.logger.warning(result[0]+' exceeds 0.8 of lambda limits: Please Check !')
+                if self.cat.loc[result[0], 'l_lab']\
+                - self.cat.loc[result[0], 'l_fit'] > 0.8 * llimits[0]\
+                or self.cat.loc[result[0],'l_fit']\
+                - self.cat.loc[result[0], 'l_lab'] > 0.8 * llimits[1]:
+                    self.logger.warning(result[0]\
+                    + ' exceeds 0.8 of lambda limits; lfit: '\
+                    + str(self.cat.loc[result[0], 'l_fit'])\
+                    + ' llab: '+str(self.cat.loc[result[0], 'l_lab'])\
+                    + ' llimits: '+str(llimits[0])+' '+str(llimits[1]))
             
             if result[13]:
                 self.logger.warning(result[0]+' failed and will be marked in the catalog')
@@ -340,9 +347,12 @@ class RV_spectrum:
         log_template_f, log_template_lambda, velscale_template = ppxf_util.log_rebin([self.spec_lambda[0],self.spec_lambda[-1]],self.template_f)
         log_spec_err, log_spec_err_lambda, velscale_spec_err = ppxf_util.log_rebin([self.spec_lambda[0],self.spec_lambda[-1]],self.spec_err)
         
-        exponent=int(np.log10(np.nanmedian(log_spec_f))-4.) # Obtain larger flux numbers to make it numerically stable
-        factor=10**(-exponent)
+        log_spec_err[~np.isfinite(log_spec_err)] = 1. # This happens if AO was used and there is a gap in the spec
         
+        exponent=int(np.log10(np.nanmedian(log_spec_f))-4.) # Obtain larger flux numbers to make it numerically stable
+        factor=float(10**(-exponent))
+ 
+ 
         log_spec_f = log_spec_f*factor
         log_template_f = log_template_f*factor
         log_spec_err = log_spec_err*factor
@@ -363,8 +373,6 @@ class RV_spectrum:
         v = np.zeros_like(l_lab)
         ev = np.zeros_like(l_lab)
         
-        
-            
         for i,line in enumerate(l_lab):
             
             self.logger.info('Started line '+line_name[i])
@@ -374,7 +382,7 @@ class RV_spectrum:
             ind_max = np.argmin(np.abs(log_template_lambda-np.log(line+0.5*fwhm_v[i])))+1
             ind_center=np.argmin(np.abs(log_template_lambda-np.log(line)))
             mask[ind_min:ind_max+1] = True
-            
+
             pp_outliers_init=ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,mask = mask,degree=-1,clean=False,quiet=True,plot=False)
             
             v[i], ev[i] = ppxf_MC(log_template_f,log_spec_f,log_spec_err,velscale_spec, guesses,nrand= 0.5*niter,goodpixels=pp_outliers_init.goodpixels, degree=-1, moments=2, n_CPU = n_CPU)
