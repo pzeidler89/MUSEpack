@@ -1,56 +1,56 @@
 {
   "global": {
-  	"pipeline_path": ,
+  	"pipeline_path": "",
 	"mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
     "using_specific_exposure_time": false,
     "dither_multiple_OBs": false,
     "n_CPU": 24,
-    "rootpath": ,
-    "OB": ,
+    "rootpath": "",
+    "OB": "",
     "OB_list": []
   },
   "calibration":{
-    "excecute": false,
+    "execute": false,
     "using_ESO_calibration": true,
-    "renew_statics":false,
+    "renew_statics": false,
     "dark": false,
-    "creating_sof": true
+    "create_sof": true
   },
   "sci_basic":{
-    "excecute": false,
+    "execute": false,
     "skyreject": "15.,15.,1",
-    "creating_sof": true
+    "create_sof": true
   },
   "std_flux":{
-    "excecute": false,
-    "creating_sof": true
+    "execute": false,
+    "create_sof": true
   },
   "sky":{
-    "excecute": false,
-    "modified": true,
+    "execute": false,
+    "modified": false,
     "sky_field": "auto",
     "fraction": 0.005,
     "ignore": 0.017,
-    "creating_sof": true
+    "create_sof": true
   },
   "sci_post":{
-    "excecute": false,
+    "execute": false,
     "subtract_sky": true,
     "raman": false,
-    "creating_sof": true
+    "create_sof": true
   },
   "dither_collect":{
-    "excecute": false,
+    "execute": false,
     "user_list": []
   },
   "exp_align":{
-    "excecute": false,
-    "creating_sof": true
+    "execute": false,
+    "create_sof": true
   },
   "exp_combine":{
-    "excecute": false,
-    "creating_sof": true
+    "execute": false,
+    "create_sof": true
   }
 }

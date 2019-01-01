@@ -1655,12 +1655,13 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
-                    os.rename('DATACUBE_FINAL.fits',\
-                    'DATACUBE_FINAL_wosky.fits')
-                    os.rename('IMAGE_FOV_0001.fits',\
-                    'IMAGE_FOV_0001_wosky.fits')
-                    os.rename('PIXTABLE_REDUCED_0001.fits',\
-                    'PIXTABLE_REDUCED_0001_wosky.fits')
+                    if not self.debug:
+                        os.rename('DATACUBE_FINAL.fits',\
+                        'DATACUBE_FINAL_wosky.fits')
+                        os.rename('IMAGE_FOV_0001.fits',\
+                        'IMAGE_FOV_0001_wosky.fits')
+                        os.rename('PIXTABLE_REDUCED_0001.fits',\
+                        'PIXTABLE_REDUCED_0001_wosky.fits')
                     os.chdir(self.rootpath)
 
                 if not self.skysub:
@@ -1680,12 +1681,13 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             --skymethod=none --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
-                    os.rename('DATACUBE_FINAL.fits',\
-                    'DATACUBE_FINAL_wsky.fits')
-                    os.rename('IMAGE_FOV_0001.fits',\
-                    'IMAGE_FOV_0001_wsky.fits')
-                    os.rename('PIXTABLE_REDUCED_0001.fits',\
-                    'PIXTABLE_REDUCED_0001_wsky.fits')
+                    if not self.debug:
+                        os.rename('DATACUBE_FINAL.fits',\
+                        'DATACUBE_FINAL_wsky.fits')
+                        os.rename('IMAGE_FOV_0001.fits',\
+                        'IMAGE_FOV_0001_wsky.fits')
+                        os.rename('PIXTABLE_REDUCED_0001.fits',\
+                        'PIXTABLE_REDUCED_0001_wsky.fits')
                     os.chdir(self.rootpath)
             else:
 
@@ -1703,12 +1705,13 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                         --rvcorr=none --filter=white scipost.sof')
 
                 os.chdir(exp_list[exp_num][:-9])
-                os.rename('DATACUBE_FINAL.fits',\
-                'DATACUBE_FINAL_wskynorvcorr.fits')
-                os.rename('IMAGE_FOV_0001.fits',\
-                'IMAGE_FOV_0001_wskynorvcorr.fits')
-                os.rename('PIXTABLE_REDUCED_0001.fits',\
-                'PIXTABLE_REDUCED_0001_wskynorvcorr.fits')
+                if not self.debug:
+                    os.rename('DATACUBE_FINAL.fits',\
+                    'DATACUBE_FINAL_wskynorvcorr.fits')
+                    os.rename('IMAGE_FOV_0001.fits',\
+                    'IMAGE_FOV_0001_wskynorvcorr.fits')
+                    os.rename('PIXTABLE_REDUCED_0001.fits',\
+                    'PIXTABLE_REDUCED_0001_wskynorvcorr.fits')
                 os.chdir(self.rootpath)
 
 
