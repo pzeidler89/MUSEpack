@@ -27,7 +27,7 @@ Required non-standard packages: ppxf, pyspeckit, pysynphot
 
 __version__ = '0.1.0'
 
-__revision__ = '20191226'
+__revision__ = '20190103'
 
 
 
@@ -383,7 +383,8 @@ class RV_spectrum:
             ind_center=np.argmin(np.abs(log_template_lambda-np.log(line)))
             mask[ind_min:ind_max+1] = True
 
-            pp_outliers_init=ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,mask = mask,degree=-1,clean=False,quiet=True,plot=False)
+            pp_outliers_init=ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,\
+            mask = mask,degree=-1,clean=False,quiet=True,plot=False, fixed=[0,1])
             
             v[i], ev[i] = ppxf_MC(log_template_f,log_spec_f,log_spec_err,velscale_spec, guesses,nrand= 0.5*niter,goodpixels=pp_outliers_init.goodpixels, degree=-1, moments=2, n_CPU = n_CPU)
             
@@ -411,7 +412,7 @@ class RV_spectrum:
                 mask[ind_min:ind_max+1] = True
         
             pp_final_plot = plt.figure(str(self.spec_id)+'_ppxf_fit_final',figsize=(10,3))
-            if len(l_lab) > 1: pp_final_init = ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,degree=-1,clean=False,mask=mask,quiet=True)
+            if len(l_lab) > 1: pp_final_init = ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,degree=-1,clean=False,mask=mask,quiet=True, fixed=[0,1])
             if len(l_lab) == 1: pp_final_init = pp_outliers_init
             pp_final_init.plot()
             plt.tight_layout()

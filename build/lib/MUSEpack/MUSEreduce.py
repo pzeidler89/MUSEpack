@@ -54,7 +54,7 @@ vers. 0.5.0  rewriting musreduce to a class and pep-8 style
 
 __version__ = '0.5'
 
-__revision__ = '20190101'
+__revision__ = '20190107'
 
 import sys
 import shutil
@@ -134,7 +134,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 01, 2019                    #####')
+        print('#####                    Jan 06, 2019                    #####')
         print('#####                   Version: 0.5.0                   #####')
         print('#####                                                    #####')
         print('##############################################################')
@@ -243,7 +243,7 @@ class musereduce:
                 self.combining_OBs_dir = self.rootpath + 'reduced/'\
                 + self.dithername + '/'
                 if not os.path.exists(self.combining_OBs_dir):
-                    os.mkdir(combining_OBs_dir)
+                    os.mkdir(self.combining_OBs_dir)
             else:
                 self.raw_data_dir = self.rootpath + 'raw/' + OB + '/'
                 self.working_dir = self.rootpath + 'reduced/' + OB + '/'
@@ -1741,7 +1741,7 @@ def dither_collect(self, exp_list_SCI, OB):
 
     if len(self.user_list) > 0:
         unique_pointings = self.working_dir\
-        + np.array([self.user_list[0] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
@@ -2018,7 +2018,7 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
 
     if len(self.user_list) > 0:
         unique_pointings = unique_pointings = self.working_dir\
-        + np.array([self.user_list[0] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2032,12 +2032,12 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
 
         if self.dithering_multiple_OBs:
             if self.withrvcorr:
-                combining_exposure_dir_withoutsky = combining_OBs_dir\
+                combining_exposure_dir_withoutsky = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withoutsky_withrvcorr'
-                combining_exposure_dir_withsky = combining_OBs_dir\
+                combining_exposure_dir_withsky = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withrvcorr'
             else:
-                combining_exposure_dir = combining_OBs_dir\
+                combining_exposure_dir = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withoutrvcorr'
 
         if not self.dithering_multiple_OBs:
@@ -2063,13 +2063,13 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
             if self.withrvcorr:
                 print(unique_pointings_ID)
                 if self.skysub:
-                    combining_exposure_dir_withoutsky = combining_OBs_dir\
+                    combining_exposure_dir_withoutsky = self.combining_OBs_dir\
                     + unique_pointings_ID + '/withoutsky_withrvcorr'
                 if not self.skysub:
-                    combining_exposure_dir_withsky = combining_OBs_dir\
+                    combining_exposure_dir_withsky = self.combining_OBs_dir\
                     + unique_pointings_ID + '/withsky_withrvcorr'
             else:
-                combining_exposure_dir = combining_OBs_dir\
+                combining_exposure_dir = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withoutrvcorr'
 
         if not self.dithering_multiple_OBs:
@@ -2161,7 +2161,7 @@ def exp_combine(self, exp_list_SCI, create_sof):
 
     if len(self.user_list) > 0:
         unique_pointings = self.working_dir\
-        + np.array([self.user_list[0] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2176,13 +2176,13 @@ def exp_combine(self, exp_list_SCI, create_sof):
         if self.dithering_multiple_OBs:
             if self.withrvcorr:
                 if self.skysub:
-                    combining_exposure_dir_withoutsky = combining_OBs_dir\
+                    combining_exposure_dir_withoutsky = self.combining_OBs_dir\
                     + unique_pointings_ID + '/withoutsky_withrvcorr'
                 if not self.skysub:
-                    combining_exposure_dir_withsky = combining_OBs_dir\
+                    combining_exposure_dir_withsky = self.combining_OBs_dir\
                     + unique_pointings_ID + '/withsky_withrvcorr'
             else:
-                combining_exposure_dir = combining_OBs_dir\
+                combining_exposure_dir = self.combining_OBs_dir\
                 + unique_pointings_ID + '/withsky_withoutrvcorr'
 
         if not self.dithering_multiple_OBs:

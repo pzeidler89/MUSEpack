@@ -56,7 +56,7 @@ def ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale, degree, g
     iter_spec[goodpixels] = log_spec_f[goodpixels] + new_log_spec_err
 
     pp1 = ppxf.ppxf(log_template_f, iter_spec, noise, velscale, guesses, goodpixels=goodpixels,
-                    plot=False, degree=degree, moments=moments, vsyst=vsyst, quiet=1,bias=0,velscale_ratio=1) 
+                    plot=False, degree=degree, moments=moments, vsyst=vsyst, quiet=1,bias=0,velscale_ratio=1, fixed=[0,1]) 
 
     if moments <= 2: uncert=np.array([pp1.sol[0],pp1.sol[1]])
     if moments > 2: uncert=np.array([pp1.sol[0],pp1.sol[1],pp1.sol[2],pp1.sol[3]])
