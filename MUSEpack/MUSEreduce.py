@@ -106,6 +106,7 @@ class musereduce:
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
         self.skyignore = self.config['sky']['ignore']
+        self.skymethod = self.config['sky']['subtract-model']
 
         self.skysub = self.config['sci_post']['subtract_sky']
         self.raman = self.config['sci_post']['raman']
@@ -1643,7 +1644,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug\
                             muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod=subtract-model \
+                            --skymethod='+self.skymethod+' \
                             --filter=white scipost.sof')
 
                     if not self.raman:
@@ -1651,7 +1652,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug \
                             muse_scipost --save=cube,skymodel,individual \
-                            --skymethod=subtract-model \
+                            --skymethod='+self.skymethod+' \
                             --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
