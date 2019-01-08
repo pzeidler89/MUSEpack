@@ -49,12 +49,12 @@ vers. 0.4.4: changed the sky subtraction keyword
 vers. 0.5.0  rewriting musreduce to a class and pep-8 style
              DEBUG keyword added, wrapper executes without esorex, needs to be
              used with already existing reduced data.
-
+vers. 0.5.0  added skymethod.
 '''
 
-__version__ = '0.5'
+__version__ = '0.5.1'
 
-__revision__ = '20190107'
+__revision__ = '20190108'
 
 import sys
 import shutil
@@ -106,7 +106,7 @@ class musereduce:
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
         self.skyignore = self.config['sky']['ignore']
-        self.skymethod = self.config['sky']['subtract-model']
+        self.skymethod = self.config['sky']['method']
 
         self.skysub = self.config['sci_post']['subtract_sky']
         self.raman = self.config['sci_post']['raman']
