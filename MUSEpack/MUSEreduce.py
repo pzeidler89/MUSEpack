@@ -1743,7 +1743,7 @@ def dither_collect(self, exp_list_SCI, OB):
 
     if len(self.user_list) > 0:
         unique_pointings = self.working_dir\
-        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18]], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
@@ -2020,7 +2020,7 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
 
     if len(self.user_list) > 0:
         unique_pointings = unique_pointings = self.working_dir\
-        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18]], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2163,7 +2163,7 @@ def exp_combine(self, exp_list_SCI, create_sof):
 
     if len(self.user_list) > 0:
         unique_pointings = self.working_dir\
-        + np.array([self.user_list[0][:18] + '_usr'], dtype=object)
+        + np.array([self.user_list[0][:18]], dtype=object)
 
     for unique_pointing_num in range(len(unique_pointings)):
 
