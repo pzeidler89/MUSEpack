@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-vers. 0.1.0: Executes the MUSE reduction pileline in the correct order
+vers. 0.1.0: Executes the MUSE reduction pipeline in the correct order
 vers. 0.1.1: introducing only one calibration file folder per OB
 vers. 0.1.2: choosing the illumination file closest to the observation
 vers. 0.1.3: selecting the files for the different master file creations
@@ -49,12 +49,12 @@ vers. 0.4.4: changed the sky subtraction keyword
 vers. 0.5.0  rewriting musreduce to a class and pep-8 style
              DEBUG keyword added, wrapper executes without esorex, needs to be
              used with already existing reduced data.
-
+vers. 0.5.0  added skymethod.
 '''
 
-__version__ = '0.5'
+__version__ = '0.5.1'
 
-__revision__ = '20190107'
+__revision__ = '20190109'
 
 import sys
 import shutil
@@ -106,6 +106,7 @@ class musereduce:
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
         self.skyignore = self.config['sky']['ignore']
+        self.skymethod = self.config['sky']['method']
 
         self.skysub = self.config['sci_post']['subtract_sky']
         self.raman = self.config['sci_post']['raman']
@@ -134,8 +135,9 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 06, 2019                    #####')
-        print('#####                   Version: 0.5.0                   #####')
+        print('#####                    Jan 09, 2019                    #####')
+        print('#####                   Version: '+str(__version__)+'   \
+                #####')
         print('#####                                                    #####')
         print('##############################################################')
 
@@ -1643,7 +1645,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug\
                             muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod=subtract-model \
+                            --skymethod='+self.skymethod+' \
                             --filter=white scipost.sof')
 
                     if not self.raman:
@@ -1651,7 +1653,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                             call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug \
                             muse_scipost --save=cube,skymodel,individual \
-                            --skymethod=subtract-model \
+                            --skymethod='+self.skymethod+' \
                             --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
