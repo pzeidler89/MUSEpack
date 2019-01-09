@@ -1316,7 +1316,7 @@ def sky(self, exp_list_SCI, create_sof):
         if exposure[-8:-5] == 'SKY': sky[idx] = True
         if exposure[-8:-5] == 'SCI': sci[idx] = True
 
-    if skyfield == 'auto' and (sky == True).any():
+    if self.skyfield == 'auto' and (sky == True).any():
         exp_list_SCI_sky = np.array(exp_list_SCI)[sky]
     else:
         exp_list_SCI_sky = np.array(exp_list_SCI)
@@ -1331,21 +1331,21 @@ def sky(self, exp_list_SCI, create_sof):
         format='no_header')
         exposure_dir = exp_list_SCI_sky[exposure_ID][:-9] + '/'
 
-        if skyfield == 'auto' and (sky == True).any():
+        if self.skyfield == 'auto' and (sky == True).any():
             PIXTABLE_SKY_list =\
-            get_filelist(self, self.exposure_dir, 'PIXTABLE_SKY*.fits')
+            get_filelist(self, exposure_dir, 'PIXTABLE_SKY*.fits')
         else:
             PIXTABLE_SKY_list =\
-            get_filelist(self, self.exposure_dir, 'PIXTABLE_OBJECT*.fits')
+            get_filelist(self, exposure_dir, 'PIXTABLE_OBJECT*.fits')
 
         if create_sof:
 
-            if os.path.exists(self.exposure_dir + 'sky.sof'):
-                os.remove(self.exposure_dir + 'sky.sof')
+            if os.path.exists(exposure_dir + 'sky.sof'):
+                os.remove(exposure_dir + 'sky.sof')
 
-            f = open(self.exposure_dir + 'sky.sof', 'w')
+            f = open(exposure_dir + 'sky.sof', 'w')
             for i in range(len(PIXTABLE_SKY_list)):
-                f.write(self.exposure_dir + PIXTABLE_SKY_list[i]\
+                f.write(exposure_dir + PIXTABLE_SKY_list[i]\
                 + ' PIXTABLE_SKY\n')
             if not self.using_ESO_calibration:
                 f.write(self.calibration_dir +\
@@ -1369,17 +1369,17 @@ def sky(self, exp_list_SCI, create_sof):
         esorex_cmd = "--log-file=sky.log --log-level=debug \
         muse_create_sky --fraction=" + str(self.skyfraction)\
         + " --ignore=" + str(self.skyignore) + " sky.sof"
-        if skyfield == 'auto' and (sky == True).any():
+        if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                call_esorex(self, self.exposure_dir, esorex_cmd)
+                call_esorex(self, exposure_dir, esorex_cmd)
         else:
             if not self.debug:
-                call_esorex(self, self.exposure_dir, '--log-file=sky.log \
+                call_esorex(self, exposure_dir, '--log-file=sky.log \
                 --log-level=debug muse_create_sky --fraction='
                 + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
-    if skyfield == 'auto' and (sky == True).any():
+    if self.skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exp_list_SCI_sky, dtype=float)
 
         for idx, exps in enumerate(exp_list_SCI_sky):
