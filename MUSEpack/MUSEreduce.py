@@ -49,12 +49,12 @@ vers. 0.4.4: changed the sky subtraction keyword
 vers. 0.5.0  rewriting musreduce to a class and pep-8 style
              DEBUG keyword added, wrapper executes without esorex, needs to be
              used with already existing reduced data.
-vers. 0.5.0  added skymethod.
+vers. 0.5.1  added skymethod.
 '''
 
 __version__ = '0.5.1'
 
-__revision__ = '20190109'
+__revision__ = '20190122'
 
 import sys
 import shutil
@@ -113,6 +113,8 @@ class musereduce:
         if self.mode != 'NFM-AO':
             self.raman = False
 
+        self.weight = self.config['exp_combine']['weight']
+
         self.user_list =\
             np.array(self.config['dither_collect']['user_list'], dtype=object)
 
@@ -135,7 +137,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 09, 2019                    #####')
+        print('#####                    Jan 22, 2019                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -2142,8 +2144,9 @@ def exp_combine(self, exp_list_SCI, create_sof):
 
     print('... EXPOSURE COMBINATION')
 
-    esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
-    muse_exp_combine --filter=white --save=cube --crsigma=5. exp_combine.sof'
+        esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
+        muse_exp_combine --filter=white --save=cube --crsigma=5. \
+        --weight='+str(self.weight)+' exp_combine.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '

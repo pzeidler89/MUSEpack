@@ -51,6 +51,7 @@
   },
   "exp_combine":{
     "execute": false,
+    "weight": "exptime",
     "create_sof": true
   }
 }
