@@ -3,31 +3,16 @@
 """
 radial_velocities.py
 
-Copyright 2018-2018 Peter Zeidler
-
-This file contains the main class for the RV fitting.
-This module is part of MUSEpack and intended to do the RV determination of MUSE spectra
-
-MUSEpack is a free software package: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-MUSEpack is distributed in the hope that it will be useful for working with
-MUSE data and spectra, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License
-along with MUSEpack. If not, see <http://www.gnu.org/licenses/>.
-
-Required non-standard packages: ppxf, pyspeckit, pysynphot
-
+vers. 0.1.0: working radial velocity fitting package
+vers. 0.1.0: no RV calculation for lines that are below
+             the significance level
+vers. 0.1.0: instrument dispersion added as keyword
+            
 """
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
-__revision__ = '20190103'
+__revision__ = '20190212'
 
 
 
@@ -78,7 +63,7 @@ class RV_spectrum:
     
     """
     
-    def __init__(self,spec_id,spec_f,spec_err,spec_lambda,logger=None,loglevel = "INFO"):
+    def __init__(self, spec_id, spec_f, spec_err, spec_lambda, logger=None, loglevel="INFO", templatebins=100000, specbinsize=1.25, dispersion=2.4):
         self.spec_id = spec_id          # ID of input spectrum
         self.spec_f = spec_f            #input spectrum
         self.spec_err = spec_err        #1s uncertainty of input spectrum
@@ -90,6 +75,15 @@ class RV_spectrum:
         self.fit_f = np.zeros_like(spec_f)      # fitted spectrum.
         self.continuum = np.zeros_like(spec_f)     # the continuum of the artificially created spectrum.
         
+        self.highres_samples = templatebins #samplerate for creating the template
+        self.spec_lambda_highres = np.linspace(spec_lambda[0],spec_lambda[-1], templatebins)
+        self.template_f_highres = np.zeros_like(self.spec_lambda_highres, dtype = float)
+        self.fit_f_highres = np.zeros_like(self.spec_lambda_highres, dtype = float)
+        self.continuum_highres = np.zeros_like(self.spec_lambda_highres, dtype = float)
+
+        self.specbinsize = specbinsize
+        self.dispersion = dispersion
+
         self.cat = None # pandas dataframe for all the line fit parameters
         self.rv = None      #radial velocity of the star
         self.erv = None     #1sigma radial velocity uncertainty
@@ -111,6 +105,7 @@ class RV_spectrum:
         fh.setFormatter(formatter)        
         
         self.logger.addHandler(fh)
+        self.logger.info('RV_spectrum vers. '+str(__version__)+' rev. '+str(__revision__))
         self.logger.info('Initiate instance of RV_spectrum for: '+str(self.spec_id))
         self.logger.debug('DEBUG mode => all modules run on one core')
         
@@ -147,8 +142,7 @@ class RV_spectrum:
             self.logger.info('Save catalog to file: '+str(load))
             self.cat.to_csv(path_or_buf = self.spec_id+'.cat')
             
-        if printcat: print(self.cat)
-        
+
         if initcat:
             self.logger.info('Initiating the catalog')
         
@@ -164,8 +158,11 @@ class RV_spectrum:
             'significance':np.empty_like(temp['lambda'])}
         
             self.cat = pd.DataFrame(d,index = temp['name'].data)
+            
+        if printcat: print(self.cat)
         
-    def plot(self):
+        
+    def plot(self, oversampled=False):
         
         self.logger.info('Initiate plotting')
         
@@ -180,15 +177,24 @@ class RV_spectrum:
         plotgrid = gridspec.GridSpec(nrows,3)
         ax_spec = plt.subplot(plotgrid[0,:])
         
-        
         non_inf_cont  = ~np.isinf(self.template_f/self.continuum)
+        non_inf_cont_highres  = ~np.isinf(self.template_f_highres/self.continuum_highres)
         
         exponent=int(np.log10(np.nanmedian(self.spec_f[non_inf_cont]))-1.)  ## to better plot larger numbers
         factor=float(10**(-exponent))
         
         ax_spec.plot(self.spec_lambda[non_inf_cont],self.spec_f[non_inf_cont]*factor,c='black',label='data',linewidth=2)
-        ax_spec.plot(self.spec_lambda[non_inf_cont],self.template_f[non_inf_cont]*factor,c='red',label='template',linewidth=2)
-        ax_spec.plot(self.spec_lambda[non_inf_cont],self.fit_residuals[non_inf_cont]*factor,c='green',label='residual',linewidth=2)
+        
+        if not oversampled:
+        
+            ax_spec.plot(self.spec_lambda[non_inf_cont],self.template_f[non_inf_cont]*factor,c='red',label='template',linewidth=2)
+            ax_spec.plot(self.spec_lambda[non_inf_cont],self.fit_residuals[non_inf_cont]*factor,c='green',label='residual',linewidth=2)
+            
+        if oversampled:
+        
+            ax_spec.plot(self.spec_lambda_highres[non_inf_cont_highres],self.template_f_highres[non_inf_cont_highres]*factor,c='red',label='template',linewidth=2)
+            ax_spec.plot(self.spec_lambda[non_inf_cont],self.fit_residuals[non_inf_cont]*factor,c='green',label='residual',linewidth=2)
+        
         ax_spec.legend(fontsize=12)
         ax_spec.set_ylabel(r'flux [$10^{'+str(exponent)+r'}$ erg/s/cm$^2$/${\rm \AA}$]', fontsize=12)
         ax_spec.set_xlabel(r'wavelength $[{\rm \AA}]$', fontsize=12)
@@ -202,11 +208,21 @@ class RV_spectrum:
             ncol = n%3
             el = self.cat.index[n]
             ax_norm = plt.subplot(plotgrid[nrow,ncol])
-        
+
             ax_norm.plot(self.spec_lambda,self.spec_f/self.continuum,c='black',label ='data',linewidth=2)
-            ax_norm.plot(self.spec_lambda,self.template_f/self.continuum,c='red',label ='template',linewidth=2)
-            ax_norm.plot(self.spec_lambda,self.fit_f/self.continuum,'--',c='lightblue',label ='fit',linewidth=2)
-            ax_norm.plot(self.spec_lambda,self.fit_residuals/self.continuum,c='green',label='residual',linewidth=2)
+            
+            if not oversampled:
+
+                ax_norm.plot(self.spec_lambda,self.template_f/self.continuum,c='red',label ='template',linewidth=1.5)
+                ax_norm.plot(self.spec_lambda,self.fit_f/self.continuum,'--',c='lightblue',label ='fit',linewidth=1.5)
+                ax_norm.plot(self.spec_lambda,self.fit_residuals/self.continuum,c='green',label='residual',linewidth=1.5)
+
+            if oversampled:
+
+                ax_norm.plot(self.spec_lambda_highres,self.template_f_highres/self.continuum_highres,c='red',label ='template',linewidth=1.5)
+                ax_norm.plot(self.spec_lambda_highres,self.fit_f_highres/self.continuum_highres,'--',c='lightblue',label ='fit',linewidth=1.5)
+                ax_norm.plot(self.spec_lambda,self.fit_residuals/self.continuum,c='green',label='residual',linewidth=1.5)
+            
             ax_norm.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
             ax_norm.yaxis.set_major_locator(plt.MaxNLocator(3))
             ax_norm.xaxis.set_major_locator(plt.MaxNLocator(2))
@@ -227,11 +243,11 @@ class RV_spectrum:
         plt.savefig(self.spec_id+'_plot.png',dpi=600,overwrite=True)
         plt.close()
 
-    def line_fitting(self,input_cat,line_idxs,niter = 5, contorder = [1], n_CPU = -1, resid_level = None, max_contorder = 2,max_ladjust = 4, adjust_preference = 'contorder',input_continuum_deviation = 0.05, llimits = [2.,2.], max_exclusion_level = 0.3):
+    def line_fitting(self,input_cat,line_idxs,niter = 5, n_CPU = -1, resid_level = None, max_contorder = 2,max_ladjust = 4, adjust_preference = 'contorder',input_continuum_deviation = 0.05, llimits = [-2.,2.], max_exclusion_level = 0.3, blends=None, autoadjust=False, fwhm_block=False):
         
         """
         Initializes the line fitting
-        
+
         Args:
             input_cat (:array:'float'): input spectral line catalog wavelengths only in Angstrom
             line_idxs (:array:'str'): str array of the linen names for which RV fits 
@@ -241,9 +257,13 @@ class RV_spectrum:
         """
         
         self.logger.info('Starting the line fitting')
+        if blends:
+            self.logger.info('A file with blends was provided')
+
+        if autoadjust: self.logger.info('Automatic adjustments of wavelength limits')
+        if fwhm_block: self.logger.info('Line FWHM is at least the instruments dispersion')
         if self.loglevel == "DEBUG": n_CPU = 1
-        
-        
+
         start_time  = time.time()
         
         warnings.filterwarnings('ignore',category=RuntimeWarning,message='divide by zero encountered in true_divide')
@@ -253,18 +273,16 @@ class RV_spectrum:
         if n_CPU == -1: n_CPU = cpu_count()
         self.logger.info('Max number of cores: '+str(n_CPU))
         
-        if len(contorder) == 1: contorder = np.full_like(line_idxs,fill_value=contorder,dtype=int)
-        for ix, el in enumerate(line_idxs): self.cat.loc[el,'cont_order'] = contorder[ix]
-        
         result = [dask.delayed(line_fitter)(self,input_cat,ldx,niter,resid_level,max_contorder,max_ladjust,\
-                  adjust_preference,input_continuum_deviation,llimits,max_exclusion_level) for ldx in np.array(line_idxs)]
-        
-        if self.loglevel == "DEBUG": results = dask.compute(*result,num_worker=8,scheduler='single-threaded')
-        if not self.loglevel == "DEBUG": results = dask.compute(*result,num_worker=len(line_idxs),scheduler='processes')
-        
-        
+                  adjust_preference,input_continuum_deviation,llimits,max_exclusion_level,blends,autoadjust,fwhm_block) for ldx in np.array(line_idxs)]
+
+        if self.loglevel == "DEBUG":            
+            results = dask.compute(*result,num_worker=1,scheduler='single-threaded')
+        if not self.loglevel == "DEBUG":
+            results = dask.compute(*result,num_worker=len(line_idxs),scheduler='processes')
+
         for result in results:
-            
+
             if not result[13]:
                 self.template_f[result[5]] = result[6][result[5]]
                 self.fit_f[result[5]] = result[11][result[5]]
@@ -277,28 +295,24 @@ class RV_spectrum:
                 self.template_f[result[5]] += result[7]
                 self.fit_f[result[5]] += result[7]
                 self.fit_residuals[result[5]] = self.spec_f[result[5]] - self.fit_f[result[5]]
-        
+
+                self.template_f_highres[result[15]] = result[16][result[15]]
+                self.fit_f_highres[result[15]] = result[14][result[15]]
+
+                self.continuum_highres[result[15]] = result[17]
+                self.template_f_highres[result[15]] += result[17]
+                self.fit_f_highres[result[15]] += result[17]
+
                 self.cat.loc[result[0],'l_start'] = result[8]
                 self.cat.loc[result[0],'l_end'] = result[9]
                 self.cat.loc[result[0],'cont_order'] = result[10]
-            
+
                 self.cat.loc[result[0],'significance'] = result[12]
-        
-                if self.cat.loc[result[0], 'l_lab']\
-                - self.cat.loc[result[0], 'l_fit'] > 0.8 * llimits[0]\
-                or self.cat.loc[result[0],'l_fit']\
-                - self.cat.loc[result[0], 'l_lab'] > 0.8 * llimits[1]:
-                    self.logger.warning(result[0]\
-                    + ' exceeds 0.8 of lambda limits; lfit: '\
-                    + str(self.cat.loc[result[0], 'l_fit'])\
-                    + ' llab: '+str(self.cat.loc[result[0], 'l_lab'])\
-                    + ' llimits: '+str(llimits[0])+' '+str(llimits[1]))
-            
+
             if result[13]:
                 self.logger.warning(result[0]+' failed and will be marked in the catalog')
                 self.cat.loc[result[0],'used'] = 'f'
-            
-        
+
         elapsed_time = time.time() - start_time
         self.logger.info('Finished line fitting')
         self.logger.info('Elapsed time: '+time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
@@ -307,9 +321,9 @@ class RV_spectrum:
         
         self.logger.info('Calculating RVs based on peaks only')
         v = np.array((self.cat.loc[:,'l_fit'].values/self.cat.loc[:,'l_lab'] - 1.)*const.c.to('km/s').value)
-        
+
         remaining_lines = line_clipping(self,v,line_significants,sigma = line_sigma)
-        
+
         if remaining_lines.mask.all():
             self.logger.error('NO USABLE LINE FOUND WITH SET PARAMETER !!')
         else:
@@ -376,23 +390,29 @@ class RV_spectrum:
         for i,line in enumerate(l_lab):
             
             self.logger.info('Started line '+line_name[i])
-            
-            mask = np.zeros(len(log_template_f), dtype=bool)
-            ind_min = np.argmin(np.abs(log_template_lambda-np.log(line-0.5*fwhm_v[i])))-1
-            ind_max = np.argmin(np.abs(log_template_lambda-np.log(line+0.5*fwhm_v[i])))+1
-            ind_center=np.argmin(np.abs(log_template_lambda-np.log(line)))
-            mask[ind_min:ind_max+1] = True
+            if self.cat.loc[line_name[i],'significance'] > line_significants:
 
-            pp_outliers_init=ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,\
-            mask = mask,degree=-1,clean=False,quiet=True,plot=False, fixed=[0,1])
+                mask = np.zeros(len(log_template_f), dtype=bool)
+                ind_min = np.argmin(np.abs(log_template_lambda-np.log(line-0.5*fwhm_v[i])))-1
+                ind_max = np.argmin(np.abs(log_template_lambda-np.log(line+0.5*fwhm_v[i])))+1
+                ind_center=np.argmin(np.abs(log_template_lambda-np.log(line)))
+                mask[ind_min:ind_max+1] = True
+
+                pp_outliers_init=ppxf.ppxf(log_template_f,log_spec_f,log_spec_err,velscale_spec,guesses,\
+                mask = mask,degree=-1,clean=False,quiet=True,plot=False, fixed=[0,1])
             
-            v[i], ev[i] = ppxf_MC(log_template_f,log_spec_f,log_spec_err,velscale_spec, guesses,nrand= 0.5*niter,goodpixels=pp_outliers_init.goodpixels, degree=-1, moments=2, n_CPU = n_CPU)
-            
+                v[i], ev[i] = ppxf_MC(log_template_f,log_spec_f,log_spec_err,velscale_spec, guesses,nrand= 0.5*niter,goodpixels=pp_outliers_init.goodpixels, degree=-1, moments=2, n_CPU = n_CPU)
+                
+                self.logger.info('Finished line '+line_name[i]+': RV=('+str('{:4.2f}'.format(v[i]))+'+-'+str('{:4.3f}'.format(ev[i]))+')km/s')
+            else:
+                self.logger.info(line_name[i]+': Line not significant [level ='+str(line_significants)+']')
+
+                ev[i] = np.nan
+                v[i] = np.nan
+
             self.cat.loc[line_name[i],'RV'] = v[i]
             self.cat.loc[line_name[i],'eRV'] = ev[i]
             
-            self.logger.info('Finished line '+line_name[i]+': RV=('+str('{:4.2f}'.format(v[i]))+'+-'+str('{:4.3f}'.format(ev[i]))+')km/s')
-    
         remaining_lines = line_clipping(self,v,line_significants,sigma = line_sigma)
 
         if remaining_lines.mask.all():

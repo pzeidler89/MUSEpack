@@ -1,31 +1,19 @@
 '''
 line_fitter.py
 
-Copyright 2018-2018 Peter Zeidler
-
-This module is part of MUSEpack and intended to do the line
-fitting of MUSE spectra
-
-MUSEpack is a free software package: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-MUSEpack is distributed in the hope that it will be useful for working with
-MUSE data and spectra, but WITHOUT ANY WARRANTY; without even the
-implied warranty of
-
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with MUSEpack. If not, see <http://www.gnu.org/licenses/>.
+vers. 0.1.0: working line fitter
+vers. 0.1.1: Step by step fit and plotter introduced for the DEBUG mode
+vers. 0.2.0: Introducing better handling of blends. One can set now upper
+             limits for blend ratios and the fitter ensures that the 
+             wavelengths remain monotonic.
+             Added automatic adjustment of wavelength limits: SHOULD BE USED
+             WITH CAUSION. NEEDS MUCH MORE TESTING !!!!
 
 '''
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 
-__revision__ = '20191228'
+__revision__ = '20190212'
 
 import sys
 import os
@@ -40,13 +28,15 @@ import pandas as pd
 from scipy.special import wofz
 import time
 import logging
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 from MUSEpack.utils import *
 
 
 def line_fitter(self, linecat, line_idx, niter,\
 input_resid_level, max_contorder, max_ladjust, adjust_preference,\
-input_continuum_deviation, llimits, max_exclusion_level):
+input_continuum_deviation, llimits, max_exclusion_level, blends, autoadjust, fwhm_block):
 
     self.logger.info('Started line ' + line_idx)
 
@@ -55,8 +45,8 @@ input_continuum_deviation, llimits, max_exclusion_level):
 
     continuum_dev = input_continuum_deviation + 1.
 
-    lstart = self.cat.loc[line_idx, 'l_start']
-    lend = self.cat.loc[line_idx, 'l_end']
+    lstart = float(self.cat.loc[line_idx, 'l_start'])
+    lend = float(self.cat.loc[line_idx, 'l_end'])
     contorder = self.cat.loc[line_idx, 'cont_order']
 
     n_ladjust = 0
@@ -65,16 +55,20 @@ input_continuum_deviation, llimits, max_exclusion_level):
     significant = True
     fit_failed = False
 
-    while (std_resid > resid_level or\
-    continuum_dev > input_continuum_deviation) and not fit_failed:
+    while (std_resid > resid_level or np.isnan(std_resid)\
+    or continuum_dev > input_continuum_deviation\
+    or np.isnan(continuum_dev)) and not fit_failed:
 
         lines_select = linecat[np.where((linecat >= lstart)\
         & (linecat < lend))]
         spec_select_idx = np.where((self.spec_lambda >= lstart) &\
                                    (self.spec_lambda < lend))
+        spec_select_idx_highres = np.where((self.spec_lambda_highres >= lstart) &\
+                                   (self.spec_lambda_highres < lend))
 
         linefit_guess, linefit_limits, linefit_limited =\
-        initial_guesses(lines_select, llimits=llimits)
+        initial_guesses(self, lines_select, blends, llimits=llimits)
+
         exponent =\
         int(np.log10(np.nanmedian(self.spec_f[spec_select_idx])) - 4.)
 
@@ -88,6 +82,11 @@ input_continuum_deviation, llimits, max_exclusion_level):
         temp_lambda = np.array(self.spec_lambda[spec_select_idx], dtype=float)
         continuum = np.zeros_like(self.spec_lambda, dtype=float)
 
+        template_f_highres = np.zeros_like(self.spec_lambda_highres, dtype=float)
+        fit_f_highres = np.zeros_like(self.spec_lambda_highres, dtype=float)
+        temp_lambda_highres = np.array(self.spec_lambda_highres[spec_select_idx_highres], dtype=float)
+        continuum_highres = np.zeros_like(self.spec_lambda_highres, dtype=float)
+
         if input_resid_level == None:
             resid_level = np.std(temp_err / np.max(temp_err))
         else:
@@ -95,27 +94,47 @@ input_continuum_deviation, llimits, max_exclusion_level):
 
         sp = pyspeckit.Spectrum(data=temp_f, error=temp_err, xarr=temp_lambda,\
                                 unit=r'flux [$10^{' + str(exponent)\
-                                + '}$ erg$^{-1}$ s$^{-1}$ cm$^{-2}$ \
-                                $\AA^{-1}$]', header={})
+                                + '}$ erg$^{-1}$ s$^{-1}$ cm$^{-2}$ '\
+                                + '$\AA^{-1}$]', header={})
         sp.xarr.set_unit(u.AA)
         sp.xarr.xtype = 'wavelength'
+
+        if self.loglevel == "DEBUG":
+            plt.ion()
+            sp.plotter(linewidth=2, title=line_idx)
 
         exclusion_level = 0.01
         iterations = 0
 
+        pat=[]
         while iterations < niter:
 
+            if iterations == 1:
+                newparinfo = update_parinfo(self, linefit_guess, \
+                llimits, line_idx, blends, sp.specfit.parinfo, False, False)
+
+            if iterations > 1:
+                newparinfo = update_parinfo(self, linefit_guess, \
+                llimits, line_idx, blends, sp.specfit.parinfo, autoadjust, fwhm_block)
+
             with log.log_to_list() as log_list:
-                sp.baseline(order=contorder, plot_baseline=False,\
+                sp.baseline(order=int(contorder), plot_baseline=False,\
                 subtract=False, annotate=False, highlight_fitregion=False,\
                 excludefit=True, save=True, exclude=None,\
-                fit_plotted_area=False, exclusionlevel=exclusion_level)
+                fit_plotted_area=False, exclusionlevel=float(exclusion_level))
 
-                sp.specfit.multifit(fittype='voigt', renormalize='auto',\
-                annotate=False, show_components=False, verbose=False,\
-                color=None, guesses=list(linefit_guess), parinfo=None,\
-                reset_fitspec=True, plot=False, limits=linefit_limits,\
-                limited=linefit_limited)
+                if iterations == 0:
+                    sp.specfit.multifit(fittype='voigt', renormalize='auto',\
+                    annotate=False, show_components=False, verbose=False,\
+                    color=None, guesses=list(linefit_guess), parinfo=None,\
+                    reset_fitspec=True, plot=False, limits=linefit_limits,\
+                    limited=linefit_limited)
+
+                if iterations > 0:
+                    sp.specfit.multifit(fittype='voigt', renormalize='auto',\
+                    annotate=False, show_components=False, verbose=False,\
+                    color=None, parinfo=newparinfo,\
+                    reset_fitspec=True, plot=False)
 
                 if exclusion_level >= max_exclusion_level:
                     self.logger.error(line_idx + ': LINE FIT FAILED !!!!!: \
@@ -136,6 +155,9 @@ input_continuum_deviation, llimits, max_exclusion_level):
                     header={})
                     sp.xarr.set_unit(u.AA)
                     sp.xarr.xtype = 'wavelength'
+
+                    if self.loglevel == "DEBUG":
+                        sp.plotter()
 
                 if len(log_list) == 0 or log_list[0].message[:8] != 'gnorm=0.':
                     if iterations > 0:
@@ -159,7 +181,29 @@ input_continuum_deviation, llimits, max_exclusion_level):
                     self.logger.debug(line_idx + ':Iteration: '\
                     + str(iterations) + ' Chi2: '\
                     + str('{:3.3f}'.format(chi2)))
+
+                    if self.loglevel == "DEBUG":
+                        sp.specfit.plot_components(axis=sp.plotter.axis, add_baseline=True, component_fit_color=plotcolor(iterations))
+                        ax = sp.plotter.axis
+                        pat.append(mlines.Line2D([], [], color=plotcolor(iterations), label='# iter: '+str(iterations)))
+                        ax.legend(handles=pat)
+
                     iterations += 1
+
+                if self.loglevel == "DEBUG":
+                    input("Press ENTER to continue")
+
+        if self.loglevel == "DEBUG":
+            sp.specfit.plotresiduals(axis=sp.plotter.axis, clear=False,\
+            yoffset=0.9 * np.min(temp_f), label=False, linewidth=2, color='g')
+            sp.specfit.plot_fit(annotate=False, lw=2, composite_fit_color='r')
+            sp.baseline.plot_baseline(annotate=False, baseline_fit_color='orange', linewidth=2)
+
+            print('Parinfo:')
+            print(sp.specfit.parinfo)
+            print(' ')
+            input("Press ENTER to close the plot window")
+            # plt.close(fig='all')
 
         if not fit_failed:
             if iterations < niter:
@@ -178,33 +222,46 @@ input_continuum_deviation, llimits, max_exclusion_level):
                 par_extract_idx = np.concatenate((par_extract_idx,\
                 np.where(lines_select == lab_lines)[0]))
 
-            highres_lambda = np.linspace(self.spec_lambda[0],\
-            self.spec_lambda[-1], 100000)
-
             for i in range(len(lines_select)):
                 xcen = lines_select[i]
                 gamma = sp.specfit.parinfo[int(4 * i + 3)]['value']
                 sigma = sp.specfit.parinfo[int(4 * i + 2)]['value']
                 amp = sp.specfit.parinfo[int(4 * i + 0)]['value']
 
-                z = ((highres_lambda - xcen) + 1j * gamma)\
-                / (sigma * np.sqrt(2))
-                highres_f = np.real(wofz(z))
-                lowres_f = spec_res_downgrade(highres_lambda,\
+                # z = ((self.spec_lambda_highres - xcen) + 1j * gamma)\
+                # / (sigma * np.sqrt(2))
+                # highres_f = np.real(wofz(z))
+                # lowres_f = spec_res_downgrade(self.spec_lambda_highres,\
+                # highres_f, self.spec_lambda)
+
+                
+                highres_f = voigt_funct(self.spec_lambda_highres,xcen,1,sigma,gamma)
+                lowres_f = spec_res_downgrade(self.spec_lambda_highres,\
                 highres_f, self.spec_lambda)
+                
                 lineflux = amp * lowres_f
-
+                lineflux_highres = amp * highres_f
+                
                 template_f += lineflux / factor
+                template_f_highres += lineflux_highres / factor
 
-                z = ((highres_lambda\
-                - sp.specfit.parinfo[int(4 * i + 1)]['value']) + 1j * gamma)\
-                / (sigma * np.sqrt(2))
-                highres_f = np.real(wofz(z))
-                lowres_f = spec_res_downgrade(highres_lambda,\
+                # z = ((self.spec_lambda_highres\
+                # - sp.specfit.parinfo[int(4 * i + 1)]['value']) + 1j * gamma)\
+                # / (sigma * np.sqrt(2))
+                # highres_f = np.real(wofz(z))
+                # lowres_f = spec_res_downgrade(self.spec_lambda_highres,\
+                # highres_f, self.spec_lambda)
+
+
+                highres_f = voigt_funct(self.spec_lambda_highres,sp.specfit.parinfo[int(4 * i + 1)]['value'],1,sigma,gamma)
+                lowres_f = spec_res_downgrade(self.spec_lambda_highres,\
                 highres_f, self.spec_lambda)
+                
+                lineflux_fit = amp * lowres_f
+                lineflux_fit_highres = amp * highres_f
 
-                lineflux1 = amp * lowres_f
-                fit_f += lineflux1 / factor
+                fit_f += lineflux_fit / factor
+                fit_f_highres += lineflux_fit_highres / factor
 
                 if (i == par_extract_idx).any():
 
@@ -214,10 +271,14 @@ input_continuum_deviation, llimits, max_exclusion_level):
                     temp_sg = sp.specfit.parinfo[int(4 * i + 2)]['value']
                     temp_sl = sp.specfit.parinfo[int(4 * i + 3)]['value']
 
-            baseline_temp = baseline_extract(sp, contorder)
+            baseline_temp = baseline_extract(self, sp, contorder)
             baseline_sub_spec =\
             sp.data / baseline_temp(temp_lambda - temp_lambda[0])
             continuum = baseline_temp(temp_lambda - temp_lambda[0]) / factor
+            continuum_highres = baseline_temp(temp_lambda_highres - temp_lambda_highres[0]) / factor
+            
+            
+
             resid = \
             (self.spec_f[spec_select_idx] - fit_f[spec_select_idx]) / continuum
 
@@ -226,10 +287,11 @@ input_continuum_deviation, llimits, max_exclusion_level):
             continuum_dev = continuum_deviation(temp_lambda,\
             temp_f, continuum, contorder)
 
-            if std_resid > resid_level\
-            or continuum_dev > input_continuum_deviation:
+            if std_resid > resid_level or np.isnan(std_resid)\
+            or continuum_dev > input_continuum_deviation\
+            or np.isnan(continuum_dev):
 
-                if std_resid > resid_level:
+                if std_resid > resid_level or np.isnan(std_resid):
                     self.logger.info(line_idx\
                     + ': STD of residuals: '\
                     + str('{:2.4f}'.format(std_resid))\
@@ -259,8 +321,8 @@ input_continuum_deviation, llimits, max_exclusion_level):
                         lstart -= 5.
                         lend += 5.
                         self.logger.info(line_idx\
-                        + ': maximum continuum order reached => Adjusting \
-                        wavelength range to: [' + str(lstart)\
+                        + ': maximum continuum order reached => Adjusting'\
+                        + 'wavelength range to: [' + str(lstart)\
                         + ',' + str(lend) + ']')
                         n_ladjust += 1
                         contorder = self.cat.loc[line_idx, 'cont_order']
@@ -307,9 +369,18 @@ input_continuum_deviation, llimits, max_exclusion_level):
         + str('{:2.4f}'.format(input_continuum_deviation)))
         self.logger.info(line_idx + ' Line significance: '\
         + str('{:3.2f}'.format(significance)))
+        
+        if (temp_l - self.cat.loc[line_idx, 'l_lab'] < 0.8 * llimits[0]\
+        or temp_l - self.cat.loc[line_idx, 'l_lab'] > 0.8 * llimits[1])\
+        and not autoadjust:
+            self.logger.warning(line_idx\
+            + ' exceeds 0.8 of lambda limits; lfit: ' + str(temp_l)\
+            + ' llab: '+str(self.cat.loc[line_idx, 'l_lab'])\
+            + ' llimits = ['+str(llimits[0])+' '+str(llimits[1]) + ']')
 
     self.logger.info('Finished line ' + line_idx)
 
     return line_idx, temp_l, temp_a, temp_sl, temp_sg, spec_select_idx,\
     template_f, continuum, lstart, lend, contorder, fit_f, significance,\
-    fit_failed
+    fit_failed, fit_f_highres, spec_select_idx_highres, template_f_highres,\
+    continuum_highres

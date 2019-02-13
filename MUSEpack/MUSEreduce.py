@@ -54,7 +54,7 @@ vers. 0.5.1  added skymethod.
 
 __version__ = '0.5.1'
 
-__revision__ = '20190122'
+__revision__ = '20190129'
 
 import sys
 import shutil
@@ -2144,9 +2144,9 @@ def exp_combine(self, exp_list_SCI, create_sof):
 
     print('... EXPOSURE COMBINATION')
 
-        esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
-        muse_exp_combine --filter=white --save=cube --crsigma=5. \
-        --weight='+str(self.weight)+' exp_combine.sof'
+    esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
+    muse_exp_combine --filter=white --save=cube --crsigma=5. \
+    --weight='+str(self.weight)+' exp_combine.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
