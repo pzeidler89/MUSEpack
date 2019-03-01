@@ -2,35 +2,28 @@
 '''
 utils.py
 
-Copyright 2018-2018 Peter Zeidler
+Copyright 2018-2019 Peter Zeidler
 
-This file contains multiple utility functions for MUSEpack.
-This module is part of MUSEpack and intended to do the RV determination of MUSE spectra
-
-MUSEpack is a free software package: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-MUSEpack is distributed in the hope that it will be useful for working with
-MUSE data and spectra, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License
-along with MUSEpack. If not, see <http://www.gnu.org/licenses/>.
-
+vers. 0.1.0: package created
+vers. 0.1.1: moved to pep-8
+vers. 0.1.2: now handles absorption and emission lines
+             emission not tested yet, though
 '''
 
-__version__ = '0.1.0'
+__version__ = '0.1.2'
 
-__revision__ = '20190212'
+__revision__ = '20190221'
 
-import sys,os,shutil,warnings
+import sys
+import os
+import shutil
+import warnings
 import pyspeckit
 import numpy as np
-from astropy.io import fits,ascii
-from astropy.table import Table, Column
+from astropy.io import fits
+from astropy.io import ascii
+from astropy.table import Table
+from astropy.table import Column
 from astropy import units as u
 from astropy import constants as const
 from astropy import log
@@ -38,145 +31,158 @@ from astropy.stats import median_absolute_deviation as MAD
 import pandas as pd
 import time
 import logging
-from pysynphot import observation,spectrum
+from pysynphot import observation
+from pysynphot import spectrum
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
 from scipy.special import wofz
 
 
-
-def initial_guesses(self, lines, blends=None, linestrength=100., absorption=True, llimits = [-2.,2.]):
+def initial_guesses(self, lines, blends=None, linestrength=100.,\
+                    llimits=[2. * (-1), 2.]):
 
     '''
     lines: ARRAY, central wavelengths of the spectral lines
     linestrength: FLOAT, initial guess for the line strength
                          default: 100
-    absorption: BOOL, defines if line is in absorption or in emission
-                    default: True (absorption)
     return: guesses,limits,limited
     '''
 
-    if absorption == True: linestrength = linestrength * (-1)
+    if self.linetype == 'absorption':
+        linestrength = linestrength * (-1)
 
-    guesses=np.zeros(4*len(lines))
-    limits=[]
-    limited=[]
+    guesses = np.zeros(4 * len(lines))
+    limits = []
+    limited = []
 
-    # fwhm_g = 2.*np.sqrt(2.*np.log(2.))*sigma_g
-    for idx,line in enumerate(lines):
+    for idx, line in enumerate(lines):
 
-        guesses[4*idx+0] = linestrength
-        guesses[4*idx+1] = line
-        guesses[4*idx+2] = self.dispersion
-        guesses[4*idx+3] = self.dispersion
-    
-        limits.append((0,0)) #Amplitude
-        limited.append((False,True)) #Amplitude
+        guesses[4 * idx + 0] = linestrength
+        guesses[4 * idx + 1] = line
+        guesses[4 * idx + 2] = self.dispersion
+        guesses[4 * idx + 3] = self.dispersion
 
-        limits.append((line+llimits[0],line+llimits[1]))
-        limited.append((True,True)) #Center
+        limits.append((0, 0)) #Amplitude
+        if self.linetype == 'absorption':
+            limited.append((False, True)) #Amplitude
+        if self.linetype == 'emission':
+            limited.append((True, False)) #Amplitude
+        if self.linetype == 'both':
+            limited.append((False, False)) #Amplitude
 
-        limits.append((0,0)) #width (gausssigma)
-        limited.append((True,False)) #width
+        limits.append((line + llimits[0], line + llimits[1]))
+        limited.append((True, True)) #Center
 
-        limits.append((0,0)) #width (lorentzsigma)
-        limited.append((True,False)) #width
-    
+        limits.append((0, 0)) #width (gausssigma)
+        limited.append((True, False)) #width
+
+        limits.append((0, 0)) #width (lorentzsigma)
+        limited.append((True, False)) #width
+
     if blends:
         blendlist = ascii.read(blends)
 
         for blendidx in range(len(blendlist)):
-            
+
             lprime = blendlist[blendidx]['lprime']
             lsec = blendlist[blendidx]['lsec']
-            
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
 
             if len(primeidx) == 1:
 
-                self.logger.info('Blend detected: '+ str(blendlist[blendidx]['prime'])\
+                self.logger.info('Blend detected: '\
+                + str(blendlist[blendidx]['prime'])\
                 + ' and ' + str(blendlist[blendidx]['sec']) + ' with ratio '\
                 + str(blendlist[blendidx]['ratio']))
 
-                guesses[secidx-1] = blendlist[blendidx]['ratio'] * guesses[primeidx-1]
+                guesses[secidx - 1] = blendlist[blendidx]['ratio']\
+                * guesses[primeidx - 1]
 
                 if lprime < lsec and (lprime + llimits[1]) > lsec + llimits[0]:
-                    limits[secidx[0]] = (limits[primeidx[0]][1] + 0.01, limits[secidx[0]][1])
+                    limits[secidx[0]]\
+                    = (limits[primeidx[0]][1] + 0.01, limits[secidx[0]][1])
+
                     if limits[primeidx[0]][1] + 0.01 >= lsec:
                         limits[secidx[0]] = (lsec - 0.5, limits[secidx[0]][1])
 
                 if lprime > lsec and (lprime + llimits[0]) < lsec + llimits[1]:
-                    limits[secidx[0]] = (limits[secidx[0]][0], limits[primeidx[0]][0] - 0.01)
+                    limits[secidx[0]] = (limits[secidx[0]][0],\
+                                         limits[primeidx[0]][0] - 0.01)
                     if limits[primeidx[0]][0] - 0.01 <= lsec:
                         limits[secidx[0]] = (limits[secidx[0]][0], lsec + 0.5)
 
-    return guesses,limits,limited
+    return guesses, limits, limited
 
-def update_parinfo(self, guesses, llimits, line_idx, blends, parinfo, autoadjust, fwhm_block):
+
+def update_parinfo(self, guesses, llimits, line_idx, blends,
+                   parinfo, autoadjust, fwhm_block):
 
     lprime = self.cat.loc[line_idx, 'l_lab']
     primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
 
-        lshift_in = parinfo[int(primeidx[0])]['value'] - guesses[int(primeidx[0])]
+        lshift_in = parinfo[int(primeidx[0])]['value']\
+        - guesses[int(primeidx[0])]
 
-        for adj_idx in range(int(len(guesses)/4.)):
+        for adj_idx in range(int(len(guesses) / 4.)):
 
-            lshift = lambda_shift(lshift_in,guesses[int(primeidx[0])],\
-            guesses[int(4*adj_idx+1)])
+            lshift = lambda_shift(lshift_in, guesses[int(primeidx[0])],\
+            guesses[int(4 * adj_idx + 1)])
 
-        # if parinfo[int(primeidx[0])]['value'] > lprime + 0.8 * (parinfo[int(primeidx[0])]['limits'][1] - lprime) or\
-        #    parinfo[int(primeidx[0])]['value'] < lprime - 0.8 * (lprime - parinfo[int(primeidx[0])]['limits'][0]):
+        # if parinfo[int(primeidx[0])]['value'] > lprime\
+        # + 0.8\ * (parinfo[int(primeidx[0])]['limits'][1] - lprime) or\
+        #    parinfo[int(primeidx[0])]['value'] < lprime\
+        # - 0.8 * (lprime - parinfo[int(primeidx[0])]['limits'][0]):
 
-            # self.logger.info(line_idx+': Automatic adjustments of wavelength limits')
+            # self.logger.info(line_idx+\
+            # ': Automatic adjustments of wavelength limits')
             # for adj_idx in range(int(len(guesses)/4.)):
 
             # lshift = lambda_shift(lshift_in,guesses[int(primeidx[0])],\
             # guesses[int(4*adj_idx+1)])
 
-            parinfo[int(4*adj_idx+1)]['limits']\
-            = (guesses[int(4*adj_idx+1)] + llimits[0]\
-            + lshift, guesses[int(4*adj_idx+1)]\
+            parinfo[int(4 * adj_idx + 1)]['limits']\
+            = (guesses[int(4 * adj_idx + 1)] + llimits[0]\
+            + lshift, guesses[int(4 * adj_idx + 1)]\
             + llimits[1] + lshift)
 
-            parinfo[int(4*adj_idx+1)]['value']\
-            = guesses[int(4*adj_idx+1)] + lshift
+            parinfo[int(4 * adj_idx + 1)]['value']\
+            = guesses[int(4 * adj_idx + 1)] + lshift
 
     #### check that fwhm is always > dispersion:
 
-    if fwhm_block:    
-        for paridx in range(int(len(guesses)/4.)):
+    if fwhm_block:
+        for paridx in range(int(len(guesses) / 4.)):
 
-            fwhm_g,fwhm_l,fwhm_v = voigt_FWHM(np.array([parinfo[int(4*paridx+2)]['value']],dtype=float), np.array([parinfo[int(4*paridx+3)]['value']],dtype=float))
+            fwhm_g, fwhm_l, fwhm_v\
+            = voigt_FWHM(np.array([parinfo[int(4 * paridx + 2)]['value']],\
+            dtype=float), np.array([parinfo[int(4 * paridx + 3)]['value']],\
+            dtype=float))
             if fwhm_v[0] < self.dispersion:
-
                 target_fwhm_g = self.dispersion - fwhm_l[0]
 
                 s = target_fwhm_g / 2. / np.sqrt(2. * np.log(2.))
-                parinfo[int(4*paridx+2)]['limits'] = (s, parinfo[int(4*paridx+2)]['limits'][1])
-                parinfo[int(4*paridx+2)]['value'] = s
-            
+                parinfo[int(4 * paridx + 2)]['limits']\
+                = (s, parinfo[int(4 * paridx + 2)]['limits'][1])
+                parinfo[int(4 * paridx + 2)]['value'] = s
 
     if blends:
         blendlist = ascii.read(blends)
 
         for blendidx in range(len(blendlist)):
-
             blendration = blendlist[blendidx]['ratio']
             lsec = blendlist[blendidx]['lsec']
-
             secidx = np.where(lsec == guesses)[0]
 
             if len(secidx) == 1:
-
                 prime_profile = voigt_funct(self.spec_lambda_highres,\
                                     parinfo[int(primeidx[0])]['value'],\
                                     parinfo[int(primeidx[0] - 1)]['value'],\
                                     parinfo[int(primeidx[0] + 1)]['value'],\
                                     parinfo[int(primeidx[0] + 2)]['value'])
-                                    
+
                 sec_profile = voigt_funct(self.spec_lambda_highres,\
                                     parinfo[int(secidx[0])]['value'],\
                                     parinfo[int(secidx[0] - 1)]['value'],\
@@ -188,10 +194,10 @@ def update_parinfo(self, guesses, llimits, line_idx, blends, parinfo, autoadjust
 
                 if np.max(np.abs(sec_profile)) >= \
                 blendration * np.max(np.abs(prime_profile)):
-                
+
                 # if parinfo[int(secidx[0] - 1)]['value'] >= \
                 # blendration * parinfo[int(primeidx[0] - 1)]['value']:
-                
+
                     parinfo[int(secidx[0] - 1)]['limited'] = (True, True)
 
                     parinfo[int(secidx[0] - 1)]['limits'] \
@@ -200,137 +206,148 @@ def update_parinfo(self, guesses, llimits, line_idx, blends, parinfo, autoadjust
 
                     parinfo[int(secidx[0] - 1)]['value']\
                     = 0.99 * blendration * prime_profile[ind_max_prime]
-                    
-                    # = 0.99 * blendration * parinfo[int(primeidx[0] - 1)]['value']
+                    # = 0.99 * blendration\
+                    # * parinfo[int(primeidx[0] - 1)]['value']
 
                 if parinfo[int(primeidx[0] - 1)]['value'] == 0.:
                     parinfo[int(secidx[0] - 1)]['limits'] \
-                    = (-0.01, \
+                    = (0.01 * (-1), \
                     parinfo[int(secidx[0] - 1)]['limits'][1])
-                    parinfo[int(secidx[0] - 1)]['value'] = blendration * (-0.01)
+                    parinfo[int(secidx[0] - 1)]['value']\
+                    = blendration * (0.01) * (-1.)
 
     return parinfo
 
-def lambda_shift(dlin,lin,lout):
 
-    dlout = dlin*lout/lin
-
+def lambda_shift(dlin, lin, lout):
+    dlout = dlin * lout / lin
     return dlout
-    
+
+
 def plotcolor(n):
-    colarray = np.array(['Lime','Blue','Magenta','Olive','Maroon','indigo','orange','Cyan','Yellow','Silver'])
-    colselect = colarray[n%len(colarray)]
+    colarray = np.array(['Lime', 'Blue', 'Magenta', 'Olive', 'Maroon',
+    'indigo', 'orange', 'Cyan', 'Yellow', 'Silver'])
+    colselect = colarray[n % len(colarray)]
     return colselect
 
-def baseline_extract(self,specfit,poly_order):
-    coeff=np.zeros(poly_order+1)
-    power=np.arange(poly_order+1)
-    for order in range(poly_order+1): coeff[order]=specfit.header['BLCOEF'+str('{:02d}'.format(order))]
-    baseline=np.poly1d(coeff/(self.specbinsize**power[::-1]))
+
+def baseline_extract(self, specfit, poly_order):
+    coeff = np.zeros(poly_order + 1)
+    power = np.arange(poly_order + 1)
+    for order in range(poly_order + 1):
+        coeff[order] = specfit.header['BLCOEF' + str('{:02d}'.format(order))]
+    baseline = np.poly1d(coeff / (self.specbinsize ** power[::-1]))
     return baseline
+
 
 def voigt_FWHM(sigma_g, gamma_l):
     #calculating the FWHM of the voigt, gauss, and lorentz profile
-    
     c_0 = 2.0056
     c_1 = 1.0593
-    fwhm_g = 2.*np.sqrt(2.*np.log(2.))*sigma_g
-    fwhm_l = 2.*gamma_l
-    phi = fwhm_l/fwhm_g
-    fwhm_v = fwhm_g*(1.-c_0*c_1+np.sqrt(phi**2+2.*c_1*phi+(c_0*c_1)**2))
-    for i,fwhm_g in enumerate(fwhm_g):
-        if fwhm_g == 0: fwhm_v[i] = fwhm_l[i]
+    fwhm_g = 2. * np.sqrt(2. * np.log(2.)) * sigma_g
+    fwhm_l = 2. * gamma_l
+    phi = fwhm_l / fwhm_g
+    fwhm_v = np.zeros_like(sigma_g, dtype=float)
+    for i in range(len(fwhm_g)):
+        if fwhm_g[i] == 0:
+            fwhm_v[i] = fwhm_l[i]
+        else:
+            fwhm_v[i] = fwhm_g[i] * (1. - c_0 * c_1 + np.sqrt(phi[i] ** 2\
+            + 2. * c_1 * phi[i] + (c_0 * c_1) ** 2))
 
-    return fwhm_g,fwhm_l,fwhm_v
-    
-def _gaussian(x,mu,A,sigma):
-    prefact=1./np.sqrt(2*np.pi*sigma**2)
-    exponetial=np.exp(-((x-mu)**2)/(2.*sigma**2))
-    returnfunction=A*exponetial
-    return returnfunction
-    
-def _lorentzian(x,mu,A,gamma):
-    
-    returnfunction = A * gamma / np.pi / ((x-mu)**2 + gamma**2)
-    
+    return fwhm_g, fwhm_l, fwhm_v
+
+
+def _gaussian(x, mu, A, sigma):
+    prefact = 1. / np.sqrt(2. * np.pi * sigma ** 2)
+    exponetial = np.exp((-1.) * ((x - mu) ** 2) / (2. * sigma ** 2))
+    returnfunction = A * exponetial
     return returnfunction
 
-def voigt_funct(x_array,x_cen,amplitude,sigma,gamma):
+
+def _lorentzian(x, mu, A, gamma):
+    returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
+    return returnfunction
+
+
+def voigt_funct(x_array, x_cen, amplitude, sigma, gamma):
 
     if sigma > 0 and gamma > 0:
-        z = ((x_array - x_cen) + 1j * gamma) / (sigma * np.sqrt(2))
+        z = ((x_array - x_cen) + 1j * gamma) / (sigma * np.sqrt(2.))
         y_arr = amplitude * np.real(wofz(z))
     if sigma == 0:
-        y_arr = _lorentzian(x_array,x_cen,amplitude,gamma)
+        y_arr = _lorentzian(x_array, x_cen, amplitude, gamma)
     if gamma == 0:
-        y_arr = _gaussian(x_array,x_cen,amplitude,sigma)
+        y_arr = _gaussian(x_array, x_cen, amplitude, sigma)
 
     return y_arr
 
+
 def spec_res_downgrade(l_in, spec_in, l_out):
     templ_spec = spectrum.ArraySourceSpectrum(wave=l_in, flux=spec_in)
-    white_filter = spectrum.ArraySpectralElement(l_out, np.ones(len(l_out)), waveunits='angstrom')
-    convolved_spec = observation.Observation(templ_spec, white_filter, binset=l_out, force='taper').binflux
+    white_filter = spectrum.ArraySpectralElement(l_out,\
+    np.ones(len(l_out)), waveunits='angstrom')
+    convolved_spec = observation.Observation(templ_spec,\
+    white_filter, binset=l_out, force='taper').binflux
+
     return convolved_spec
 
-def line_clipping(self,x,line_significants,sigma = 3):
-    
-    mask = np.zeros_like(x,dtype = int)
-    ind_sig = np.where((self.cat.loc[:,'significance'].values.astype(np.float64) < line_significants)\
-                       | (self.cat.loc[:,'used'].values == 'f'))
+
+def line_clipping(self, x, line_significants, sigma=3):
+
+    mask = np.zeros_like(x, dtype=int)
+    ind_sig = np.where((self.cat.loc[:,\
+    'significance'].values.astype(np.float64) < line_significants)\
+                       | (self.cat.loc[:, 'used'].values == 'f'))
     mask[ind_sig] = 1
-    
-    x_red1 = np.delete(x,np.where(mask == 1))
-    
+
+    x_red1 = np.delete(x, np.where(mask == 1))
+
     if len(x_red1) >= 3:
-        
         if len(x_red1) == 3:
             median = np.median(x_red1)
             mad = MAD(x_red1)
-        
         if len(x) > 3:
-            x_red = np.delete(x_red1,[np.argmin(x_red1),np.argmax(x_red1)])
+            x_red = np.delete(x_red1, [np.argmin(x_red1), np.argmax(x_red1)])
             median = np.median(x_red)
             mad = MAD(x_red)
-    
-        ind = np.where((x < median - sigma*mad) | (x > median + sigma*mad))[0]
+        ind = np.where((x < median - sigma * mad) | (x > median\
+        + sigma * mad))[0]
         mask[ind] = 1
-    
     x_masked = np.ma.masked_array(x, mask=[mask])
-    
     return x_masked
-    
+
+
 def clipped_MAD(x):
-    if len(x) <= 3: mad = MAD(x)
-    if len(x) > 3:
-        x = np.delete(x,[np.argmin(x),np.argmax(x)])
+    if len(x) <= 3:
         mad = MAD(x)
-    
+    if len(x) > 3:
+        x = np.delete(x, [np.argmin(x), np.argmax(x)])
+        mad = MAD(x)
     return mad
-    
-    
-def continuum_deviation(l_in,f_in,baseline,contorder):
-    ## Calculates the relative defiation between the baseline and a rudimentary continuum
-    
-    peaks = find_peaks(f_in*(-1),width=2)[0]
+
+
+def continuum_deviation(self, l_in, f_in, baseline, contorder):
+
+    if self.linetype == 'absorption':
+        peaks = find_peaks(f_in * (-1), width=2)[0]
+    else:
+        peaks = find_peaks(f_in, width=2)[0]
     mask = np.zeros_like(f_in)
-    
-    for p in peaks: mask[p-3:p+4] = 1
-    
-    remove = ~np.ma.array(l_in,mask = mask).mask
-    
+
+    for p in peaks:
+        mask[p - 3:p + 4] = 1
+
+    remove = ~np.ma.array(l_in, mask=mask).mask
+
     l_masked = l_in[remove]
     f_masked = f_in[remove]
     baseline_masked = baseline[remove]
-    
-    masked_fit = np.polyfit(l_masked,f_masked,contorder)
-    masked_fitfunc = np.poly1d(masked_fit)
-    
-    cont_dev = MAD(f_masked/np.median(f_masked)-baseline_masked/np.median(baseline_masked))
-    
-    return cont_dev
 
-    
-    
-    
-    
+    masked_fit = np.polyfit(l_masked, f_masked, contorder)
+    masked_fitfunc = np.poly1d(masked_fit)
+
+    cont_dev = MAD(f_masked / np.median(f_masked)
+    - baseline_masked / np.median(baseline_masked))
+
+    return cont_dev
