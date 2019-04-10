@@ -1,22 +1,8 @@
 #!/usr/bin/env python
 
-"""
-radial_velocities.py
-
-vers. 0.1.0: working radial velocity fitting package
-vers. 0.1.0: no RV calculation for lines that are below
-             the significance level
-vers. 0.1.0: instrument dispersion added as keyword
-vers. 0.1.1: moved to pep-8
-vers. 0.1.2: now handles absorption and emission lines
-             emission not tested yet, though
-
-"""
-
 __version__ = '0.1.2'
 
-__revision__ = '20190225'
-
+__revision__ = '20190308'
 
 import sys
 import os
@@ -60,17 +46,45 @@ logging.basicConfig(format='%(asctime)s [%(levelname)8s]:'\
 class RV_spectrum:
     """
     Args:
-        spec_id (str): unique identifier of the spectrum
-        spec_f (array): flux array of the spectrum in erg/s/cm^2/Angstrom
-        spec_err (array): flux uncertainty array of the spectrum
-        spec_lambda (array): wavelength_array of the spectrum in Angstrom
-        loglevel (str): outputlevel of the logger: I
-            NFO, DEBUG optional, default: INFO
-            when DEBUG is activated, all functions run on a single
-            core to obtain proper output in the correct order.
+        spec_id : :obj:`str`
+            unique identifier of the spectrum
+
+        spec_f : :func:`numpy.array`
+            flux array of the spectrum in erg/s/cm:math:`^2`/Angstrom
+
+        spec_err : :func:`numpy.array`
+            flux uncertainty array of the spectrum
+
+        spec_lambda : :func:`numpy.array`
+            wavelength_array of the spectrum in Angstrom
+
+    Kwargs:
+        loglevel : :obj:`str` (optional, default: ``INFO``)
+            ``DEBUG``: all functions run on a single core to obtain proper
+            output in the correct order for proper debugging.
+
+        templatebins : :obj:`float` (optional, default: 100000)
+            Number of wavelength bins for the oversampled spectrum used to fit
+            the spectral lines.
+
+        specbinsize : :obj:`float` (optional, default: 1.25)
+            The spectral bin size. The default is set to fit the MUSE dataset
+
+        dispersion : :obj:`float` (optional, default: 2.4)
+            The dispersion of the spectrograph. The default is set to the
+            nominal MUSE instrument dispersion
+
+        linetype: :obj:`str` (optional, default: absorption)
+            absorption: All spectral lines are absorption lines
+
+            emission: All spectral lines are emission lines
+
+            both : spectral lines can be absorption or emission lines. **This**
+            **mode has not been tested yet !!!**
+
     """
 
-    def __init__(self, spec_id, spec_f, spec_err, spec_lambda, logger=None,\
+    def __init__(self, spec_id, spec_f, spec_err, spec_lambda,\
     loglevel="INFO", templatebins=100000, specbinsize=1.25, dispersion=2.4,\
     linetype='absorption'):
 
@@ -135,7 +149,9 @@ class RV_spectrum:
 
     def clean(self):
         """
-        this cleans the output in case one wants to repeat the spectral fit
+        This cleans resets all of the output. This **must** be executed before
+        repeating the spectral fit without re-initiating the class.
+
         """
 
         self.logger.info('The fit output is cleaned:')
@@ -145,11 +161,23 @@ class RV_spectrum:
 
     def catalog(self, initcat=None, save=False, load=None, printcat=False):
         """
-        Initializes the catalog
+        This instance handles the catalog that will holds the fit results
+        of the primary lines.
 
-        Args:
-            line_file (str): reading in the line catalog of the
-            ascii format name, lambda, start, end
+        Kwargs:
+            initcat : :obj:`ascii` (optional, default: :obj:`None`)
+                :obj:`ascii` file containing the primary lines
+                format: name, lambda, start, end
+
+            save : :obj:`bool` (optional, default: :obj:`False`)
+                :obj:`True`: The catalog is written to a file.
+
+            load : :obj:`str` (optional, default: :obj:`None`)
+                Loads a catalog from catalog file.
+
+            printcat : :obj:`bool` (optional, default: :obj:`False`)
+                :obj:`True`: The catalog is printed to the terminal
+
         """
 
         if load:
@@ -187,6 +215,16 @@ class RV_spectrum:
             print(self.cat)
 
     def plot(self, oversampled=False):
+        """
+        Plots the spectrum and the regions of the primary lines to a file
+        including the spectral fit and the template.
+
+        Kwargs:
+            oversampled : :obj:`bool` (optional, default: :obj:`False`)
+                :obj:`True`: The oversampled spectral fit and the template are
+                used in the plot.
+
+        """
 
         self.logger.info('Initiate plotting')
 
@@ -302,18 +340,71 @@ class RV_spectrum:
     fwhm_block=False):
 
         """
-        Initializes the line fitting
+        Initializing the line fitting by calling :mod:`line_fitter`
 
         Args:
-            input_cat (:array:'float'): input spectral line catalog
-                                        wavelengths only in Angstrom
-            line_idxs (:array:'str'): str array of the linen names
-                                      for which RV fits
-                should be performed, must be identical to "name" in init_cat
-            niter (int, optional, default=5): maximum number of iterations
-                                              for the line fitting
-            contorder (:array:'int, optional, default=[1]): Array of the
-                                continuum orders per line fit.
+            input_cat : :func:`numpy.array`: input spectral line catalog with
+            wavelengths in Angstrom
+
+            line_idxs : :func:`numpy.array`:
+                :obj:`str` :func:`numpy.array`: of the line names for which RV
+                fits should be performed, must be identical to "name" in
+                init_cat
+
+        Kwargs:
+            niter : :obj:`int` (optional, default: 5)
+                The maximum number of iteration if convergence is not reached
+
+            n_CPU : :obj:`float` (optional, default: -1)
+                Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of
+                CPUs is the number of spectral lines the fit is performed to.
+
+            resid_level: :obj:`float` or :obj:`None` (optional, default: None)
+                The maximum MAD for the fit residuals for a succesfull fit
+
+            max_contorder : :obj:`int` (optional, default: 2)
+                The maximum polynominal order of the continuum
+
+            max_ladjust : :obj:`int` (optional, default: 4)
+                Ahe maximum number of wavelength range adjustments in steps of 5
+                Angstrom
+
+            adjust_preference: :obj:`str` (optional, default: contorder)
+                contorder: continuum order is adjusted first
+
+                wavelength: wavelength range is adjusted first
+
+            input_continuum_deviation :obj:`float` (optional, default: 0.05)
+                Fraction by how much the continuum is allowed to deviate from a
+                running median estimate. This is set to prevent lines mimicking
+                a continuum
+
+            llimits : :obj:`list` (optional, default: [-2., 2.])
+                the limits for the wavelength fit as set in ``ppxf``
+
+            max_exclusion_level :obj:`float` (optional, default: 0.3)
+                The exclusion level for lines to be excluded from the next
+                baseline estimate as set in ``pyspeckit``
+
+            blends: obj:`ascii`-file or :obj:`None` (optional, default: None)
+                A file with primary lines that contain blends to provide a
+                maximum amplitude ratio of the primary and the blend to prevent
+                that the blend becomes the dominant line in the fit.
+
+            autoadjust :obj:`bool` (optional, default: :obj:`False`)
+                :obj:`True`: the wavelength limits ``llimit`` will be adjusted
+                to the fit of the previous iteration. All other wavelength
+                range are adjusted accordingly taking into account the proper
+                velocity corrected shift :math:`\Delta \lambda/\lambda`. This
+                is especially important to detect hyper-velocity stars.
+
+            fwhm_block :obj:`bool` (optional, default: :obj:`False`)
+                :obj:`True`: The minimum fwhm of the voigt profiles of the
+                fitted lines is the instrument's dispersion
+
+                :obj:`False`: The minimum fwhm of the voigt profiles of the
+                fitted lines is zero
+
         """
 
         self.logger.info('Starting the line fitting')
@@ -335,7 +426,7 @@ class RV_spectrum:
         warnings.filterwarnings('ignore', category=RuntimeWarning,\
         message='invalid value encountered in greater_equal')
 
-        if isinstance(input_continuum_deviation,float):
+        if isinstance(input_continuum_deviation, float):
             input_continuum_deviation\
             = {line_idxs[i]: input_continuum_deviation\
             for i in range(len(line_idxs))}
@@ -353,10 +444,10 @@ class RV_spectrum:
                   for ldx in np.array(line_idxs)]
 
         if self.loglevel == "DEBUG":
-            results = dask.compute(*result, num_worker=1,\
+            results = dask.compute(*result, num_workers=1,\
                       scheduler='single-threaded')
         if not self.loglevel == "DEBUG":
-            results = dask.compute(*result, num_worker=len(line_idxs),\
+            results = dask.compute(*result, num_workers=n_CPU,\
                       scheduler='processes')
 
         for result in results:
@@ -399,10 +490,27 @@ class RV_spectrum:
         + time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
 
     def rv_fit_peak(self, line_sigma=3, line_significants=5):
+        '''
+        This instance fit the radial velocity solely on the fitted peaks of
+        the spectral lines
+
+        Kwargs:
+            line_sigma : :obj:`int` (optional, default: 3)
+                The sigma-level for the sigma clipping before determining peak
+                radial velocity measurement
+
+            line_significants: :obj:`int` (optional, default: 5)
+                The sigma-level for the spectral line to be above the continuum
+                in order to be considered *valid*
+        '''
 
         self.logger.info('Calculating RVs based on peaks only')
         v = np.array((self.cat.loc[:, 'l_fit'].values\
         / self.cat.loc[:, 'l_lab'] - 1.) * const.c.to('km/s').value)
+        
+        for i,vi in enumerate(v):
+            self.logger.info('Line ' + self.cat.index[i]\
+            + ': RV=' + str('{:4.2f}'.format(vi)) + ' km/s')
 
         remaining_lines\
         = line_clipping(self, v, line_significants, sigma=line_sigma)
@@ -412,6 +520,7 @@ class RV_spectrum:
         else:
             self.rv_peak = np.median(v[~remaining_lines.mask])
             self.erv_peak = MAD(v[~remaining_lines.mask])
+            
             self.logger.info('Finished Calculating RVs based on peaks only: '\
             + 'RV=(' + str('{:4.2f}'.format(self.rv_peak)) + '+-'\
             + str('{:4.3f}'.format(self.erv_peak)) + ')km/s based on '\
@@ -422,19 +531,30 @@ class RV_spectrum:
     n_CPU=-1, line_significants=5):
 
         """
-        Initializes the RV fit
+        The instance that runs the radial velocity fit using ``ppxf`` and Monte
+        Carlo bootstrapping.
 
         Args:
-            guesses (:array:'float') :array[vel,sig],
-            initial guesses for the RV fit
-            niter (int, optional, default = 10000):
-            number of iterations for resampling the spectrum
-            line_exclude (:list:'str', optional, default=False):
-            line names that should be manually excluded
-            line_sigma (float, optional, default=3):
-            sigma for the RV clipping for the individual lines
-            n_CPU (int, optiona, default=-1):
-            number of CPUs used. -1 for all available
+            guesses : :func:`numpy.array`
+                The initial guesses for the the radial velocity fit guesses in
+                the form [RV,sepctral_dispersion]
+
+        Kwargs:
+            niter : :obj:`int` (optional, default: 10000)
+                number of iterations to bootstrap the spectrum
+
+            line_sigma: :obj:`int` (optional, default: 3):
+                sigma for the RV clipping for the individual lines
+
+            n_CPU : :obj:`float` (optional, default: -1)
+                Setting the number of CPUs used for the parallelization. If set 
+                to -1 all available system resources are used. Maximum number of
+                CPUs is the number of spectral lines the fit is performed to.
+
+            line_significants: :obj:`int` (optional, default: 5)
+                The sigma-level for the spectral line to be above the continuum
+                in order to be considered *valid*
+
         """
 
         self.logger.info('Starting the RV fitting')
@@ -556,20 +676,20 @@ class RV_spectrum:
                 ind_center = np.argmin(np.abs(logspec_lambda - np.log(line)))
                 mask[ind_min:ind_max + 1] = True
 
-            pp_final_plot = plt.figure(str(self.spec_id)\
-            + '_ppxf_fit_final', figsize=(10, 3))
+            # pp_final_plot = plt.figure(str(self.spec_id)\
+            # + '_ppxf_fit_final', figsize=(10, 3))
             if len(l_lab) > 1:
                 pp_final_init = ppxf.ppxf(log_template_f, log_spec_f,\
                 log_spec_err, velscale_spec, guesses, degree=-1, clean=False,\
                 mask=mask, quiet=True, fixed=[0, 1])
 
-            if len(l_lab) == 1:
-                pp_final_init = pp_outliers_init
-            pp_final_init.plot()
-            # plt.tight_layout()
-            plt.savefig(self.spec_id + '_ppxf_fit_final.png',\
-            dpi=600, overwrite=True)
-            plt.close()
+            # if len(l_lab) == 1:
+            #     pp_final_init = pp_outliers_init
+            # pp_final_init.plot()
+            # # plt.tight_layout()
+            # plt.savefig(self.spec_id + '_ppxf_fit_final.png',\
+            # dpi=600, overwrite=True)
+            # plt.close()
 
             self.logger.info('Started final RV fit')
             self.rv, self.erv = ppxf_MC(log_template_f, log_spec_f,\

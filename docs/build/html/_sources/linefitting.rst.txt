@@ -1,0 +1,21 @@
+Line Fitter
+***********
+
+This module is the work horse for fitting spectral lines from an input catalog to a given 1D spectrum. The line fitting itself is performed using the module `pyspeckit`_.
+
+`pyspeckit`_ uses an iterative method to fit the spectral lines and the continuum simultaneously. :mod:`line_fitter` automatically adjusts the input parameters to `pyspeckit`_ in the manner to optimize the fitting (*continuum order* and *wavelegth limits*)
+
+The :mod:`line_fitter` determines whether the fit fullfils the set parameters and was, therefore, succesfull and can be further used to do the velocity fitting. :mod:`line_fitter` also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.
+
+In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration based on the solution of the primary line.
+
+.. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
+
+.. automodule:: line_fitter
+   :members:
+
+History
+-------
+
+.. versionadded:: 0.1.0
+   introducing the line fitting routine

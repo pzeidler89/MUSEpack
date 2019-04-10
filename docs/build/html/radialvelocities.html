@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. Spectral line fitting and radial velocity measurements &mdash; MUSEpack  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Disclaimer" href="disclaimer.html" />
+    <link rel="prev" title="3. MUSEreduce" href="MUSEreduce.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MUSEpack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installing MUSEpack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#additional-python-packages">1.1. Additional python packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">3. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">3.2. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">4.1. Radial Velocities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spectral-line-fitter">4.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-modules">4.3. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#history">4.4. History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Disclaimer:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="disclaimer.html">Disclaimer</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MUSEpack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>4. Spectral line fitting and radial velocity measurements</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/radialvelocities.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="spectral-line-fitting-and-radial-velocity-measurements">
+<span id="radial-velocities"></span><h1>4. Spectral line fitting and radial velocity measurements<a class="headerlink" href="#spectral-line-fitting-and-radial-velocity-measurements" title="Permalink to this headline">¶</a></h1>
+<p>The main purpose of MUSEreduce is the spectral line fitting in order to create template spectra from observations, which are used to measure the radial velocities of stars and gas, especially in the absence of working spectral template libraries, e.e., for pre-main-sequence stars.</p>
+<p>The <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a> and the spectral fitting module <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> are the heart of this package. By using <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> as basic spectral fiutting routine and <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a> for the spectral cross-correlation, including a Monte Carlo bootstrap technique, it is possible to measure radial velocities with an accuracy of <span class="math notranslate nohighlight">\(1-3\,\rm{km/s}\)</span> in the absence of any template library. For a detailed description we refer to Zeidler et al. 2019.</p>
+<div class="section" id="id1">
+<h2>4.1. Radial Velocities<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>This is the main class for measuring the radial velocities. A basic example is descibed in <a class="reference internal" href="quickstart.html#examples"><span class="std std-ref">Examples</span></a>. A detailed description can be found in Zeidler et al. 2019.</p>
+<p>Throughout the document the <strong>primary line</strong> is the spectral line of interest for which the line fitting will be executed. <strong>Secondary lines</strong> are spectral lines in blends.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The automatic handling of absorption and emission lines since vers. 0.1.2 has not been tested yet.</p>
+</div>
+<dl class="class">
+<dt id="radial_velocities.RV_spectrum">
+<em class="property">class </em><code class="descclassname">radial_velocities.</code><code class="descname">RV_spectrum</code><span class="sig-paren">(</span><em>spec_id</em>, <em>spec_f</em>, <em>spec_err</em>, <em>spec_lambda</em>, <em>loglevel='INFO'</em>, <em>templatebins=100000</em>, <em>specbinsize=1.25</em>, <em>dispersion=2.4</em>, <em>linetype='absorption'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>spec_id <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>unique identifier of the spectrum</dd>
+<dt>spec_f <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>flux array of the spectrum in erg/s/cm:math:<cite>^2</cite>/Angstrom</dd>
+<dt>spec_err <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>flux uncertainty array of the spectrum</dd>
+<dt>spec_lambda <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>wavelength_array of the spectrum in Angstrom</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>loglevel <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">INFO</span></code>)</span></dt>
+<dd><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>: all functions run on a single core to obtain proper
+output in the correct order for proper debugging.</dd>
+<dt>templatebins <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 100000)</span></dt>
+<dd>Number of wavelength bins for the oversampled spectrum used to fit
+the spectral lines.</dd>
+<dt>specbinsize <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 1.25)</span></dt>
+<dd>The spectral bin size. The default is set to fit the MUSE dataset</dd>
+<dt>dispersion <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 2.4)</span></dt>
+<dd>The dispersion of the spectrograph. The default is set to the
+nominal MUSE instrument dispersion</dd>
+<dt>linetype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: absorption)</dt>
+<dd><p class="first">absorption: All spectral lines are absorption lines</p>
+<p>emission: All spectral lines are emission lines</p>
+<p class="last">both : spectral lines can be absorption or emission lines. <strong>This</strong>
+<strong>mode has not been tested yet !!!</strong></p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.catalog">
+<code class="descname">catalog</code><span class="sig-paren">(</span><em>initcat=None</em>, <em>save=False</em>, <em>load=None</em>, <em>printcat=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.catalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>This instance handles the catalog that will holds the fit results
+of the primary lines.</p>
+<dl class="docutils">
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>initcat <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> file containing the primary lines
+format: name, lambda, start, end</dd>
+<dt>save <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is written to a file.</dd>
+<dt>load <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt>
+<dd>Loads a catalog from catalog file.</dd>
+<dt>printcat <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is printed to the terminal</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.clean">
+<code class="descname">clean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>This cleans resets all of the output. This <strong>must</strong> be executed before
+repeating the spectral fit without re-initiating the class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.line_fitting">
+<code class="descname">line_fitting</code><span class="sig-paren">(</span><em>input_cat, line_idxs, niter=5, n_CPU=-1, resid_level=None, max_contorder=2, max_ladjust=4, adjust_preference='contorder', input_continuum_deviation=0.05, llimits=[-2.0, 2.0], max_exclusion_level=0.3, blends=None, autoadjust=False, fwhm_block=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.line_fitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.line_fitting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializing the line fitting by calling <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a></p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">input_cat : <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: input spectral line catalog with
+wavelengths in Angstrom</p>
+<dl class="last docutils">
+<dt>line_idxs <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>:</span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: of the line names for which RV
+fits should be performed, must be identical to “name” in
+init_cat</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>niter <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt>
+<dd>The maximum number of iteration if convergence is not reached</dd>
+<dt>n_CPU <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt>
+<dd>Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of
+CPUs is the number of spectral lines the fit is performed to.</dd>
+<dt>resid_level: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt>
+<dd>The maximum MAD for the fit residuals for a succesfull fit</dd>
+<dt>max_contorder <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 2)</span></dt>
+<dd>The maximum polynominal order of the continuum</dd>
+<dt>max_ladjust <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt>
+<dd>Ahe maximum number of wavelength range adjustments in steps of 5
+Angstrom</dd>
+<dt>adjust_preference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: contorder)</dt>
+<dd><p class="first">contorder: continuum order is adjusted first</p>
+<p class="last">wavelength: wavelength range is adjusted first</p>
+</dd>
+<dt>input_continuum_deviation <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.05)</dt>
+<dd>Fraction by how much the continuum is allowed to deviate from a
+running median estimate. This is set to prevent lines mimicking
+a continuum</dd>
+<dt>llimits <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> (optional, default: [-2., 2.])</span></dt>
+<dd>the limits for the wavelength fit as set in <code class="docutils literal notranslate"><span class="pre">ppxf</span></code></dd>
+<dt>max_exclusion_level <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.3)</dt>
+<dd>The exclusion level for lines to be excluded from the next
+baseline estimate as set in <code class="docutils literal notranslate"><span class="pre">pyspeckit</span></code></dd>
+<dt>blends: obj:<cite>ascii</cite>-file or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt>
+<dd>A file with primary lines that contain blends to provide a
+maximum amplitude ratio of the primary and the blend to prevent
+that the blend becomes the dominant line in the fit.</dd>
+<dt>autoadjust <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted
+to the fit of the previous iteration. All other wavelength
+range are adjusted accordingly taking into account the proper
+velocity corrected shift <span class="math notranslate nohighlight">\(\Delta \lambda/\lambda\)</span>. This
+is especially important to detect hyper-velocity stars.</dd>
+<dt>fwhm_block <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt>
+<dd><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the
+fitted lines is the instrument’s dispersion</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the
+fitted lines is zero</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>oversampled=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the spectrum and the regions of the primary lines to a file
+including the spectral fit and the template.</p>
+<dl class="docutils">
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>oversampled <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The oversampled spectral fit and the template are
+used in the plot.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.rv_fit">
+<code class="descname">rv_fit</code><span class="sig-paren">(</span><em>guesses</em>, <em>niter=10000</em>, <em>line_sigma=3</em>, <em>n_CPU=-1</em>, <em>line_significants=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.rv_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.rv_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The instance that runs the radial velocity fit using <code class="docutils literal notranslate"><span class="pre">ppxf</span></code> and Monte
+Carlo bootstrapping.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>guesses <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>The initial guesses for the the radial velocity fit guesses in
+the form [RV,sepctral_dispersion]</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>niter <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 10000)</span></dt>
+<dd>number of iterations to bootstrap the spectrum</dd>
+<dt>line_sigma: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3):</dt>
+<dd>sigma for the RV clipping for the individual lines</dd>
+<dt>n_CPU <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt>
+<dd>Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of
+CPUs is the number of spectral lines the fit is performed to.</dd>
+<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt>
+<dd>The sigma-level for the spectral line to be above the continuum
+in order to be considered <em>valid</em></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="radial_velocities.RV_spectrum.rv_fit_peak">
+<code class="descname">rv_fit_peak</code><span class="sig-paren">(</span><em>line_sigma=3</em>, <em>line_significants=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.rv_fit_peak"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.rv_fit_peak" title="Permalink to this definition">¶</a></dt>
+<dd><p>This instance fit the radial velocity solely on the fitted peaks of
+the spectral lines</p>
+<dl class="docutils">
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>line_sigma <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3)</span></dt>
+<dd>The sigma-level for the sigma clipping before determining peak
+radial velocity measurement</dd>
+<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt>
+<dd>The sigma-level for the spectral line to be above the continuum
+in order to be considered <em>valid</em></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="spectral-line-fitter">
+<h2>4.2. Spectral line fitter<a class="headerlink" href="#spectral-line-fitter" title="Permalink to this headline">¶</a></h2>
+<p>This module is the work horse for fitting spectral lines from an input catalog to a given 1D spectrum. The line fitting itself is performed using the module <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a>.</p>
+<p><a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> uses an iterative method to fit the spectral lines and the continuum simultaneously. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> automatically adjusts the input parameters to <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> in the manner to optimize the fitting (<em>continuum order</em> and <em>wavelegth limits</em>)</p>
+<p>The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> determines whether the fit fullfils the set parameters and was, therefore, succesfull and can be further used to do the velocity fitting. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.</p>
+<p>In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration based on the solution of the primary line.</p>
+<span class="target" id="module-line_fitter"></span><dl class="function">
+<dt id="line_fitter.line_fitter">
+<code class="descclassname">line_fitter.</code><code class="descname">line_fitter</code><span class="sig-paren">(</span><em>self</em>, <em>linecat</em>, <em>line_idx</em>, <em>niter</em>, <em>input_resid_level</em>, <em>max_contorder</em>, <em>max_ladjust</em>, <em>adjust_preference</em>, <em>input_continuum_deviation</em>, <em>llimits</em>, <em>max_exclusion_level</em>, <em>blends</em>, <em>autoadjust</em>, <em>fwhm_block</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/line_fitter.html#line_fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#line_fitter.line_fitter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>linecat <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>Array with the spectral lines and their wavelengths</dd>
+<dt>line_idx <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>Name of the primary line</dd>
+<dt>niter <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt>
+<dd>Number of iterations</dd>
+<dt>input_resid_level <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>The maximum MAD for the fit residuals for a succesfull fit</dd>
+<dt>max_contorder <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt>
+<dd>The maximum polynominal order of the continuum to have</dd>
+<dt>max_ladjust <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>The maximum number of wavelength range adjustments in steps of 5
+Angstrom</dd>
+<dt>adjust_preference <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd><p class="first">contorder: continuum order is adjusted first</p>
+<p class="last">wavelength: wavelength range is adjusted first</p>
+</dd>
+<dt>input_continuum_deviation <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>by how much the continuum is allowed to deviate from a running
+median estimate. This is set to prevent lines mimicking a continuum</dd>
+<dt>llimits <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></span></dt>
+<dd>the limits for the wavelength fit as set in <code class="docutils literal notranslate"><span class="pre">ppxf</span></code></dd>
+<dt>max_exclusion_level <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>The exclusion level for lines to be excluded from the next baseline
+estimate as set in <code class="docutils literal notranslate"><span class="pre">pyspeckit</span></code></dd>
+<dt>blends <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a>-file or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></dt>
+<dd>A file with primary lines that contain blends to provide a maximum
+amplitude ratio of the primary and the blend to prevent that the
+blend becomes the dominant line in the fit.</dd>
+<dt>autoadjust <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt>
+<dd><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted to
+the fit of the previous iteration. All other wavelength range are
+adjusted accordingly taking into account the proper velocity
+corrected shift <span class="math notranslate nohighlight">\(\Delta \lambda/\lambda\)</span>. This is especially
+important to detect hyper-velocity stars.</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: no adjustment to the limits done</p>
+</dd>
+<dt>fwhm_block <span class="classifier-delimiter">:</span> <span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool:obj:</span></code></span></dt>
+<dd><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
+lines is the instrument’s dispersion</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
+lines is zero</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>line_idx <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>Name of the primary line</dd>
+<dt>temp_l <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>fitted wavelength of the primary line</dd>
+<dt>temp_a <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>fitted amplitude of the primary line</dd>
+<dt>temp_sl <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>fitted Lorentzian gamma of the primary line</dd>
+<dt>temp_sg <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>fitted Gaussian sigma of the primary line</dd>
+<dt>spec_select_idx <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>indices of the used part of the spectrum</dd>
+<dt>template_f <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>template spectrum shifted to the rest-frame</dd>
+<dt>continuum <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>the fitted continuum</dd>
+<dt>lstart <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>first used wavelength bin (might differ from input if it was
+adjusted during fitting)</dd>
+<dt>lend <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>last used wavelength bin (might differ from input if it was
+adjusted during fitting)</dd>
+<dt>contorder <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt>
+<dd>The order of the polynominal used for the continuum</dd>
+<dt>fit_f <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd>the fitted spectrum</dd>
+<dt>significance <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>the line strength over the continuum</dd>
+<dt>fit_failed <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: if the fit failed for some reason. This line will be               excluded from further analyses</dd>
+<dt>fit_f_highres <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>the fitted spectrum and the oversampling resolution</dd>
+<dt>spec_select_idx_highres <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>indices of the used part of the over sampled spectrum</dd>
+<dt>template_f_highres <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>over sampled template spectrum shifted to the rest-frame</dd>
+<dt>continuum_highres <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>the fitted over sampled continuum</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="utility-modules">
+<h2>4.3. Utility modules<a class="headerlink" href="#utility-modules" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">The documentation of utility modules will follow soon</p>
+</div>
+</div>
+<div class="section" id="history">
+<h2>4.4. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0: </span>working radial velocity fitting package</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0: </span>no RV calculation for lines that are below the significance level</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0: </span>instrument dispersion added as keyword</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.1: </span>moved to pep-8</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.2: </span>now handles absorption and emission lines. <strong>Not tested yet, though</strong></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="disclaimer.html" class="btn btn-neutral float-right" title="Disclaimer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MUSEreduce.html" class="btn btn-neutral float-left" title="3. MUSEreduce" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Peter Zeidler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

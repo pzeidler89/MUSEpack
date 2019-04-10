@@ -1,33 +1,10 @@
 #!/usr/bin/env python
-"""
-ppxf_MC.py
 
-Copyright 2018-2018 Peter Zeidler
-
-This module is part of MUSEpack and adds and subtracts the spectral uncertainties in a radom fashion
-and then for each random draw the routine recalculates RV.
-The final result is the mean of the gaussian dristibution and its uncertanty is
-the 1sigma width.
-
-MUSEpack is a free software package: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-MUSEpack is distributed in the hope that it will be useful for working with
-MUSE data and spectra, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License
-along with MUSEpack. If not, see <http://www.gnu.org/licenses/>.
-
-"""
 import numpy as np
 from astropy.stats import sigma_clip
 from lmfit import Model
 from ppxf import ppxf
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
 from functools import partial
 import matplotlib.pyplot as plt
 from astropy.stats import median_absolute_deviation as MAD
@@ -64,7 +41,7 @@ def ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale, degree, g
     return uncert
 
 def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses, nrand=100,
-                    degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5, spec_id = None,n_CPU = -1):
+                    degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5, spec_id = None, n_CPU = -1):
 
     '''
     log_template_f: array, logarithmically binned template spectrum
@@ -92,21 +69,12 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses, nrand=1
     if goodpixels.any() == None: goodpixels = np.arange(len(log_spec_f))
     iter_spec = log_spec_f.copy()
 
-    if n_CPU > 0: cpu = n_CPU
-    if n_CPU ==-1 : cpu = cpu_count()
-    
-    # pool=Pool(cpu)
-    # uncert_ppxf=pool.map(partial(ppxf_bootstrap,log_template_f, log_spec_f, log_spec_err, velscale,
-    #                              degree, goodpixels, guesses, moments, vsyst,iter_spec,noise),np.arange(nrand))
-    #
-    # pool.close()
-    # pool.join()
-    #
-   
     results = [dask.delayed(ppxf_bootstrap)(log_template_f, log_spec_f, log_spec_err, velscale,degree, goodpixels, guesses, moments, vsyst,iter_spec,noise) for n in np.arange(nrand)]
    
-    if cpu == 1: uncert_ppxf = dask.compute(*results,num_worker=1,scheduler='single-threaded')
-    if cpu > 0: uncert_ppxf = dask.compute(*results,num_worker=cpu,scheduler='processes')
+    if n_CPU == 1:
+        uncert_ppxf = dask.compute(*results,num_workers=1,scheduler='single-threaded')
+    if n_CPU > 0:
+        uncert_ppxf = dask.compute(*results, num_workers=n_CPU, scheduler='processes')
    
    
    

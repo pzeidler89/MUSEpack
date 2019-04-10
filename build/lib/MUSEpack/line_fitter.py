@@ -1,20 +1,4 @@
-'''
-line_fitter.py
-
-vers. 0.1.0: working line fitter
-vers. 0.1.1: Step by step fit and plotter introduced for the DEBUG mode
-vers. 0.2.0: Introducing better handling of blends. One can set now upper
-             limits for blend ratios and the fitter ensures that the
-             wavelengths remain monotonic.
-             Added automatic adjustment of wavelength limits: SHOULD BE USED
-             WITH CAUSION. NEEDS MUCH MORE TESTING !!!!
-vers. 0.2.1: moved to pep-8
-vers. 0.2.2: now handles absorption and emission lines
-             emission not tested yet, though
-
-'''
-
-__version__ = '0.2.2'
+__version__ = '0.1.0'
 
 __revision__ = '201902125'
 
@@ -40,6 +24,123 @@ def line_fitter(self, linecat, line_idx, niter,\
 input_resid_level, max_contorder, max_ladjust, adjust_preference,\
 input_continuum_deviation, llimits, max_exclusion_level, blends,\
 autoadjust, fwhm_block):
+
+    '''
+    Args:
+        linecat : :func:`numpy.array`
+            Array with the spectral lines and their wavelengths
+
+        line_idx : :obj:`str`
+            Name of the primary line
+
+        niter : :obj:`int`
+            Number of iterations
+
+        input_resid_level : :obj:`float`
+            The maximum MAD for the fit residuals for a succesfull fit
+
+        max_contorder : :obj:`int`
+            The maximum polynominal order of the continuum to have
+
+        max_ladjust : :obj:`str`
+            The maximum number of wavelength range adjustments in steps of 5
+            Angstrom
+
+        adjust_preference : :obj:`str`
+            contorder: continuum order is adjusted first
+
+            wavelength: wavelength range is adjusted first
+
+        input_continuum_deviation : :obj:`float`
+            by how much the continuum is allowed to deviate from a running
+            median estimate. This is set to prevent lines mimicking a continuum
+
+        llimits : :obj:`list`
+            the limits for the wavelength fit as set in ``ppxf``
+
+        max_exclusion_level : :obj:`float`
+            The exclusion level for lines to be excluded from the next baseline
+            estimate as set in ``pyspeckit``
+
+        blends : :obj:`ascii`-file or :obj:`None`
+            A file with primary lines that contain blends to provide a maximum
+            amplitude ratio of the primary and the blend to prevent that the
+            blend becomes the dominant line in the fit.
+
+        autoadjust : :obj:`bool`
+            :obj:`True`: the wavelength limits ``llimit`` will be adjusted to
+            the fit of the previous iteration. All other wavelength range are
+            adjusted accordingly taking into account the proper velocity
+            corrected shift :math:`\Delta \lambda/\lambda`. This is especially
+            important to detect hyper-velocity stars.
+
+            :obj:`False`: no adjustment to the limits done
+
+        fwhm_block : :obj:`bool:obj:`
+            :obj:`True`: The minimum fwhm of the voigt profiles of the fitted
+            lines is the instrument's dispersion
+
+            :obj:`False`: The minimum fwhm of the voigt profiles of the fitted
+            lines is zero
+
+    Returns:
+        line_idx : :obj:`str`
+            Name of the primary line
+
+        temp_l : :obj:`float`
+            fitted wavelength of the primary line
+
+        temp_a : :obj:`float`
+            fitted amplitude of the primary line
+
+        temp_sl : :obj:`float`
+            fitted Lorentzian gamma of the primary line
+
+        temp_sg : :obj:`float`
+            fitted Gaussian sigma of the primary line
+
+        spec_select_idx : :func:`numpy.array`
+            indices of the used part of the spectrum
+
+        template_f : :func:`numpy.array`
+            template spectrum shifted to the rest-frame
+
+        continuum : :func:`numpy.array`
+            the fitted continuum
+
+        lstart : :obj:`float`
+            first used wavelength bin (might differ from input if it was
+            adjusted during fitting)
+
+        lend : :obj:`float`
+            last used wavelength bin (might differ from input if it was
+            adjusted during fitting)
+
+        contorder : :obj:`int`
+            The order of the polynominal used for the continuum
+
+        fit_f : array
+            the fitted spectrum
+
+        significance : :obj:`float`
+            the line strength over the continuum
+
+        fit_failed : :obj:`bool`
+            :obj:`True`: if the fit failed for some reason. This line will be               excluded from further analyses
+
+        fit_f_highres : :obj:`float`
+            the fitted spectrum and the oversampling resolution
+
+        spec_select_idx_highres : :func:`numpy.array`
+            indices of the used part of the over sampled spectrum
+
+        template_f_highres : :func:`numpy.array`
+            over sampled template spectrum shifted to the rest-frame
+
+        continuum_highres : :func:`numpy.array`
+            the fitted over sampled continuum
+
+    '''
 
     self.logger.info('Started line ' + line_idx)
 

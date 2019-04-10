@@ -1,60 +1,8 @@
 #!/usr/bin/env python
 
-'''
-vers. 0.1.0: Executes the MUSE reduction pipeline in the correct order
-vers. 0.1.1: introducing only one calibration file folder per OB
-vers. 0.1.2: choosing the illumination file closest to the observation
-vers. 0.1.3: selecting the files for the different master file creations
-vers. 0.1.4: minor corrections
-vers. 0.1.5: looping order changed. each module loops by itself
-vers. 0.1.6: always checking if calibration files already exist
-vers. 0.1.7: Choosing between ESO calibrations and own calibrations
-vers. 0.1.8: User can choose specific exposure time to reduce
-vers. 0.2.0: exposures spread via different OBs for one pointing is supported.
-             To do so, run the script normally for each OB including scipost.
-             After all are processed then run exp_align and exp_combine
-             AO observations are supported
-             reduction of multiple OBs in one run supported
-             set rootpath manually
-             Extend the toggles
-vers. 0.2.1: user can choose the number of CPUs used
-vers. 0.2.2: sky subtraction can be modified, so that individual elements can
-             be excluded
-vers. 0.2.3: use json file as input
-vers. 0.2.4: additional parameters added: skyreject, skysubtraction
-             set parameters and modules will be shown
-vers. 0.2.5: bug fixes
-vers. 0.3.0: using the correct ILLUM file for the STD reduction in the
-             SCI_BASIC routine, SCI_BASIC now separated for STD and OBJECT
-             reduction
-vers. 0.3.1: one can select if the sof file are created automatically or
-             provided by the user
-vers. 0.4.0: supports now pipeline 2.4.2 and the NFM-AO
-             added: pipeline_path
-             choosing if darks may be used
-             only reduces STD once per OB
-             general use of external SKY fields
-             collecting the files for exp_combine in an independent step
-             exp_align is an independent step now
-vers. 0.4.1: new file names to correct a problem where data gets replaced
-             in the scipost routine if you reduce the data with and
-             without sky
-vers. 0.4.2: one can now change the ignore and fraction parameters in the
-             JSON file
-vers. 0.4.3: one can auto remove and rewrite the statics
-vers. 0.4.4: changed the sky subtraction keyword
-             the user can give now individual names for the different dither
-             exposures: Does currently not work with multiple OBs or multiple
-             pointings per OB
-vers. 0.5.0  rewriting musreduce to a class and pep-8 style
-             DEBUG keyword added, wrapper executes without esorex, needs to be
-             used with already existing reduced data.
-vers. 0.5.1  added skymethod.
-'''
-
 __version__ = '0.5.1'
 
-__revision__ = '20190129'
+__revision__ = '20190305'
 
 import sys
 import shutil
@@ -74,6 +22,20 @@ import json
 
 class musereduce:
 
+    '''
+    Kwargs:
+        configfile : :obj:`str`, (optional), default: :obj:`False`
+            A :obj:`json` configfile for musereduce, where all the parameters
+            will             be set.
+
+        debug : :obj:`bool`, (optional), default: :obj:`None`
+            :obj:`True`: musereduce runs in debug mode and ESORex will not be
+            executed. All products must be available. It can be used for
+            testing the creation of folder, and creating the ``.sof`` files
+
+    '''
+
+
     def __init__(self, configfile=None, debug=False):
 
         if configfile == None:
@@ -90,7 +52,7 @@ class musereduce:
             self.OB_list = np.array([self.dithername])
         self.rootpath = self.config['global']['rootpath']
         self.mode = self.config['global']['mode']
-        self.auto_sort_data = self.config['global']['auto_sort_data']
+        self.auto__sort_data = self.config['global']['auto_sort_data']
         self.using_specific_exposure_time =\
         self.config['global']['using_specific_exposure_time']
 
@@ -290,9 +252,9 @@ class musereduce:
 
             print('... Sorting the data')
 
-            if self.auto_sort_data:
+            if self.auto__sort_data:
                 print('>>> Sorting the raw data')
-                sort_data(self)
+                _sort_data(self)
             else:
                 print('>>> MANUAL INTERACTION NEEDED')
 
@@ -342,63 +304,88 @@ class musereduce:
                 create_sof = self.config['calibration']['create_sof']
 
                 if not self.using_ESO_calibration:
-                    bias(self, exp_list_SCI, exp_list_DAR,\
+                    _bias(self, exp_list_SCI, exp_list_DAR,\
                     exp_list_TWI, create_sof)
 
                     if self.dark:
-                        dark(self, exp_list_SCI, exp_list_DAR, create_sof)
-                    flat(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    wavecal(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    lsf(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    twilight(self, exp_list_SCI, exp_list_TWI, create_sof)
+                        _dark(self, exp_list_SCI, exp_list_DAR, create_sof)
+                    _flat(self, exp_list_SCI, exp_list_TWI, create_sof)
+                    _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof)
+                    _lsf(self, exp_list_SCI, exp_list_TWI, create_sof)
+                    _twilight(self, exp_list_SCI, exp_list_TWI, create_sof)
 
             ### OBSERVATION PRE-PROCESSING ###
             if self.config['sci_basic']['execute']:
                 create_sof = self.config['sci_basic']['create_sof']
-                science_pre(self, exp_list_SCI, create_sof)
+                _science_pre(self, exp_list_SCI, create_sof)
 
             ### OBSERVATION POST-PROCESSING ###
             if self.config['std_flux']['execute']:
                 create_sof = self.config['std_flux']['create_sof']
-                std_flux(self, exp_list_SCI, create_sof)
+                _std_flux(self, exp_list_SCI, create_sof)
 
             if self.config['sky']['execute']:
                 create_sof = self.config['sky']['create_sof']
 
                 if not self.config['sky']['modified']:
-                    sky(self, exp_list_SCI, create_sof)
+                    _sky(self, exp_list_SCI, create_sof)
                 if self.config['sky']['modified']:
-                    modified_sky(self, exp_list_SCI, create_sof)
+                    _modified_sky(self, exp_list_SCI, create_sof)
 
             ###s SCIENCE POST-PROCESSING ###
             if self.config['sci_post']['execute']:
                 create_sof = self.config['sci_post']['create_sof']
-                scipost(self, exp_list_SCI, create_sof, OB)
+                _scipost(self, exp_list_SCI, create_sof, OB)
 
             if self.config['dither_collect']['execute']:
-                dither_collect(self, exp_list_SCI, OB)
+                _dither_collect(self, exp_list_SCI, OB)
 
         if self.config['exp_align']['execute']:
             create_sof = self.config['exp_align']['create_sof']
-            exp_align(self, exp_list_SCI, create_sof, OB)
+            _exp_align(self, exp_list_SCI, create_sof, OB)
 
         if self.config['exp_combine']['execute']:
             create_sof = self.config['exp_combine']['create_sof']
-            exp_combine(self, exp_list_SCI, create_sof)
+            _exp_combine(self, exp_list_SCI, create_sof)
 
         endtime = time.time()
         print('>>> Total execution time: ',\
         timedelta(seconds=endtime - startime))
 
 
-def get_filelist(self, data_dir, filename_wildcard):
+def _get_filelist(self, data_dir, filename_wildcard):
+
+    '''
+    This module collects the necessary file lists from folders.
+
+    Args:
+        data_dir : :obj:`str`
+            The directory where the files are located.
+
+        filename_wildcard : :obj:`str`
+            The filenames which should be collected
+    '''
+
     os.chdir(data_dir)
     raw_data_list = glob.glob(filename_wildcard)
     os.chdir(self.rootpath)
     return raw_data_list
 
 
-def call_esorex(self, exec_dir, esorex_cmd):
+def _call_esorex(self, exec_dir, esorex_cmd):
+
+    '''
+    This module calls the various ESOrex commands and gives it to the
+    terminal for execution.
+
+    Args:
+        exec_dir : :obj:`str`
+            The directory where ESOrex should be executed.
+
+        esorex_cmd : :obj:`str`
+            The ESOrex command that needs to be executed
+    '''
+
     os.chdir(exec_dir)
     os.system('export OMP_NUM_THREADS=' + str(self.n_CPU))
     print('esorex ' + esorex_cmd)
@@ -406,8 +393,15 @@ def call_esorex(self, exec_dir, esorex_cmd):
     os.chdir(self.rootpath)
 
 
-def sort_data(self):
-    file_list = get_filelist(self, self.raw_data_dir, '*.fits*')
+def _sort_data(self):
+
+    '''
+    This module reads the headers of all of the raw data and sorts it
+    accordingly. It also assigns the correct calibration files to the exposures
+
+    '''
+
+    file_list = _get_filelist(self, self.raw_data_dir, '*.fits*')
     science_files = np.array([])
     calibration_files = np.array([])
     science_type = np.array([])
@@ -591,7 +585,31 @@ def sort_data(self):
         f_twilight.close()
 
 
-def bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
+def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_bias``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_DAR : :obj:`list`:
+            The list of all associated dark files including their category read
+            from the fits header
+
+        exp_list_TWI : :obj:`list`:
+            The list of all associated twilight files including their category
+            read from the fits header 
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
 
     print('... Creating the MASTER BIAS')
 
@@ -660,7 +678,7 @@ def bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
                 self.calibration_dir + 'SCIENCE/bias.sof')
 
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
                     esorex_cmd)
 
             if os.path.isfile(self.calibration_dir + 'TWILIGHT/bias.sof'):
@@ -675,7 +693,7 @@ def bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
                 self.calibration_dir + 'TWILIGHT/bias.sof')
 
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
                     esorex_cmd)
 
             if dark:
@@ -691,19 +709,39 @@ def bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
                     self.calibration_dir + 'DARK/bias.sof')
 
                     if not self.debug:
-                        call_esorex(self, self.calibration_dir + 'DARK/',
+                        _call_esorex(self, self.calibration_dir + 'DARK/',
                         esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
         if self.dark:
             if not self.debug:
-                call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd)
+                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd)
 
 
-def dark(self, exp_list_SCI, exp_list_DAR, create_sof):
+def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_dark``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_DAR : :obj:`list`:
+            The list of all associated dark files including their category read
+            from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
 
     print('... Creating the MASTER DARK')
 
@@ -746,14 +784,35 @@ def dark(self, exp_list_SCI, exp_list_DAR, create_sof):
                 self.calibration_dir + 'DARK/dark.sof')
 
                 if not self.debug:
-                    call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
+                    _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
+            _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
 
 
-def flat(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_flat``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_TWI : :obj:`list`:
+            The list of all associated twilight files including their category
+            read from the fits header 
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... Creating the MASTER FLAT')
 
     esorex_cmd = '--log-file=flat.log --log-level=debug muse_flat \
@@ -800,7 +859,7 @@ def flat(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'SCIENCE/flat_temp.sof',\
                 self.calibration_dir + 'SCIENCE/flat.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
                     esorex_cmd)
 
             f = open(self.calibration_dir + 'TWILIGHT/flat_temp.sof', 'w')
@@ -825,16 +884,37 @@ def flat(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'TWILIGHT/flat_temp.sof',\
                 self.calibration_dir + 'TWILIGHT/flat.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
                     esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
 
 
-def wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_wavecal``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_TWI : :obj:`list`:
+            The list of all associated twilight files including their category
+            read from the fits header 
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... Creating the WAVELENGTH CALIBRATION')
 
     esorex_cmd = '--log-file=wavecal.log --log-level=debug\
@@ -885,7 +965,7 @@ def wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'SCIENCE/wavecal_temp.sof',\
                 self.calibration_dir + 'SCIENCE/wavecal.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
                     esorex_cmd)
 
             f = open(self.calibration_dir + 'TWILIGHT/wavecal_temp.sof', 'w')
@@ -916,16 +996,37 @@ def wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'TWILIGHT/wavecal_temp.sof',\
                 self.calibration_dir + 'TWILIGHT/wavecal.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
                     esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
 
 
-def lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_lsf``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_TWI : :obj:`list`:
+            The list of all associated twilight files including their category
+            read from the fits header 
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... Creating the LINE SPREAD FUNCTION')
 
     esorex_cmd = '--log-file=lsf.log --log-level=debug muse_lsf \
@@ -979,7 +1080,7 @@ def lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'SCIENCE/lsf_temp.sof',\
                 self.calibration_dir + 'SCIENCE/lsf.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
                     esorex_cmd)
 
             f = open(self.calibration_dir + 'TWILIGHT/lsf_temp.sof', 'w')
@@ -1012,16 +1113,37 @@ def lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'TWILIGHT/lsf_temp.sof',\
                 self.calibration_dir + 'TWILIGHT/lsf.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
                     esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
 
 
-def twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_twilight``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        exp_list_TWI : :obj:`list`:
+            The list of all associated twilight files including their category
+            read from the fits header 
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... Creating the TWILIGHT FLAT')
 
     esorex_cmd = '--log-file=twilight.log --log-level=debug \
@@ -1102,15 +1224,32 @@ def twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
                 os.rename(self.calibration_dir + 'TWILIGHT/twilight_temp.sof',\
                 self.calibration_dir + 'TWILIGHT/twilight.sof')
                 if not self.debug:
-                    call_esorex(self, self.calibration_dir + 'TWILIGHT',\
+                    _call_esorex(self, self.calibration_dir + 'TWILIGHT',\
                     esorex_cmd)
 
     if not create_sof:
         if not self.debug:
-            call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd)
 
 
-def science_pre(self, exp_list_SCI, create_sof):
+def _science_pre(self, exp_list_SCI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_scibasic``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... Science PREPROCESSING')
 
     esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug \
@@ -1264,7 +1403,7 @@ def science_pre(self, exp_list_SCI, create_sof):
             f_object.close()
 
         if not self.debug:
-            call_esorex(self, exposure_dir, esorex_cmd)
+            _call_esorex(self, exposure_dir, esorex_cmd)
         if os.path.isfile(self.working_dir + 'std/sci_basic_std.sof'):
             assert filecmp.cmp(self.working_dir + 'std/sci_basic_std.sof',\
             self.working_dir + 'std/sci_basic_std_temp.sof'),\
@@ -1276,15 +1415,32 @@ def science_pre(self, exp_list_SCI, create_sof):
             self.working_dir + 'std/sci_basic_std.sof')
 
     if not self.debug:
-        call_esorex(self, self.working_dir + 'std/', esorex_cmd_std)
+        _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std)
 
 
-def std_flux(self, exp_list_SCI, create_sof):
+def _std_flux(self, exp_list_SCI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_standard``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... FLUX CALIBRATION')
 
     esorex_cmd = ' --log-file=std_flux.log --log-level=debug \
     muse_standard --filter=white std_flux.sof'
-    PIXTABLE_STD_list = get_filelist(self, self.working_dir + 'std/',\
+    PIXTABLE_STD_list = _get_filelist(self, self.working_dir + 'std/',\
     'PIXTABLE_STD*.fits')
 
     if create_sof:
@@ -1305,10 +1461,27 @@ def std_flux(self, exp_list_SCI, create_sof):
         f.close()
 
     if not self.debug:
-        call_esorex(self, self.working_dir + 'std/', esorex_cmd)
+        _call_esorex(self, self.working_dir + 'std/', esorex_cmd)
 
 
-def sky(self, exp_list_SCI, create_sof):
+def _sky(self, exp_list_SCI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_sky``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
+
     print('... SKY CREATION')
 
     sky = np.zeros_like(exp_list_SCI, dtype=bool)
@@ -1335,10 +1508,10 @@ def sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             PIXTABLE_SKY_list =\
-            get_filelist(self, exposure_dir, 'PIXTABLE_SKY*.fits')
+            _get_filelist(self, exposure_dir, 'PIXTABLE_SKY*.fits')
         else:
             PIXTABLE_SKY_list =\
-            get_filelist(self, exposure_dir, 'PIXTABLE_OBJECT*.fits')
+            _get_filelist(self, exposure_dir, 'PIXTABLE_OBJECT*.fits')
 
         if create_sof:
 
@@ -1373,10 +1546,10 @@ def sky(self, exp_list_SCI, create_sof):
         + " --ignore=" + str(self.skyignore) + " sky.sof"
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                call_esorex(self, exposure_dir, esorex_cmd)
+                _call_esorex(self, exposure_dir, esorex_cmd)
         else:
             if not self.debug:
-                call_esorex(self, exposure_dir, '--log-file=sky.log \
+                _call_esorex(self, exposure_dir, '--log-file=sky.log \
                 --log-level=debug muse_create_sky --fraction='
                 + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
@@ -1397,7 +1570,24 @@ def sky(self, exp_list_SCI, create_sof):
                 shutil.copy(f, exps[:-9] + '/.')
 
 
-def modified_sky(self, exp_list_SCI, create_sof):
+def _modified_sky(self, exp_list_SCI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_sky`` with the modified continuum and
+    line subtraction as described in Zeidler et al. 2019.
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
 
     print('... SKY CREATION MODIFIED')
 
@@ -1426,10 +1616,10 @@ def modified_sky(self, exp_list_SCI, create_sof):
         exposure_dir = exp_list_SCI_sky[exposure_ID][:-9] + '/'
 
         if self.skyfield == 'auto' and (sky == True).any():
-            PIXTABLE_SKY_list = get_filelist(self, exposure_dir,\
+            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir,\
             'PIXTABLE_SKY*.fits')
         else:
-            PIXTABLE_SKY_list = get_filelist(self, exposure_dir,\
+            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir,\
             'PIXTABLE_OBJECT*.fits')
 
         if create_sof:
@@ -1463,13 +1653,13 @@ def modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                call_esorex(self, exposure_dir, '--log-file=sky.log\
+                _call_esorex(self, exposure_dir, '--log-file=sky.log\
                 --log-level=debug muse_create_sky --fraction='\
                 + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
         else:
             if not self.debug:
-                call_esorex(self, exposure_dir, '--log-file=sky.log\
+                _call_esorex(self, exposure_dir, '--log-file=sky.log\
                 --log-level=debug muse_create_sky --fraction='\
                 + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
@@ -1517,13 +1707,13 @@ def modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                call_esorex(self, exposure_dir, '--log-file=sky.log \
+                _call_esorex(self, exposure_dir, '--log-file=sky.log \
                 --log-level=debug muse_create_sky \
                 --fraction=' + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
         else:
             if not self.debug:
-                call_esorex(self, exposure_dir, '--log-file=sky.log \
+                _call_esorex(self, exposure_dir, '--log-file=sky.log \
                 --log-level=debug muse_create_sky --fraction='
                 + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
@@ -1558,7 +1748,27 @@ def modified_sky(self, exp_list_SCI, create_sof):
                 shutil.copy(f, exps[:-9] + '/.')
 
 
-def scipost(self, exp_list_SCI, create_sof, OB):
+def _scipost(self, exp_list_SCI, create_sof, OB):
+
+    '''
+    This module calls *ESORex'* ``muse_scipost``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+        OB : :obj:`str`:
+            The specific ``OB`` to be reduced. 
+
+    '''
+
     print('... SCIENCE POST-PROCESSING')
 
     unique_pointings = np.array([])
@@ -1594,7 +1804,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
             + str(exp_num + 1) + '/' + str(len(exp_list)))
             print(' ')
 
-            PIXTABLE_OBJECT_list = get_filelist(self, exp_list[exp_num][:-9],\
+            PIXTABLE_OBJECT_list = _get_filelist(self, exp_list[exp_num][:-9],\
             'PIXTABLE_OBJECT*.fits')
 
             if create_sof:
@@ -1644,7 +1854,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
 
                     if self.raman:
                         if not self.debug:
-                            call_esorex(self, exp_list[exp_num][:-9],\
+                            _call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug\
                             muse_scipost --save=cube,skymodel,individual,raman\
                             --skymethod='+self.skymethod+' \
@@ -1652,7 +1862,7 @@ def scipost(self, exp_list_SCI, create_sof, OB):
 
                     if not self.raman:
                         if not self.debug:
-                            call_esorex(self, exp_list[exp_num][:-9],\
+                            _call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug \
                             muse_scipost --save=cube,skymodel,individual \
                             --skymethod='+self.skymethod+' \
@@ -1673,13 +1883,13 @@ def scipost(self, exp_list_SCI, create_sof, OB):
 
                     if self.raman:
                         if not self.debug:
-                            call_esorex(self, exp_list[exp_num][:-9],\
+                            _call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug \
                             muse_scipost --save=cube,skymodel,individual,raman\
                             --skymethod=none --filter=white scipost.sof')
                     if not self.raman:
                         if not self.debug:
-                            call_esorex(self, exp_list[exp_num][:-9],\
+                            _call_esorex(self, exp_list[exp_num][:-9],\
                             '--log-file=scipost.log --log-level=debug \
                             muse_scipost --save=cube,skymodel,individual \
                             --skymethod=none --filter=white scipost.sof')
@@ -1697,13 +1907,13 @@ def scipost(self, exp_list_SCI, create_sof, OB):
 
                 if self.raman:
                     if not self.debug:
-                        call_esorex(self, exp_list[exp_num][:-9],\
+                        _call_esorex(self, exp_list[exp_num][:-9],\
                         '--log-file=scipost.log --log-level=debug muse_scipost\
                         --save=cube,skymodel,individual,raman --skymethod=none\
                         --rvcorr=none --filter=white scipost.sof')
                 if not self.raman:
                     if not self.debug:
-                        call_esorex(self, exp_list[exp_num][:-9],\
+                        _call_esorex(self, exp_list[exp_num][:-9],\
                         '--log-file=scipost.log --log-level=debug muse_scipost\
                         --save=cube,skymodel,individual --skymethod=none \
                         --rvcorr=none --filter=white scipost.sof')
@@ -1719,7 +1929,28 @@ def scipost(self, exp_list_SCI, create_sof, OB):
                 os.chdir(self.rootpath)
 
 
-def dither_collect(self, exp_list_SCI, OB):
+def _dither_collect(self, exp_list_SCI, OB):
+
+    '''
+    This module collects the individual dither exposures for one OB to be
+    combined in the steps: :mod:`MUSEreduce._exp_align` and
+    :mod:`MUSEreduce._exp_combine`
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+        OB : :obj:`str`:
+            The specific ``OB`` to be reduced.
+
+    '''
 
     print('... COLLECT DITHER POSTITIONS')
 
@@ -1998,7 +2229,27 @@ def dither_collect(self, exp_list_SCI, OB):
                     + str(exp_num + 1).rjust(2, '0') + '.fits')
 
 
-def exp_align(self, exp_list_SCI, create_sof, OB):
+def _exp_align(self, exp_list_SCI, create_sof, OB):
+
+    '''
+    This module calls *ESORex'* ``muse_exp_align``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+        OB : :obj:`str`:
+            The specific ``OB`` to be reduced.
+
+    '''
+
     print('... CUBE ALIGNMENT')
 
     esorex_cmd = '--log-file=exp_align.log --log-level=debug \
@@ -2089,7 +2340,7 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
 
         if self.withrvcorr:
             if self.skysub:
-                exp_list = get_filelist(self,\
+                exp_list = _get_filelist(self,\
                 combining_exposure_dir_withoutsky, 'IMAGE_FOV_*.fits')
                 if create_sof:
                     if os.path.exists(combining_exposure_dir_withoutsky\
@@ -2104,11 +2355,11 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
                         + '/' + exp_list[i] + ' IMAGE_FOV\n')
                     f.close()
                 if not self.debug:
-                    call_esorex(self, combining_exposure_dir_withoutsky,\
+                    _call_esorex(self, combining_exposure_dir_withoutsky,\
                     esorex_cmd)
 
             if not self.skysub:
-                exp_list = get_filelist(self,\
+                exp_list = _get_filelist(self,\
                 combining_exposure_dir_withsky, 'IMAGE_FOV_*.fits')
                 if create_sof:
                     if os.path.exists(combining_exposure_dir_withsky\
@@ -2122,11 +2373,11 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
                         + '/' + exp_list[i] + ' IMAGE_FOV\n')
                     f.close()
                 if not self.debug:
-                    call_esorex(self, combining_exposure_dir_withsky,\
+                    _call_esorex(self, combining_exposure_dir_withsky,\
                     esorex_cmd)
 
         else:
-            exp_list = get_filelist(self,\
+            exp_list = _get_filelist(self,\
             combining_exposure_dir, 'IMAGE_FOV_*.fits')
             if create_sof:
                 if os.path.exists(combining_exposure_dir + '/exp_align.sof'):
@@ -2137,10 +2388,26 @@ def exp_align(self, exp_list_SCI, create_sof, OB):
                     + '/' + exp_list[i] + ' IMAGE_FOV\n')
                 f.close()
             if not self.debug:
-                call_esorex(self, combining_exposure_dir, esorex_cmd)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd)
 
 
-def exp_combine(self, exp_list_SCI, create_sof):
+def _exp_combine(self, exp_list_SCI, create_sof):
+
+    '''
+    This module calls *ESORex'* ``muse_exp_combine``
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+        create_sof : :obj:`bool`:
+            :obj:`True`: ``bias.sof`` is created and populated
+
+            :obj:`False`: ``bias.sof`` is not created and needs to be provided
+            by the user
+
+    '''
 
     print('... EXPOSURE COMBINATION')
 
@@ -2204,7 +2471,7 @@ def exp_combine(self, exp_list_SCI, create_sof):
 
         if self.withrvcorr:
             if self.skysub:
-                pixtable_list = get_filelist(self,\
+                pixtable_list = _get_filelist(self,\
                 combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_*.fits')
                 if create_sof:
                     if os.path.exists(combining_exposure_dir_withoutsky\
@@ -2222,11 +2489,11 @@ def exp_combine(self, exp_list_SCI, create_sof):
                     + 'filter_list.fits FILTER_LIST\n')
                     f.close()
                 if not self.debug:
-                    call_esorex(self, combining_exposure_dir_withoutsky,\
+                    _call_esorex(self, combining_exposure_dir_withoutsky,\
                     esorex_cmd)
 
             if not self.skysub:
-                pixtable_list = get_filelist(self,\
+                pixtable_list = _get_filelist(self,\
                 combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_*.fits')
                 if create_sof:
                     if os.path.exists(combining_exposure_dir_withsky\
@@ -2245,10 +2512,10 @@ def exp_combine(self, exp_list_SCI, create_sof):
                     + 'filter_list.fits FILTER_LIST\n')
                     f.close()
                 if not self.debug:
-                    call_esorex(self, combining_exposure_dir_withsky,\
+                    _call_esorex(self, combining_exposure_dir_withsky,\
                     esorex_cmd)
         else:
-            pixtable_list = get_filelist(self,\
+            pixtable_list = _get_filelist(self,\
             combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
             if create_sof:
                 if os.path.exists(combining_exposure_dir + '/exp_combine.sof'):
@@ -2263,4 +2530,4 @@ def exp_combine(self, exp_list_SCI, create_sof):
                 + 'filter_list.fits FILTER_LIST\n')
                 f.close()
             if not self.debug:
-                call_esorex(self, combining_exposure_dir, esorex_cmd)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd)

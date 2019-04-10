@@ -10,7 +10,10 @@ from astropy.wcs import WCS
 from spectral_cube import SpectralCube
 import montage_wrapper as montage
 
-def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame = None, wcsname = 'Pampelmuse',correctiontype = 'full'):
+def wcs_corr(input_fits, input_prm,path=os.getcwd(), prm_path=os.getcwd(),
+             output_file=None, out_frame = None, in_frame = None,
+             wcsname = 'Pampelmuse',
+             correctiontype = 'shift'):
 
     '''
     input_fits: str
@@ -22,15 +25,20 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     path: str, optional
         I/O path, Default: current directory
 
+    prm_path: str, optional
+        I/O path of prm file, Default: current directory
+
     output_file: str, optional
         outputfile name, Default: update fitsheader of input fits
     
     output_frame: str, optional
         coordinate frame of the output cube in case one want to change, default: input frame
-    
+    in_frame: str, optional
+        coordinate frame of the input cube in case one want to change, default: input frame
+
     wcsname: str, optional
         the name of the new wcsname, default: Pampelmuse
-    
+
     correctiontype: str, optional
         the type of distrotion correction: full: the full 2D CD matrix,
                                            shift: shift in XY only.
@@ -39,10 +47,36 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     '''
 
     cube=fits.open(path+'/'+input_fits+'.fits')
-    pmr=fits.open(path+'/'+input_prm+'.prm.fits')
+    pmr=fits.open(prm_path+'/'+input_prm+'.prm.fits')
 
-    prihdr = cube[0].header
-    sechdr = cube[1].header
+    print('processing observation: ' + path+'/'+input_fits+'.fits')
+    print('using prm file: ' + prm_path+'/'+input_prm+'.prm.fits')
+
+    assert (len(cube) !=3 or len(cube) != 1), 'fits file has currently unsupported extensions: Please check'
+
+    if len(cube) == 3:
+        prihdr = cube[0].header
+        sechdr = cube[1].header
+        assert prihdr['INSTRUME'] != 'MUSE', ' This is not a MUSE cube. Please check'
+        if not in_frame:
+            in_frame = prihdr['RADECSYS'].lower()
+        print('MUSE cube detected')
+
+    if len(cube) == 1:
+        print('No MUSE cube all info in one extension')
+        prihdr = cube[0].header
+        sechdr = cube[0].header
+        if 'RADECSYS' in prihdr:
+            in_frame = prihdr['RADECSYS'].lower()
+
+    assert in_frame is not None, 'No WCS frame provided'
+
+    print(' Input WCS frame: ', in_frame)
+    if out_frame is None:
+        print('Output WCS frame: ', in_frame)
+    else:
+        print('Output WCS frame: ', out_frame)
+    print('')
 
     A=np.nanmedian(pmr[4].data[0][1])
     B=np.nanmedian(pmr[4].data[1][1])
@@ -50,8 +84,7 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     D=np.nanmedian(pmr[4].data[3][1])
     x0=np.nanmedian(pmr[4].data[4][1])
     y0=np.nanmedian(pmr[4].data[5][1])
-    
-    
+
     CD=np.array([[A,C],[B,D]])
     r=np.array([[x0,0.],[0.,y0]])
     
@@ -64,7 +97,7 @@ def wcs_corr(input_fits,input_prm,path=os.getcwd(),output_file=None, out_frame =
     if out_frame != None:
         ref_ra=sechdr['CRVAL1']
         ref_dec=sechdr['CRVAL2']
-        ref_coord = SkyCoord(ra = ref_ra*u.degree,dec = ref_dec*u.degree, frame = prihdr['RADECSYS'].lower())
+        ref_coord = SkyCoord(ra = ref_ra*u.degree,dec = ref_dec*u.degree, frame = in_frame)
         trans_ref_coord = ref_coord.transform_to(out_frame)
         
         sechdr['CRVAL1'] = trans_ref_coord.ra.value

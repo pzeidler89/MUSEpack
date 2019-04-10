@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>line_fitter &mdash; MUSEpack  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MUSEpack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">1. Installing MUSEpack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-python-packages">1.1. Additional python packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">2. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">3. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">3.2. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">4.1. Radial Velocities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">4.4. History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Disclaimer:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../disclaimer.html">Disclaimer</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MUSEpack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>line_fitter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for line_fitter</h1><div class="highlight"><pre>
+<span></span><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.0&#39;</span>
+
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;201902125&#39;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pyspeckit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="k">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">FormatStrFormatter</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">wofz</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">mlines</span>
+<span class="kn">from</span> <span class="nn">MUSEpack.utils</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="line_fitter"><a class="viewcode-back" href="../radialvelocities.html#line_fitter.line_fitter">[docs]</a><span class="k">def</span> <span class="nf">line_fitter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linecat</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">niter</span><span class="p">,</span>\
+<span class="n">input_resid_level</span><span class="p">,</span> <span class="n">max_contorder</span><span class="p">,</span> <span class="n">max_ladjust</span><span class="p">,</span> <span class="n">adjust_preference</span><span class="p">,</span>\
+<span class="n">input_continuum_deviation</span><span class="p">,</span> <span class="n">llimits</span><span class="p">,</span> <span class="n">max_exclusion_level</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span>\
+<span class="n">autoadjust</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        linecat : :func:`numpy.array`</span>
+<span class="sd">            Array with the spectral lines and their wavelengths</span>
+
+<span class="sd">        line_idx : :obj:`str`</span>
+<span class="sd">            Name of the primary line</span>
+
+<span class="sd">        niter : :obj:`int`</span>
+<span class="sd">            Number of iterations</span>
+
+<span class="sd">        input_resid_level : :obj:`float`</span>
+<span class="sd">            The maximum MAD for the fit residuals for a succesfull fit</span>
+
+<span class="sd">        max_contorder : :obj:`int`</span>
+<span class="sd">            The maximum polynominal order of the continuum to have</span>
+
+<span class="sd">        max_ladjust : :obj:`str`</span>
+<span class="sd">            The maximum number of wavelength range adjustments in steps of 5</span>
+<span class="sd">            Angstrom</span>
+
+<span class="sd">        adjust_preference : :obj:`str`</span>
+<span class="sd">            contorder: continuum order is adjusted first</span>
+
+<span class="sd">            wavelength: wavelength range is adjusted first</span>
+
+<span class="sd">        input_continuum_deviation : :obj:`float`</span>
+<span class="sd">            by how much the continuum is allowed to deviate from a running</span>
+<span class="sd">            median estimate. This is set to prevent lines mimicking a continuum</span>
+
+<span class="sd">        llimits : :obj:`list`</span>
+<span class="sd">            the limits for the wavelength fit as set in ``ppxf``</span>
+
+<span class="sd">        max_exclusion_level : :obj:`float`</span>
+<span class="sd">            The exclusion level for lines to be excluded from the next baseline</span>
+<span class="sd">            estimate as set in ``pyspeckit``</span>
+
+<span class="sd">        blends : :obj:`ascii`-file or :obj:`None`</span>
+<span class="sd">            A file with primary lines that contain blends to provide a maximum</span>
+<span class="sd">            amplitude ratio of the primary and the blend to prevent that the</span>
+<span class="sd">            blend becomes the dominant line in the fit.</span>
+
+<span class="sd">        autoadjust : :obj:`bool`</span>
+<span class="sd">            :obj:`True`: the wavelength limits ``llimit`` will be adjusted to</span>
+<span class="sd">            the fit of the previous iteration. All other wavelength range are</span>
+<span class="sd">            adjusted accordingly taking into account the proper velocity</span>
+<span class="sd">            corrected shift :math:`\Delta \lambda/\lambda`. This is especially</span>
+<span class="sd">            important to detect hyper-velocity stars.</span>
+
+<span class="sd">            :obj:`False`: no adjustment to the limits done</span>
+
+<span class="sd">        fwhm_block : :obj:`bool:obj:`</span>
+<span class="sd">            :obj:`True`: The minimum fwhm of the voigt profiles of the fitted</span>
+<span class="sd">            lines is the instrument&#39;s dispersion</span>
+
+<span class="sd">            :obj:`False`: The minimum fwhm of the voigt profiles of the fitted</span>
+<span class="sd">            lines is zero</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        line_idx : :obj:`str`</span>
+<span class="sd">            Name of the primary line</span>
+
+<span class="sd">        temp_l : :obj:`float`</span>
+<span class="sd">            fitted wavelength of the primary line</span>
+
+<span class="sd">        temp_a : :obj:`float`</span>
+<span class="sd">            fitted amplitude of the primary line</span>
+
+<span class="sd">        temp_sl : :obj:`float`</span>
+<span class="sd">            fitted Lorentzian gamma of the primary line</span>
+
+<span class="sd">        temp_sg : :obj:`float`</span>
+<span class="sd">            fitted Gaussian sigma of the primary line</span>
+
+<span class="sd">        spec_select_idx : :func:`numpy.array`</span>
+<span class="sd">            indices of the used part of the spectrum</span>
+
+<span class="sd">        template_f : :func:`numpy.array`</span>
+<span class="sd">            template spectrum shifted to the rest-frame</span>
+
+<span class="sd">        continuum : :func:`numpy.array`</span>
+<span class="sd">            the fitted continuum</span>
+
+<span class="sd">        lstart : :obj:`float`</span>
+<span class="sd">            first used wavelength bin (might differ from input if it was</span>
+<span class="sd">            adjusted during fitting)</span>
+
+<span class="sd">        lend : :obj:`float`</span>
+<span class="sd">            last used wavelength bin (might differ from input if it was</span>
+<span class="sd">            adjusted during fitting)</span>
+
+<span class="sd">        contorder : :obj:`int`</span>
+<span class="sd">            The order of the polynominal used for the continuum</span>
+
+<span class="sd">        fit_f : array</span>
+<span class="sd">            the fitted spectrum</span>
+
+<span class="sd">        significance : :obj:`float`</span>
+<span class="sd">            the line strength over the continuum</span>
+
+<span class="sd">        fit_failed : :obj:`bool`</span>
+<span class="sd">            :obj:`True`: if the fit failed for some reason. This line will be               excluded from further analyses</span>
+
+<span class="sd">        fit_f_highres : :obj:`float`</span>
+<span class="sd">            the fitted spectrum and the oversampling resolution</span>
+
+<span class="sd">        spec_select_idx_highres : :func:`numpy.array`</span>
+<span class="sd">            indices of the used part of the over sampled spectrum</span>
+
+<span class="sd">        template_f_highres : :func:`numpy.array`</span>
+<span class="sd">            over sampled template spectrum shifted to the rest-frame</span>
+
+<span class="sd">        continuum_highres : :func:`numpy.array`</span>
+<span class="sd">            the fitted over sampled continuum</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Started line &#39;</span> <span class="o">+</span> <span class="n">line_idx</span><span class="p">)</span>
+
+    <span class="n">resid_level</span> <span class="o">=</span> <span class="mf">5.</span>
+    <span class="n">std_resid</span> <span class="o">=</span> <span class="n">resid_level</span> <span class="o">+</span> <span class="mf">1.</span>
+    <span class="n">continuum_dev</span> <span class="o">=</span> <span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
+
+    <span class="n">lstart</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_start&#39;</span><span class="p">])</span>
+    <span class="n">lend</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_end&#39;</span><span class="p">])</span>
+    <span class="n">contorder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;cont_order&#39;</span><span class="p">]</span>
+
+    <span class="n">n_ladjust</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_cont_reached</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">max_n_ladjust_reached</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">significant</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">fit_failed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">std_resid</span> <span class="o">&gt;</span> <span class="n">resid_level</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">std_resid</span><span class="p">)</span>\
+    <span class="ow">or</span> <span class="n">continuum_dev</span> <span class="o">&gt;</span> <span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">]</span>\
+    <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">continuum_dev</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fit_failed</span><span class="p">:</span>
+
+        <span class="n">lines_select</span> <span class="o">=</span> <span class="n">linecat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">linecat</span> <span class="o">&gt;=</span> <span class="n">lstart</span><span class="p">)</span>\
+        <span class="o">&amp;</span> <span class="p">(</span><span class="n">linecat</span> <span class="o">&lt;</span> <span class="n">lend</span><span class="p">))]</span>
+
+        <span class="n">spec_select_idx</span>\
+        <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span> <span class="o">&gt;=</span> <span class="n">lstart</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span> <span class="o">&lt;</span> <span class="n">lend</span><span class="p">))</span>
+
+        <span class="n">spec_select_idx_highres</span>\
+        <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span> <span class="o">&gt;=</span> <span class="n">lstart</span><span class="p">)</span> <span class="o">&amp;</span>\
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span> <span class="o">&lt;</span> <span class="n">lend</span><span class="p">))</span>
+
+        <span class="n">linefit_guess</span><span class="p">,</span> <span class="n">linefit_limits</span><span class="p">,</span> <span class="n">linefit_limited</span> <span class="o">=</span>\
+        <span class="n">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines_select</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span> <span class="n">llimits</span><span class="o">=</span><span class="n">llimits</span><span class="p">)</span>
+
+        <span class="n">exponent</span>\
+        <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">]))</span> <span class="o">-</span> <span class="mf">4.</span><span class="p">)</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">exponent</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+
+        <span class="n">template_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">fit_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">temp_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">temp_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_err</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span><span class="p">,</span>\
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">temp_lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">continuum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">template_f_highres</span>\
+        <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">fit_f_highres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">temp_lambda_highres</span>\
+        <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">[</span><span class="n">spec_select_idx_highres</span><span class="p">],</span>\
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">continuum_highres</span>\
+        <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">input_resid_level</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">resid_level</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">temp_err</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">temp_err</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resid_level</span> <span class="o">=</span> <span class="n">input_resid_level</span>
+
+        <span class="n">sp</span> <span class="o">=</span> <span class="n">pyspeckit</span><span class="o">.</span><span class="n">Spectrum</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">temp_f</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">temp_err</span><span class="p">,</span> <span class="n">xarr</span><span class="o">=</span><span class="n">temp_lambda</span><span class="p">,</span>\
+                                <span class="n">unit</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;flux [$10^{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>\
+                                <span class="o">+</span> <span class="s1">&#39;}$ erg$^{-1}$ s$^{-1}$ cm$^{-2}$ &#39;</span>\
+                                <span class="o">+</span> <span class="s1">&#39;$\AA^{-1}$]&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="p">{})</span>
+        <span class="n">sp</span><span class="o">.</span><span class="n">xarr</span><span class="o">.</span><span class="n">set_unit</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">AA</span><span class="p">)</span>
+        <span class="n">sp</span><span class="o">.</span><span class="n">xarr</span><span class="o">.</span><span class="n">xtype</span> <span class="o">=</span> <span class="s1">&#39;wavelength&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">plotter</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">line_idx</span><span class="p">)</span>
+
+        <span class="n">exclusion_level</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pat</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="n">iterations</span> <span class="o">&lt;</span> <span class="n">niter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">iterations</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">newparinfo</span> <span class="o">=</span> <span class="n">update_parinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linefit_guess</span><span class="p">,</span> \
+                <span class="n">llimits</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">iterations</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">newparinfo</span> <span class="o">=</span> <span class="n">update_parinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linefit_guess</span><span class="p">,</span>\
+                <span class="n">llimits</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">,</span>\
+                <span class="n">autoadjust</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">log</span><span class="o">.</span><span class="n">log_to_list</span><span class="p">()</span> <span class="k">as</span> <span class="n">log_list</span><span class="p">:</span>
+                <span class="n">sp</span><span class="o">.</span><span class="n">baseline</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">contorder</span><span class="p">),</span> <span class="n">plot_baseline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+                <span class="n">subtract</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">highlight_fitregion</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+                <span class="n">excludefit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+                <span class="n">fit_plotted_area</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclusionlevel</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">exclusion_level</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">iterations</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">multifit</span><span class="p">(</span><span class="n">fittype</span><span class="o">=</span><span class="s1">&#39;voigt&#39;</span><span class="p">,</span> <span class="n">renormalize</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>\
+                    <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_components</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+                    <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">guesses</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">linefit_guess</span><span class="p">),</span> <span class="n">parinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+                    <span class="n">reset_fitspec</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">linefit_limits</span><span class="p">,</span>\
+                    <span class="n">limited</span><span class="o">=</span><span class="n">linefit_limited</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">iterations</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">multifit</span><span class="p">(</span><span class="n">fittype</span><span class="o">=</span><span class="s1">&#39;voigt&#39;</span><span class="p">,</span> <span class="n">renormalize</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>\
+                    <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_components</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+                    <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parinfo</span><span class="o">=</span><span class="n">newparinfo</span><span class="p">,</span>\
+                    <span class="n">reset_fitspec</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">exclusion_level</span> <span class="o">&gt;=</span> <span class="n">max_exclusion_level</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: LINE FIT FAILED !!!!!: </span><span class="se">\</span>
+<span class="s1">                    Exclusion level reached max of &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_exclusion_level</span><span class="p">))</span>
+                    <span class="n">fit_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">log_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gnorm=0.&#39;</span>\
+                <span class="ow">and</span> <span class="n">exclusion_level</span> <span class="o">&lt;</span> <span class="n">max_exclusion_level</span><span class="p">:</span>
+                    <span class="n">exclusion_level</span> <span class="o">+=</span> <span class="mf">0.01</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Adjusting exclusion level&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39; to: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exclusion_level</span><span class="p">)))</span>
+                    <span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">sp</span> <span class="o">=</span> <span class="n">pyspeckit</span><span class="o">.</span><span class="n">Spectrum</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">temp_f</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">temp_err</span><span class="p">,</span>\
+                    <span class="n">xarr</span><span class="o">=</span><span class="n">temp_lambda</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;flux [$10^{&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span>\
+                    <span class="o">+</span> <span class="s1">&#39;}$ erg$^{-1}$ s$^{-1}$ cm$^{-2}$ $\AA^{-1}$]&#39;</span><span class="p">,</span>\
+                    <span class="n">header</span><span class="o">=</span><span class="p">{})</span>
+                    <span class="n">sp</span><span class="o">.</span><span class="n">xarr</span><span class="o">.</span><span class="n">set_unit</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">AA</span><span class="p">)</span>
+                    <span class="n">sp</span><span class="o">.</span><span class="n">xarr</span><span class="o">.</span><span class="n">xtype</span> <span class="o">=</span> <span class="s1">&#39;wavelength&#39;</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+                        <span class="n">sp</span><span class="o">.</span><span class="n">plotter</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">log_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;gnorm=0.&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">iterations</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">chi2_change</span> <span class="o">=</span>\
+                        <span class="p">(</span><span class="n">chi2</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">optimal_chi2</span><span class="p">(</span><span class="n">reduced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                        <span class="n">threshold</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">))</span>\
+                        <span class="o">/</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">optimal_chi2</span><span class="p">(</span><span class="n">reduced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                        <span class="n">threshold</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">optimal_chi2</span><span class="p">(</span><span class="n">reduced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                        <span class="n">threshold</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">chi2</span>\
+                        <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">chi2_change</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">:</span>
+                            <span class="k">break</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Iteration: &#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; delta Chi2: &#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chi2_change</span><span class="p">)))</span>
+
+                    <span class="n">chi2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">optimal_chi2</span><span class="p">(</span><span class="n">reduced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                    <span class="n">threshold</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Iteration: &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Chi2: &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:3.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chi2</span><span class="p">)))</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+                        <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">plot_components</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">plotter</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>\
+                        <span class="n">add_baseline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
+                        <span class="n">component_fit_color</span><span class="o">=</span><span class="n">plotcolor</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
+                        <span class="n">ax</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">plotter</span><span class="o">.</span><span class="n">axis</span>
+                        <span class="n">pat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mlines</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span>\
+                        <span class="n">color</span><span class="o">=</span><span class="n">plotcolor</span><span class="p">(</span><span class="n">iterations</span><span class="p">),</span>\
+                        <span class="n">label</span><span class="o">=</span><span class="s1">&#39;# iter: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iterations</span><span class="p">)))</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">pat</span><span class="p">)</span>
+
+                    <span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+                    <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press ENTER to continue&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">plotresiduals</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">plotter</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+            <span class="n">yoffset</span><span class="o">=</span><span class="mf">0.9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">temp_f</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">plot_fit</span><span class="p">(</span><span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">composite_fit_color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">baseline</span><span class="o">.</span><span class="n">plot_baseline</span><span class="p">(</span><span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+            <span class="n">baseline_fit_color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parinfo:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Press ENTER to close the plot window&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fit_failed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">iterations</span> <span class="o">&lt;</span> <span class="n">niter</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Converged after &#39;</span>\
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; iterations; Chi2: &#39;</span>\
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:3.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chi2</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; delta Chi2 [%]: &#39;</span>\
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chi2_change</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="n">iterations</span> <span class="o">==</span> <span class="n">niter</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+            <span class="o">+</span> <span class="s1">&#39;: Maximum number of iterations (&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span>\
+            <span class="o">+</span> <span class="s1">&#39;) reached; Chi2: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">chi2</span><span class="p">))</span>
+
+            <span class="n">par_extract_idx</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">lab_line_idx</span><span class="p">,</span> <span class="n">lab_lines</span>\
+            <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]])):</span>
+                <span class="n">par_extract_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">par_extract_idx</span><span class="p">,</span>\
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lines_select</span> <span class="o">==</span> <span class="n">lab_lines</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines_select</span><span class="p">)):</span>
+                <span class="n">xcen</span> <span class="o">=</span> <span class="n">lines_select</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">gamma</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                <span class="n">amp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+
+                <span class="n">highres_f</span> <span class="o">=</span> <span class="n">voigt_funct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span> <span class="n">xcen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>\
+                <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+                <span class="n">lowres_f</span> <span class="o">=</span> <span class="n">spec_res_downgrade</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span>\
+                <span class="n">highres_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">)</span>
+
+                <span class="n">lineflux</span> <span class="o">=</span> <span class="n">amp</span> <span class="o">*</span> <span class="n">lowres_f</span>
+                <span class="n">lineflux_highres</span> <span class="o">=</span> <span class="n">amp</span> <span class="o">*</span> <span class="n">highres_f</span>
+
+                <span class="n">template_f</span> <span class="o">+=</span> <span class="n">lineflux</span> <span class="o">/</span> <span class="n">factor</span>
+                <span class="n">template_f_highres</span> <span class="o">+=</span> <span class="n">lineflux_highres</span> <span class="o">/</span> <span class="n">factor</span>
+
+                <span class="n">highres_f</span> <span class="o">=</span> <span class="n">voigt_funct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span>\
+                <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+                <span class="n">lowres_f</span> <span class="o">=</span> <span class="n">spec_res_downgrade</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span>\
+                <span class="n">highres_f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda</span><span class="p">)</span>
+
+                <span class="n">lineflux_fit</span> <span class="o">=</span> <span class="n">amp</span> <span class="o">*</span> <span class="n">lowres_f</span>
+                <span class="n">lineflux_fit_highres</span> <span class="o">=</span> <span class="n">amp</span> <span class="o">*</span> <span class="n">highres_f</span>
+
+                <span class="n">fit_f</span> <span class="o">+=</span> <span class="n">lineflux_fit</span> <span class="o">/</span> <span class="n">factor</span>
+                <span class="n">fit_f_highres</span> <span class="o">+=</span> <span class="n">lineflux_fit_highres</span> <span class="o">/</span> <span class="n">factor</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">par_extract_idx</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+
+                    <span class="n">temp_a</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>\
+                    <span class="o">/</span> <span class="n">factor</span>
+                    <span class="n">temp_l</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="n">temp_sg</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                    <span class="n">temp_sl</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+
+            <span class="n">baseline_temp</span> <span class="o">=</span> <span class="n">baseline_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">contorder</span><span class="p">)</span>
+            <span class="n">baseline_sub_spec</span> <span class="o">=</span>\
+            <span class="n">sp</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="n">baseline_temp</span><span class="p">(</span><span class="n">temp_lambda</span> <span class="o">-</span> <span class="n">temp_lambda</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">continuum</span> <span class="o">=</span> <span class="n">baseline_temp</span><span class="p">(</span><span class="n">temp_lambda</span> <span class="o">-</span> <span class="n">temp_lambda</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">factor</span>
+            <span class="n">continuum_highres</span> <span class="o">=</span> <span class="n">baseline_temp</span><span class="p">(</span><span class="n">temp_lambda_highres</span>\
+            <span class="o">-</span> <span class="n">temp_lambda_highres</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">factor</span>
+
+            <span class="n">resid</span> <span class="o">=</span> \
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">])</span> <span class="o">/</span> <span class="n">continuum</span>
+            <span class="n">std_resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
+
+            <span class="n">continuum_dev</span> <span class="o">=</span> <span class="n">continuum_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp_lambda</span><span class="p">,</span>\
+            <span class="n">temp_f</span><span class="p">,</span> <span class="n">continuum</span><span class="p">,</span> <span class="n">contorder</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">std_resid</span> <span class="o">&gt;</span> <span class="n">resid_level</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">std_resid</span><span class="p">)</span>\
+            <span class="ow">or</span> <span class="n">continuum_dev</span> <span class="o">&gt;</span> <span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">]</span>\
+            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">continuum_dev</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">std_resid</span> <span class="o">&gt;</span> <span class="n">resid_level</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">std_resid</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+                    <span class="o">+</span> <span class="s1">&#39;: STD of residuals: &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_resid</span><span class="p">))</span>\
+                    <span class="o">+</span> <span class="s1">&#39; targeted: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resid_level</span><span class="p">)))</span>
+
+                <span class="k">if</span> <span class="n">continuum_dev</span> <span class="o">&gt;</span> <span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Continuum deviation: &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">continuum_dev</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; targeted: &#39;</span>\
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">])))</span>
+
+                <span class="k">if</span> <span class="n">contorder</span> <span class="o">==</span> <span class="n">max_contorder</span><span class="p">:</span>
+                    <span class="n">max_cont_reached</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="n">n_ladjust</span> <span class="o">==</span> <span class="n">max_ladjust</span><span class="p">:</span>
+                    <span class="n">max_n_ladjust_reached</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">if</span> <span class="n">max_cont_reached</span> <span class="ow">and</span> <span class="n">max_n_ladjust_reached</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">line_idx</span>\
+                    <span class="o">+</span> <span class="s2">&quot;: Maximum adjustments reached: Check the output&quot;</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+                <span class="k">if</span> <span class="n">adjust_preference</span> <span class="o">==</span> <span class="s1">&#39;contorder&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">max_cont_reached</span><span class="p">:</span>
+                        <span class="n">contorder</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+                        <span class="o">+</span> <span class="s1">&#39;: Adjusting continuum order to: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">contorder</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">max_cont_reached</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">max_n_ladjust_reached</span><span class="p">:</span>
+                        <span class="n">lstart</span> <span class="o">-=</span> <span class="mf">5.</span>
+                        <span class="n">lend</span> <span class="o">+=</span> <span class="mf">5.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+                        <span class="o">+</span> <span class="s1">&#39;: maximum continuum order reached =&gt; Adjusting&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; wavelength range to: [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lstart</span><span class="p">)</span>\
+                        <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lend</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
+                        <span class="n">n_ladjust</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">max_cont_reached</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">contorder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;cont_order&#39;</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">adjust_preference</span> <span class="o">!=</span> <span class="s1">&#39;contorder&#39;</span><span class="p">:</span>
+                    <span class="n">contorder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;cont_order&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">max_n_ladjust_reached</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">adjust_preference</span> <span class="o">==</span> <span class="s1">&#39;min_lambda&#39;</span>\
+                        <span class="ow">or</span> <span class="n">adjust_preference</span> <span class="o">==</span> <span class="s1">&#39;minmax_lambda&#39;</span><span class="p">:</span>
+                            <span class="n">lstart</span> <span class="o">-=</span> <span class="mf">5.</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+                            <span class="o">+</span> <span class="s1">&#39;: Adjusting lower wavelength range to: &#39;</span>\
+                            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lstart</span><span class="p">))</span>
+
+                        <span class="k">if</span> <span class="n">adjust_preference</span> <span class="o">==</span> <span class="s1">&#39;max_lambda&#39;</span>\
+                        <span class="ow">or</span> <span class="n">adjust_preference</span> <span class="o">==</span> <span class="s1">&#39;minmax_lambda&#39;</span><span class="p">:</span>
+                            <span class="n">lend</span> <span class="o">+=</span> <span class="mf">5.</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Adjusting upper </span><span class="se">\</span>
+<span class="s1">                            wavelength range to: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lend</span><span class="p">))</span>
+                        <span class="n">n_ladjust</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">max_n_ladjust_reached</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">max_cont_reached</span><span class="p">:</span>
+                        <span class="n">contorder</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span>\
+                        <span class="o">+</span> <span class="s1">&#39;: maximum wavelength adjustment reached =&gt;&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; Adjusting continuum order to: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">contorder</span><span class="p">))</span>
+
+                        <span class="n">lstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_start&#39;</span><span class="p">]</span>
+                        <span class="n">lend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_end&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">fit_failed</span><span class="p">:</span>
+        <span class="n">temp_l</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">temp_a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">temp_sl</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">temp_sg</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="n">significance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">temp_a</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">temp_err</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fit_failed</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: STD of residuals: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">std_resid</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; targeted: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resid_level</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39;: Continuum deviation: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">continuum_dev</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; targeted: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:2.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line_idx</span> <span class="o">+</span> <span class="s1">&#39; Line significance: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:3.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">significance</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">temp_l</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>\
+        <span class="ow">or</span> <span class="n">temp_l</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>\
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">autoadjust</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">line_idx</span>\
+            <span class="o">+</span> <span class="s1">&#39; exceeds 0.8 of lambda limits; lfit: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp_l</span><span class="p">)</span>\
+            <span class="o">+</span> <span class="s1">&#39; llab: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">])</span>\
+            <span class="o">+</span> <span class="s1">&#39; llimits = [&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Finished line &#39;</span> <span class="o">+</span> <span class="n">line_idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">temp_l</span><span class="p">,</span> <span class="n">temp_a</span><span class="p">,</span> <span class="n">temp_sl</span><span class="p">,</span> <span class="n">temp_sg</span><span class="p">,</span> <span class="n">spec_select_idx</span><span class="p">,</span>\
+    <span class="n">template_f</span><span class="p">,</span> <span class="n">continuum</span><span class="p">,</span> <span class="n">lstart</span><span class="p">,</span> <span class="n">lend</span><span class="p">,</span> <span class="n">contorder</span><span class="p">,</span> <span class="n">fit_f</span><span class="p">,</span> <span class="n">significance</span><span class="p">,</span>\
+    <span class="n">fit_failed</span><span class="p">,</span> <span class="n">fit_f_highres</span><span class="p">,</span> <span class="n">spec_select_idx_highres</span><span class="p">,</span> <span class="n">template_f_highres</span><span class="p">,</span>\
+    <span class="n">continuum_highres</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Peter Zeidler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>
