@@ -1,6 +1,6 @@
 __version__ = '0.1.0'
 
-__revision__ = '201902125'
+__revision__ = '20190422'
 
 import sys
 import os
@@ -383,6 +383,7 @@ autoadjust, fwhm_block):
 
             resid = \
             (self.spec_f[spec_select_idx] - fit_f[spec_select_idx]) / continuum
+
             std_resid = np.std(resid)
 
             continuum_dev = continuum_deviation(self, temp_lambda,\

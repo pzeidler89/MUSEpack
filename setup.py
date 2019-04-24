@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='MUSEpack',
-      version='0.4.6.dev20190321',
+      version='0.4.6.dev20190422',
       packages=['MUSEpack'],
       author = 'Peter Zeidler',
       author_email = 'peterzeidler89@gmail.com',

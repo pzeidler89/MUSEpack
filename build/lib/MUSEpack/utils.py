@@ -12,7 +12,7 @@ vers. 0.1.2: now handles absorption and emission lines
 
 __version__ = '0.1.2'
 
-__revision__ = '20190221'
+__revision__ = '20190422'
 
 import sys
 import os
@@ -42,10 +42,30 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
                     llimits=[2. * (-1), 2.]):
 
     '''
-    lines: ARRAY, central wavelengths of the spectral lines
-    linestrength: FLOAT, initial guess for the line strength
-                         default: 100
-    return: guesses,limits,limited
+    Creates the initial guesses for the line fitter
+
+    Args:
+    lines : :func:`numpy.array`
+        central wavelengths of the spectral lines
+
+    Kwargs:
+
+    linestrength : :obj:`float` (default: 100)
+        initial guess for the line strength
+
+    blends : :obj:`str` (optional)
+        A file containing the a list of blended lines in the 
+        format: ** List is coming soon**
+
+    return:
+        guesses : :obj:`list`
+            lists containing the guesses
+
+        limits : :obj:`list`
+            lists containing the limits
+
+        limited : :obj:`list`
+            lists containing the limited
     '''
 
     if self.linetype == 'absorption':

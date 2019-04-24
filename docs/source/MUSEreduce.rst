@@ -72,3 +72,5 @@ History
    rewriting :class:`MUSEreduce.musereduce` to a class and pep-8 style. *DEBUG* keyword added. Wrapper can be executed without running ``esorex`` but needs to be used with already existing reduced data.
 .. versionadded:: 0.5.1
    added *skymethod*
+.. versionadded:: 0.5.2
+   M:class:`MUSEreduce.musereduce` can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.

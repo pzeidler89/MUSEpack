@@ -683,8 +683,8 @@ class RV_spectrum:
                 log_spec_err, velscale_spec, guesses, degree=-1, clean=False,\
                 mask=mask, quiet=True, fixed=[0, 1])
 
-            # if len(l_lab) == 1:
-            #     pp_final_init = pp_outliers_init
+            if len(l_lab) == 1:
+                pp_final_init = pp_outliers_init
             # pp_final_init.plot()
             # # plt.tight_layout()
             # plt.savefig(self.spec_id + '_ppxf_fit_final.png',\

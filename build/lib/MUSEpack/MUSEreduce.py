@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
-__revision__ = '20190305'
+__revision__ = '20190416'
 
 import sys
 import shutil
@@ -147,9 +147,9 @@ class musereduce:
                 print('>>> Using ESO calibration files')
             else:
                 print('>>> Using self-processed calibration files')
-                if dark:
+                if self.dark:
                     print('>>> DARK will be reduced and used')
-                if not dark:
+                if not self.dark:
                     print('>>> DARK will not be reduced and used')
         if self.dark:
             print('>>> DARK will be used: ' + str(self.dark))
@@ -160,6 +160,7 @@ class musereduce:
         if self.dithering_multiple_OBs:
             print('>>> Exposures per pointing are spread over multiple OBs')
             print('==> The pointing name is: ' + self.dithername)
+            self.multOB_exp_counter = 0
         else:
             print('>>> All exposures are located in one OB')
             if len(self.user_list) > 0:
@@ -635,7 +636,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
                 format='no_header')
-            if dark:
+            if self.dark:
                 raw_data_list_DARK = ascii.read(exp_list_DAR[exposure_ID],\
                 format='no_header')
             raw_data_list_TWILIGHT = ascii.read(exp_list_TWI[exposure_ID],\
@@ -649,7 +650,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
                     + raw_data_list[i][1] + '\n')
             f_science.close()
 
-            if dark:
+            if self.dark:
                 f_dark = open(self.calibration_dir
                                 + 'DARK/bias_temp.sof', 'w')
                 for i in range(len(raw_data_list_DARK[1][:])):
@@ -696,7 +697,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
                     esorex_cmd)
 
-            if dark:
+            if self.dark:
                 if os.path.isfile(self.calibration_dir + 'DARK/bias.sof'):
                     assert filecmp.cmp(self.calibration_dir + 'DARK/bias.sof',\
                     self.calibration_dir + 'DARK/bias_temp.sof'),\
@@ -826,7 +827,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
             os.remove(self.calibration_dir + 'TWILIGHT/flat.sof')
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(self.exposure_ID + 1)\
+            print('>>> processing exposure: ' + str(exposure_ID + 1)\
             + '/' + str(len(exp_list_SCI)))
             print('>>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
@@ -874,11 +875,11 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
                 + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.close()
 
-            if os.path.isfile(calibration_dir + 'TWILIGHT/flat.sof'):
+            if os.path.isfile(self.calibration_dir + 'TWILIGHT/flat.sof'):
                 assert filecmp.cmp(self.calibration_dir + 'TWILIGHT/flat.sof',\
                 self.calibration_dir + 'TWILIGHT/flat_temp.sof'),\
                 'CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK'
-                os.remove(calibration_dir + 'TWILIGHT/flat_temp.sof')
+                os.remove(self.calibration_dir + 'TWILIGHT/flat_temp.sof')
 
             else:
                 os.rename(self.calibration_dir + 'TWILIGHT/flat_temp.sof',\
@@ -949,7 +950,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
             + 'SCIENCE/MASTER_BIAS.fits MASTER_BIAS\n')
             f.write(self.calibration_dir\
             + 'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
-            if dark:
+            if self.dark:
                 f.write(self.calibration_dir\
                 + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.close()
@@ -979,7 +980,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
             + 'TWILIGHT/MASTER_BIAS.fits MASTER_BIAS\n')
             f.write(self.calibration_dir\
             + 'TWILIGHT/TRACE_TABLE.fits TRACE_TABLE\n')
-            if dark:
+            if self.dark:
                 f.write(self.calibration_dir\
                 + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.close()
@@ -1063,7 +1064,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
             + 'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
             f.write(self.calibration_dir\
             + 'SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-            if dark:
+            if self.dark:
                 f.write(self.exposure_dir\
                 + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.write(self.calibration_dir\
@@ -1096,7 +1097,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
             + 'TWILIGHT/TRACE_TABLE.fits TRACE_TABLE\n')
             f.write(self.calibration_dir\
             + 'TWILIGHT/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
-            if dark:
+            if self.dark:
                 f.write(self.exposure_dir\
                 + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
             f.write(self.calibration_dir\
@@ -1653,14 +1654,14 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log\
-                --log-level=debug muse_create_sky --fraction='\
+                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
+                + '--log-level=debug muse_create_sky --fraction='\
                 + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log\
-                --log-level=debug muse_create_sky --fraction='\
+                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
+                + '--log-level=debug muse_create_sky --fraction='\
                 + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
 
@@ -1707,14 +1708,14 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log \
-                --log-level=debug muse_create_sky \
-                --fraction=' + str(self.skyfraction) + ' --ignore='\
+                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
+                + '--log-level=debug muse_create_sky'\
+                + '--fraction=' + str(self.skyfraction) + ' --ignore='\
                 + str(self.skyignore) + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log \
-                --log-level=debug muse_create_sky --fraction='
+                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
+                + '--log-level=debug muse_create_sky --fraction='
                 + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
@@ -2061,27 +2062,33 @@ def _dither_collect(self, exp_list_SCI, OB):
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/DATACUBE_FINAL_' + OB + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits',\
                         combining_exposure_dir_withoutsky\
-                        + '/DATACUBE_FINAL_' + OB + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/IMAGE_FOV_' + OB + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
-                        + '/IMAGE_FOV_' + OB + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/PIXTABLE_REDUCED_' + OB + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
-                        + '/PIXTABLE_REDUCED_' + OB + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + str(exp_num + 1).rjust(2, '0') + '.fits')
                     else:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
@@ -2119,27 +2126,32 @@ def _dither_collect(self, exp_list_SCI, OB):
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + OB + '.fits')
+                        + '/DATACUBE_FINAL_' + OB\
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + OB + '.fits')
+                        + '/DATACUBE_FINAL_' + OB\
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/IMAGE_FOV_' + OB + '.fits')
+                        + '/IMAGE_FOV_' + OB\
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits',\
                         combining_exposure_dir_withsky + '/IMAGE_FOV_' + OB\
-                        + '.fits')
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                         print(exp_list[exp_num][:-9] +\
                         ' /PIXTABLE_REDUCED_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_' + OB + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB\
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_' + OB + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB\
+                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
 
                     else:
                         print(exp_list[exp_num][:-9]\
@@ -2178,27 +2190,27 @@ def _dither_collect(self, exp_list_SCI, OB):
                     print(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/DATACUBE_FINAL_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits',\
                     combining_exposure_dir + '/DATACUBE_FINAL_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                     print(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/IMAGE_FOV_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/IMAGE_FOV_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                     print(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/PIXTABLE_REDUCED_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/PIXTABLE_REDUCED_' + OB\
-                    + '.fits')
+                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
                 else:
                     print(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
