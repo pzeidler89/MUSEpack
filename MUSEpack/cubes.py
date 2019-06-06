@@ -2,6 +2,7 @@
 
 import sys
 import os
+import glob
 import shutil
 import numpy as np
 from astropy.io import ascii
@@ -11,13 +12,17 @@ from astropy.table import Column
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
+from astropy.stats import sigma_clip
 from spectral_cube import SpectralCube
 import montage_wrapper as montage
 
+''' internal modules'''
+from MUSEpack.utils import ABtoVega
 
-def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
+def wcs_cor(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
             output_file=None, out_frame=None, in_frame=None,
-            wcsname='Pampelmuse', correctiontype='shift'):
+            correct_flux=False, spec_folder='stars', spec_path=os.getcwd(),
+            correctiontype='shift'):
 
     '''
     Args:
@@ -34,8 +39,7 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         prm_path : :obj:`str` (optional, default: current directory)
             I/O path of prm file
 
-        output_file : :obj:`str` (optional, default: update fitsheader of input
-            fits)
+        output_file : :obj:`str` (optional, default: input file name +_cor)
             outputfile name
 
         output_frame : :obj:`str` (optional, default : input frame)
@@ -47,8 +51,20 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
             determined from the header information or it has to be manually
             changed
 
-        wcsname : :obj:`str` (optional, default: ``Pampelmuse``)
-            the name of the new, updated wcs
+        correct_flux : :obj:`bool` (optional, default: :obj:`False`)
+            If set :obj:`True` the fluxes of the data cube will be corrected
+            to match the input catalog to correct for calibration offsets.
+            This step is only recommended if the input fluxes can be trusted.
+            CUBEFIT and GETSPECTRA have to executed again using the corrected
+            data cube to correct the prm file and to extract the corrected
+            spectra.
+
+        spec_folder : :obj:`str` (optional, default: ``spectra``)
+            The folder name, in which the the extracted stellar spectra are
+            stored. This is only needed if correct_flux=:obj:`True`
+
+        spec_path : :obj:`str` (optional, default: current directory)
+            I/O path of the ``spec_folder``
 
         correctiontype : :obj:`str` (optional, default: ``shift``)
             the type of distortion correction
@@ -61,7 +77,7 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
 
 
     cube = fits.open(path + '/' + input_fits + '.fits')
-    pmr = fits.open(prm_path + '/' + input_prm + '.prm.fits')
+    prm = fits.open(prm_path + '/' + input_prm + '.prm.fits')
 
     print('processing observation: ' + path + '/' + input_fits + '.fits')
     print('using prm file: ' + prm_path + '/' + input_prm + '.prm.fits')
@@ -85,6 +101,9 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         sechdr = cube[0].header
         if 'RADECSYS' in prihdr:
             in_frame = prihdr['RADECSYS'].lower()
+        if correct_flux:
+            print('Flux correction currently only supported'\
+            + ' for MUSE cubes')
 
     assert in_frame is not None, 'No WCS frame provided'
 
@@ -95,20 +114,15 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         print('Output WCS frame: ', out_frame)
     print('')
 
-    A = np.nanmedian(pmr[4].data[0][1])
-    B = np.nanmedian(pmr[4].data[1][1])
-    C = np.nanmedian(pmr[4].data[2][1])
-    D = np.nanmedian(pmr[4].data[3][1])
-    x0 = np.nanmedian(pmr[4].data[4][1])
-    y0 = np.nanmedian(pmr[4].data[5][1])
+    A = np.nanmedian(prm[4].data[0][1])
+    B = np.nanmedian(prm[4].data[1][1])
+    C = np.nanmedian(prm[4].data[2][1])
+    D = np.nanmedian(prm[4].data[3][1])
+    x0 = np.nanmedian(prm[4].data[4][1])
+    y0 = np.nanmedian(prm[4].data[5][1])
 
     CD = np.array([[A, C], [B, D]])
     r = np.array([[x0, 0.], [0., y0]])
-
-    w = WCS(sechdr)
-    w.wcs.name = 'MUSE'
-    orig_hdr = w.to_header(relax=False, key='A')
-    orig_hdr.remove('RADESYSA')
 
     #### coord sys change
     if out_frame != None:
@@ -138,12 +152,47 @@ def wcs_corr(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         sechdr['CD2_1'] = (-1) * B * 0.2 / 3600.
         sechdr['CD2_2'] = D * 0.2 / 3600.
 
-    sechdr.set('WCSNAME', wcsname)
+    #### flux correction
+    if correct_flux and len(cube) == 3:
+        aboffset = ABtoVega('ACS','F814W')
 
-    sechdr.extend(orig_hdr)
+        speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
+
+        cat_mag = []
+        muse_mag = []
+
+        for i, temp_sp in enumerate(speclist):
+
+            spec_hdu = fits.open(temp_sp)
+            spec_head = spec_hdu[0].header
+
+            if 'SPECTRUM MAG F814W' in list(spec_head.keys()):
+                muse_mag = np.append(muse_mag,\
+                spec_head['HIERARCH SPECTRUM MAG F814W'] + 50. + aboffset)
+                cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
+
+        del_mag = cat_mag - muse_mag
+        clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)
+        fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
+
+        print('The magnitude difference catalog - MUSE [mag]: ',\
+        '{:.2f}'.format(np.ma.median(clippend_del_mag)))
+        print('The flux multiplicator f_catalog / f_MUSE: ',\
+        '{:.2f}'.format(fmultipl))
+
+        cube['DATA'].data *= fmultipl
+        cube['STAT'].data *= fmultipl ** 2
+
+        if output_file == None:
+            prm[0].header['HIERARCH PAMPELMUSE global prefix'] = input_prm + '_cor'
+            prm.writeto(prm_path + '/' + input_prm + '_cor.prm.fits', overwrite=True)
+
+        else:
+            shutil.copyfile(prm_path + '/' + input_prm + '.prm.fits',\
+            prm_path + '/' + output_file + '.prm.fits')
 
     if output_file == None:
-        cube.writeto(path + '/' + input_fits + '.fits', overwrite=True)
+        cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)
     else:
         cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
 
@@ -253,7 +302,7 @@ def linemaps(input_fits, path=os.getcwd(), elements=None, wavelengths=None):
     if os.path.exists(path + 'temp/') == False:
         os.mkdir(path + 'temp/')
 
-    cube = SpectralCube.read(path + '/' + input_fits, hdu=1, fomrat='fits')
+    cube = SpectralCube.read(path + '/' + input_fits, hdu=1, format='fits')
     for wavelength, element in zip(wavelengths, elements):
         slab = cube.spectral_slab((wavelength - 3) * u.AA,\
         (wavelength + 3) * u.AA).sum(axis=0)

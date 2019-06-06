@@ -33,6 +33,8 @@ import time
 import logging
 from pysynphot import observation
 from pysynphot import spectrum
+from pysynphot import ObsBandpass
+from pysynphot import BlackBody
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
 from scipy.special import wofz
@@ -371,3 +373,24 @@ def continuum_deviation(self, l_in, f_in, baseline, contorder):
     - baseline_masked / np.median(baseline_masked))
 
     return cont_dev
+
+
+def ABtoVega(instrument, bandpass):
+
+    bp = ObsBandpass(str(instrument) + ',wfc1,'\
+    + str(bandpass) + ',mjd#57754')
+    spec_bb = BlackBody(10000)
+    spec_bb_norm = spec_bb.renorm(1, 'counts', bp)
+    obs = observation.Observation(spec_bb_norm, bp)
+
+    # Get photometric calibration information.
+    photflam = obs.effstim('flam')
+    photplam = bp.pivot()
+
+    zp_vega = obs.effstim('vegamag')
+    zp_st = obs.effstim('stmag')
+    zp_ab = obs.effstim('abmag')
+
+    difference = zp_vega - zp_ab
+
+    return difference
