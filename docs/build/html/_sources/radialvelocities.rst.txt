@@ -25,6 +25,14 @@ Throughout the document the **primary line** is the spectral line of interest fo
 .. autoclass:: radial_velocities.RV_spectrum
    :members:
 
+Monte Carlo radial velocity determination
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is the module that does the Monte Carlo boot strapping to measure RV to desired accuracy. It is automatically called by the ``rv_fit`` attribute of :class:`radial_velocities.RV_spectrum` and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.
+
+.. automodule:: ppxf_MC
+   :members:
+
 
 Spectral line fitter
 --------------------
@@ -41,6 +49,13 @@ In order to accomodate hyper-velocity stars an option is given that the waveleng
 
 .. automodule:: line_fitter
    :members:
+
+Cross correlating the spectra
+-----------------------------
+
+.. todo::
+
+   The documentation will follow soon
 
 Utility modules
 ---------------

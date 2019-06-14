@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. MUSEreduce &mdash; MUSEpack  documentation</title>
+  <title>2. MUSEreduce &mdash; MUSEpack  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="4. Radial velocities" href="radialvelocities.html" />
-    <link rel="prev" title="2. Quickstart" href="quickstart.html" /> 
+    <link rel="next" title="3. Spectral line fitting and radial velocity measurements" href="radialvelocities.html" />
+    <link rel="prev" title="1. Installing MUSEpack" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,20 +88,30 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Quickstart</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#history">3.2. History</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">4. Radial velocities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">4.1. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="linefitting.html">5. Line Fitter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="linefitting.html#history">5.1. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -151,7 +161,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>3. MUSEreduce</li>
+      <li>2. MUSEreduce</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -171,29 +181,356 @@
            <div itemprop="articleBody">
             
   <div class="section" id="musereduce">
-<span id="id1"></span><h1>3. MUSEreduce<a class="headerlink" href="#musereduce" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> is a easy-to-use python wrapper for the VLT/<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">https://www.eso.org/sci/software/pipelines/muse/</a>.</p>
+<span id="id1"></span><h1>2. MUSEreduce<a class="headerlink" href="#musereduce" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> is a easy-to-use python Class used as wrapper for the VLT/<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">https://www.eso.org/sci/software/pipelines/muse/</a>.</p>
+<p>To run <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> all of the raw data must be stored in a folder named <cite>user_path/raw/OB_ID</cite>, where <cite>OB_ID</cite> must be a unique name for each individual OB. It is not mandatory (but recommended) to use the same nomenclature as as in the fits header. The script has to point to <cite>user_path</cite> by setting the keyword <code class="docutils literal notranslate"><span class="pre">rootpath</span></code> of the <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> config file to the parent location.</p>
 <dl class="class">
 <dt id="MUSEreduce.musereduce">
-<em class="property">class </em><code class="descclassname">MUSEreduce.</code><code class="descname">musereduce</code><span class="sig-paren">(</span><em>configfile=None</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#musereduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MUSEreduce.musereduce" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">MUSEreduce.</code><code class="descname">musereduce</code><span class="sig-paren">(</span><em>configfile</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#musereduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MUSEreduce.musereduce" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Kwargs:</dt>
 <dd><dl class="first last docutils">
-<dt>configfile <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, (optional), default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a></span></dt>
+<dt>configfile <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
 <dd>A <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configfile for musereduce, where all the parameters
-will             be set.</dd>
+will be set.</dd>
 <dt>debug <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, (optional), default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></dt>
-<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: musereduce runs in debug mode and ESORex will not be
-executed. All products must be available. It can be used for
-testing the creation of folder, and creating the <code class="docutils literal notranslate"><span class="pre">.sof</span></code> files</dd>
+<dd><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> runs in debug mode and
+ESORex will not be executed. All products must be available.
+It can be used for testing the creation of folder, and creating
+the <code class="docutils literal notranslate"><span class="pre">.sof</span></code> files</dd>
 </dl>
 </dd>
 </dl>
+<dl class="method">
+<dt id="MUSEreduce.musereduce.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#musereduce.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MUSEreduce.musereduce.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method executes wrapper and starts the data reduction process
+set in the <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configfile.</p>
 </dd></dl>
 
-<div class="section" id="utility-modules">
-<h2>3.1. Utility modules<a class="headerlink" href="#utility-modules" title="Permalink to this headline">¶</a></h2>
-<p>The following modules are routines to support the <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a>, needed to execute the various data reduction steps as it is suggested in the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a>. They are documented here for completness.</p>
+</dd></dl>
+
+<div class="section" id="the-basic-folder-structure">
+<h2>2.1. The basic folder structure<a class="headerlink" href="#the-basic-folder-structure" title="Permalink to this headline">¶</a></h2>
+<p>If <code class="docutils literal notranslate"><span class="pre">auto_sort_data</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> in the config file and <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> is executed, the basic folder structure is created in the <code class="docutils literal notranslate"><span class="pre">rootpath</span></code>. As example, we consider that three OBs were observed: OB1a, OB1b, and OB2. OB1a and OB1b are two dither positions (with rotation angles of 5 and 95 deg and an exposure time of 2800s) of the same pointing OB1, while OB2 consists of three dither postions observed in one OB (with rotation angles of 10, 100, and 190 deg and an exposure time of 220s). The folder structure looks the following:</p>
+<img alt="_images/folder_struct.png" src="_images/folder_struct.png" />
+<p>Each <em>master</em> OB (<cite>OB1</cite>, <cite>OB2</cite>) has its own folder in the <cite>reduced</cite> folder. Pointing <cite>OB1</cite> consists of the two OBs <cite>OB1a</cite> and <cite>OB1b</cite>. Each OB has the following folders:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Each individual exposure (e.g., <cite>091315-402023_2800_005_00</cite>) following the structure: RADEC_EXPTIME_ROTANGLE_COUNTER. RADEC is in sexagesimal, EXPTIME in seconds and the ROTANGLE is in degrees. The counter is needed if there are tow exposures with the same configuration.</li>
+<li>Each individual pointing (e.g., <cite>091315-402023_2800</cite>) following the structure: RADEC_EXPTIME.</li>
+<li>The <cite>calibrations</cite> containing <cite>DARK</cite>, <cite>TWILIGHT</cite>, and <cite>SCIENCE</cite>, in case the calibration steps are executed.</li>
+<li>The <cite>ESO_calibrations</cite> where the calibration files delivered by ESO (if available) will be copied to.</li>
+<li>The <cite>static_calibration_files</cite>, in which a copy of the statics (part of the /<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> installation) is created.</li>
+<li>The folder <cite>std</cite>, in which the reduced data of the standard star will be located.</li>
+</ul>
+</div></blockquote>
+<p>The calibration files and the standard star is the same for each individual OB and, therefore, these file are only needed once per OB.</p>
+</div>
+<div class="section" id="the-config-file">
+<h2>2.2. The config file<a class="headerlink" href="#the-config-file" title="Permalink to this headline">¶</a></h2>
+<p>The following is a description of the <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configuration file, which is needed to be set properly to run <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a>.</p>
+<dl class="object">
+<dt id="config">
+<!--[config]--><code class="descname">config</code><a class="headerlink" href="#config" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>global</strong> (<a class="reference internal" href="#global"><code class="xref json json-object docutils literal notranslate"><span class="pre">global</span></code></a>) – global parameters affecting the data reduction process</li>
+<li><strong>calibration</strong> (<a class="reference internal" href="#calibration"><code class="xref json json-object docutils literal notranslate"><span class="pre">calibration</span></code></a>) – parameters that affect the calibration steps of the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a></li>
+<li><strong>sci_basic</strong> (<a class="reference internal" href="#sci_basic"><code class="xref json json-object docutils literal notranslate"><span class="pre">sci_basic</span></code></a>) – the preprocessing of the science exposures</li>
+<li><strong>std_flux</strong> (<a class="reference internal" href="#std_flux"><code class="xref json json-object docutils literal notranslate"><span class="pre">std_flux</span></code></a>) – the flux calibration</li>
+<li><strong>sky</strong> (<a class="reference internal" href="#sky"><code class="xref json json-object docutils literal notranslate"><span class="pre">sky</span></code></a>) – the sky subtraction</li>
+<li><strong>sci_post</strong> (<a class="reference internal" href="#sci_post"><code class="xref json json-object docutils literal notranslate"><span class="pre">sci_post</span></code></a>) – the postprocessing step of the data reduction</li>
+<li><strong>dither_collect</strong> (<a class="reference internal" href="#dither_collect"><code class="xref json json-object docutils literal notranslate"><span class="pre">dither_collect</span></code></a>) – collecting the individual data cubes and pixel tables to combine them to one pointing</li>
+<li><strong>exp_align</strong> (<a class="reference internal" href="#exp_align"><code class="xref json json-object docutils literal notranslate"><span class="pre">exp_align</span></code></a>) – aligning the individual data cubes and pixel tables to one common WCS</li>
+<li><strong>exp_combine</strong> (<a class="reference internal" href="#exp_combine"><code class="xref json json-object docutils literal notranslate"><span class="pre">exp_combine</span></code></a>) – combining the individual data cubes and pixel tables to one final science product</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="global">
+<!--[global]--><code class="descname">global</code><a class="headerlink" href="#global" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>pipeline_path</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The absolut path to the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> folder.</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The observation mode the data was obtained with.<span> (</span><em>WFM-NOAO</em><span>, </span><em>WFM-AO</em><span>, </span><em>NFM-AO</em><span>)</span></li>
+<li><strong>withrvcorr</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – bariocentric correction. Needs to be turned off, if one wants run their own wavelength calibration<span> (</span><em>true</em><span>, </span><em>false</em><span>, </span><em>default=’true’</em><span>)</span></li>
+<li><strong>auto_sort_data</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If the raw data is sorted and the calibration files are assigned based on their header information. If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> than
+the file lists <cite>ID_DAR.list</cite>, <cite>ID_SCI.list</cite>, and <cite>ID_TWI.list</cite> get created. If these have to be altered manually (e.g., using
+different calibration files), we recommend to run it first with <code class="docutils literal notranslate"><span class="pre">auto_sort_data</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, then make the changes accordingly
+and from this point on set <code class="docutils literal notranslate"><span class="pre">auto_sort_data</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>using_specific_exposure_time</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#float" title="Python Float"><em>float</em></a>) – The user can choose to only reduce a specific exposure time, if the same OB contains multiple exposures withdifferent exposure times (e.g., long and short exposures)</li>
+<li><strong>dither_multiple_OBs</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Each OB is normally limited to a total exposure time of one hour. Therefore, one pointing may be distributed via multiple OBs.
+If <code class="docutils literal notranslate"><span class="pre">dither_multiple_OBs</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> it is possible to dither exposures that are obtained in more than one OB.
+If <code class="docutils literal notranslate"><span class="pre">dither_multiple_OBs</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> one also must provide an <code class="docutils literal notranslate"><span class="pre">OB_list</span></code>.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></li>
+<li><strong>n_CPU</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#int" title="Python Integer"><em>int</em></a>) – The number of CPUs used to reduce the data. If set to -1 than all available CPUs are used.<span> (</span><em>default=-1</em><span>)</span></li>
+<li><strong>rootpath</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The absolut path in which the <cite>raw</cite> folder is located and in which the <cite>processed</cite> will be created.</li>
+<li><strong>OB</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The name of the OB that must be reduce. It must be the the same name as the OB_ID given in the <cite>raw</cite> folder.</li>
+<li><strong>OB_list</strong> (<em>list</em>) – If <code class="docutils literal notranslate"><span class="pre">dither_multiple_OBs</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> one must give a list of <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> OB_IDs, which will be dithered in the end.
+The calibration and data reduction
+runs on wach individual OB to take into account different calibration files.<span> (</span><em>default=[]</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="calibration">
+<!--[calibration]--><code class="descname">calibration</code><a class="headerlink" href="#calibration" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>using_ESO_Calibration</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If the user wants to use the ESO calibration files (recommended if available) instead of running the calibration themselves (BIAS,                                           DARK, FLAT, WAVECAL, LSF, TWILIGHT) it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a><span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>renew_statics</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the static calibration files should be copied again from the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> folder. This is necessary if
+the installed version of the pipline changes and one wants to obtain the latest static calibrations<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></li>
+<li><strong>dark</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to also use the DARK files from the calibration.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="sci_basic">
+<!--[sci_basic]--><code class="descname">sci_basic</code><a class="headerlink" href="#sci_basic" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>sky_reject</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The sigma clipping parameters for the intermediate to do the Gaussian fit to each sky emission line: <cite>high sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>),
+<cite>low sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>), <cite>number of iterations</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>). For a more detailed description we refer to the
+<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> manual.<span> (</span><em>default=‘15.</em><span>, </span><em>15.</em><span>, </span><em>1’</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="std_flux">
+<!--[std_flux]--><code class="descname">std_flux</code><a class="headerlink" href="#std_flux" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="sky">
+<!--[sky]--><code class="descname">sky</code><a class="headerlink" href="#sky" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>modified</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both                             emitted from the Earth’s atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to
+<a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>. If <code class="docutils literal notranslate"><span class="pre">modified</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the <code class="docutils literal notranslate"><span class="pre">method</span></code> should be <cite>subtract_model</cite>. Other methods will <strong>not</strong> lead to an error
+but they may lead to wrong results.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></li>
+<li><strong>sky_field</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – Determines if a sky observation is used (if available) or the science observation itself is used to determine the background
+contamination (tellurics). If set to <cite>auto</cite> the pipeline will check if there are sky observations available and use the closest one in time to
+the science exposures. If the <code class="docutils literal notranslate"><span class="pre">skyfield</span></code>  = <cite>object</cite>, the science exposure will be used.<span> (</span><em>‘auto’</em><span>, </span><em>‘object’</em><span>, </span><em>default=’auto’</em><span>)</span></li>
+<li><strong>fraction</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#float" title="Python Float"><em>float</em></a>) – The fraction of the image used to be considered as sky. Must be between 0. and 1. For more details we refer to the
+<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>[0.</em><span>, </span><em>1.[</em><span>, </span><em>default=0.05</em><span>)</span></li>
+<li><strong>ignore</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#float" title="Python Float"><em>float</em></a>) – The fraction of the image ignored for sky consideration. Must be between 0. and 1. For more details we refer to the
+<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>[0.</em><span>, </span><em>1.[</em><span>, </span><em>default=0.05</em><span>)</span></li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The method how the determined sky spectrum is fitted to each spaxel to subtract the sky background. Should be set to ‘subtract-model’ in case
+of <code class="docutils literal notranslate"><span class="pre">modified</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. For more details we refer to the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>‘model’</em><span>, </span><em>‘subtract-model’</em><span>, </span><em>‘simple’</em><span>, </span><em>‘none’</em><span>, </span><em>default=’model’</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="sci_post">
+<!--[sci_post]--><code class="descname">sci_post</code><a class="headerlink" href="#sci_post" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>subtract_sky</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – The user can decide to not run any sky subtraction. All telluric lines will be included in the final datacube. this may be useful if one
+wants to do their own wavelength calibration.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>raman</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If the laser guid stars are used raman scattering in the atmosphere may ve visible in the final data cubes. If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the Raman lines
+are being removed. For more details we refer to the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="dither_collect">
+<!--[dither_collect]--><code class="descname">dither_collect</code><a class="headerlink" href="#dither_collect" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>user_list</strong> (<em>list</em>) – A user list with the identifiers of the dither positions, in case only a subset shall be collected and copied to the final folder
+to be used for the combination. If left empty all dither positions are used to create the final data cube.<span> (</span><em>default=[]</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="exp_align">
+<!--[exp_align]--><code class="descname">exp_align</code><a class="headerlink" href="#exp_align" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="object">
+<dt id="exp_combine">
+<!--[exp_combine]--><code class="descname">exp_combine</code><a class="headerlink" href="#exp_combine" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Object Properties:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+<li><strong>weight</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The method how the fluxes in each dither position is being weighted before combination. For more details we refer to
+the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>‘exptime’</em><span>, </span><em>‘fwhm’</em><span>, </span><em>‘none’</em><span>, </span><em>default=exptime</em><span>)</span></li>
+<li><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
+than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>In the following we show how the <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configuration file looks like. It can be found in the main directly of MUSEpack under: <cite>config.json</cite>.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;global&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;pipeline_path&quot;</span><span class="p">:</span> <span class="s2">&quot;path_to_pipeline/muse/2.4.2/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;WFM-NOAO&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;withrvcorr&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;auto_sort_data&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;using_specific_exposure_time&quot;</span><span class="p">:</span> <span class="p">,</span>
+    <span class="nt">&quot;dither_multiple_OBs&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;n_CPU&quot;</span><span class="p">:</span> <span class="mi">-1</span><span class="p">,</span>
+    <span class="nt">&quot;rootpath&quot;</span><span class="p">:</span> <span class="s2">&quot;path_to_data_folder&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;OB&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;OB_list&quot;</span><span class="p">:</span> <span class="p">[]</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;calibration&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;using_ESO_calibration&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;renew_statics&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;dark&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;sci_basic&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;skyreject&quot;</span><span class="p">:</span> <span class="s2">&quot;15.,15.,1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;std_flux&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;sky&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;modified&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;sky_field&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fraction&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nt">&quot;ignore&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;sci_post&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;subtract_sky&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;raman&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;dither_collect&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;user_list&quot;</span><span class="p">:</span> <span class="p">[]</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;exp_align&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;exp_combine&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;weight&quot;</span><span class="p">:</span> <span class="s2">&quot;exptime&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="utility-methods">
+<h2>2.3. Utility methods<a class="headerlink" href="#utility-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following methods are routines to support the <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a>, needed to execute the various data reduction steps as it is suggested in the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a>. They are documented here for completness.</p>
 <span class="target" id="module-MUSEreduce"></span><dl class="function">
 <dt id="MUSEreduce._get_filelist">
 <code class="descclassname">MUSEreduce.</code><code class="descname">_get_filelist</code><span class="sig-paren">(</span><em>self</em>, <em>data_dir</em>, <em>filename_wildcard</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#_get_filelist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MUSEreduce._get_filelist" title="Permalink to this definition">¶</a></dt>
@@ -546,7 +883,7 @@ by the user</p>
 
 </div>
 <div class="section" id="history">
-<h2>3.2. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<h2>2.4. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.1.0: </span>Executes the MUSE reduction pileline in the correct order</p>
 </div>
@@ -619,6 +956,9 @@ by the user</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.5.1: </span>added <em>skymethod</em></p>
 </div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.5.2: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.</p>
+</div>
 </div>
 </div>
 
@@ -630,10 +970,10 @@ by the user</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="radialvelocities.html" class="btn btn-neutral float-right" title="4. Radial velocities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="radialvelocities.html" class="btn btn-neutral float-right" title="3. Spectral line fitting and radial velocity measurements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="quickstart.html" class="btn btn-neutral float-left" title="2. Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="1. Installing MUSEpack" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

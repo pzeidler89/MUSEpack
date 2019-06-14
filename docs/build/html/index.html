@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MUSEpack - a tool to analyze IFS datasets &mdash; MUSEpack  documentation</title>
+  <title>MUSEpack v0.4.6.dev20190606 &mdash; MUSEpack  documentation</title>
   
 
   
@@ -87,19 +87,33 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">4.4. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -149,7 +163,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>MUSEpack - a tool to analyze IFS datasets</li>
+      <li>MUSEpack v0.4.6.dev20190606</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -168,13 +182,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="musepack-a-tool-to-analyze-ifs-datasets">
-<h1>MUSEpack - a tool to analyze IFS datasets<a class="headerlink" href="#musepack-a-tool-to-analyze-ifs-datasets" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="musepack-v0-4-6-dev20190606">
+<h1>MUSEpack v0.4.6.dev20190606<a class="headerlink" href="#musepack-v0-4-6-dev20190606" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>MUSEpack is a python package written to support the data analyzes from Integral Field Units, specifically tailored to use datasets of the Multi Unit Spectroscopic Explorer (<a class="reference external" href="https://www.eso.org/sci/facilities/develop/instruments/muse.html">MUSE</a>) mounted at UT4 of the VLT.</p>
-<p>The main purpose of MUSEpack is the measurement of stellar and gas radial velocities to an accuracy of <span class="math notranslate nohighlight">\(1-3\,\rm{km/s}\)</span> without the need for spectral template libraries using <a class="reference internal" href="radialvelocities.html#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a>. By using strong stellar absorption lines or gas emission lines and a high-resolution spectral line library such as the <a class="reference external" href="https://www.nist.gov/pml/atomic-spectra-database">NIST Atomic Spectra Database</a> it is possible to create template, which are fitted to the spectra using a Monte Carlo method. For a detailed description of the code we refer to <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
-<p>This package includes the class <a class="reference internal" href="MUSEreduce.html#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a>, which is a easy-to-use python wrapper for the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> provided by ESO including a modification to <code class="docutils literal notranslate"><span class="pre">muse_create_sky</span></code> which prevents over subtraction of emission lines when reducing data in regions with a high, variable background such as Galactic HII regions.</p>
+<p>The main purpose of MUSEpack is the measurement of stellar and gas radial velocities to an accuracy of <span class="math notranslate nohighlight">\(1-3\,\rm{km/s}\)</span> without the need for spectral template libraries using <a class="reference internal" href="radialvelocities.html#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a>. By using strong stellar absorption lines or gas emission lines and a high-resolution spectral line library such as the <a class="reference external" href="https://www.nist.gov/pml/atomic-spectra-database">NIST Atomic Spectra Database</a> it is possible to create template, which are fitted to the spectra using a Monte Carlo method. For a detailed description and the citation of the code we refer to <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -183,19 +196,32 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">4.4. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -208,9 +234,14 @@
 <div class="section" id="references">
 <h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li>Zeidler, P., and friends, et al. 2019, AJ, to be submitted</li>
 <li>Bacon, R., Accardo, M., Adjali, L., et al. 2010, Proc. SPIE, 7735, 773508</li>
 <li>Kamann, S., Husser, T.-O., Brinchmann, J., et al. 2016, A&amp;A, 588, A149</li>
 </ul>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Some more references</p>
+</div>
 </div>
 </div>
 

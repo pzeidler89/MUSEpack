@@ -140,6 +140,48 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 def update_parinfo(self, guesses, llimits, line_idx, blends,
                    parinfo, autoadjust, fwhm_block):
 
+   '''
+   Updates the parinfo file, created by pyspeckit.
+
+   Args:
+        guesses : :func:`numpy.array`
+            The initial guesses for the the radial velocity fit guesses in
+            the form [RV,sepctral_dispersion]
+
+        llimits : :obj:`list`
+            the limits for the wavelength fit as set in ``ppxf``
+
+        line_idx : :obj:`str`
+            Name of the primary line
+
+       blends : :obj:`ascii`-file or :obj:`None`
+           A file with primary lines that contain blends to provide a maximum
+           amplitude ratio of the primary and the blend to prevent that the
+           blend becomes the dominant line in the fit.
+
+        parinfo: :obj:`dict`
+            the parinfo file created by pyspeckit, which contains the fitted
+            parameters for all input lines
+
+        autoadjust : :obj:`bool`
+            :obj:`True`: the wavelength limits ``llimit`` will be adjusted to
+            the fit of the previous iteration. All other wavelength range are
+            adjusted accordingly taking into account the proper velocity
+            corrected shift :math:`\Delta \lambda/\lambda`. This is especially
+            important to detect hyper-velocity stars.
+
+            :obj:`False`: no adjustment to the limits done
+
+        fwhm_block : :obj:`bool:obj:`
+            :obj:`True`: The minimum fwhm of the voigt profiles of the fitted
+            lines is the instrument's dispersion
+
+            :obj:`False`: The minimum fwhm of the voigt profiles of the fitted
+            lines is zero
+
+   
+   '''
+
     lprime = self.cat.loc[line_idx, 'l_lab']
     primeidx = np.where(lprime == guesses)[0]
 

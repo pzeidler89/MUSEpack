@@ -86,19 +86,33 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">4.4. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -168,7 +182,7 @@
   <h1>Source code for line_fitter</h1><div class="highlight"><pre>
 <span></span><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.0&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;201902125&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190422&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -551,6 +565,7 @@
 
             <span class="n">resid</span> <span class="o">=</span> \
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_f</span><span class="p">[</span><span class="n">spec_select_idx</span><span class="p">])</span> <span class="o">/</span> <span class="n">continuum</span>
+
             <span class="n">std_resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
 
             <span class="n">continuum_dev</span> <span class="o">=</span> <span class="n">continuum_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp_lambda</span><span class="p">,</span>\

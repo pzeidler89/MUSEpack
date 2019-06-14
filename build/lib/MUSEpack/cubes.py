@@ -176,7 +176,7 @@ def wcs_cor(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
 
         print('The magnitude difference catalog - MUSE [mag]: ',\
-        '{:.2f}'.format(np.median(clippend_del_mag)))
+        '{:.2f}'.format(np.ma.median(clippend_del_mag)))
         print('The flux multiplicator f_catalog / f_MUSE: ',\
         '{:.2f}'.format(fmultipl))
 

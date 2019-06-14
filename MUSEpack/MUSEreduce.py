@@ -24,19 +24,20 @@ class musereduce:
 
     '''
     Kwargs:
-        configfile : :obj:`str`, (optional), default: :obj:`False`
+        configfile : :obj:`str`
             A :obj:`json` configfile for musereduce, where all the parameters
-            will             be set.
+            will be set.
 
         debug : :obj:`bool`, (optional), default: :obj:`None`
-            :obj:`True`: musereduce runs in debug mode and ESORex will not be
-            executed. All products must be available. It can be used for
-            testing the creation of folder, and creating the ``.sof`` files
+            :obj:`True`: :class:`MUSEreduce.musereduce` runs in debug mode and
+            ESORex will not be executed. All products must be available.
+            It can be used for testing the creation of folder, and creating
+            the ``.sof`` files
 
     '''
 
 
-    def __init__(self, configfile=None, debug=False):
+    def __init__(self, configfile, debug=False):
 
         if configfile == None:
             configfile = os.path.dirname(__file__) + "/config.json"
@@ -90,6 +91,12 @@ class musereduce:
         self.debug = debug
 
     def execute(self):
+
+        '''
+        This method executes wrapper and starts the data reduction process
+        set in the :obj:`json` configfile.
+
+        '''
 
         startime = time.time()
 

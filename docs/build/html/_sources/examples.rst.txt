@@ -5,4 +5,4 @@ Examples
 
 .. todo::
 
-   On this page some example will follow
+   On this page some examples will follow

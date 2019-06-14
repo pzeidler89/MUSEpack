@@ -86,19 +86,33 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">4.4. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -168,9 +182,9 @@
   <h1>Source code for MUSEreduce</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.1&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.2&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190129&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190416&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -192,19 +206,20 @@
 
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Kwargs:</span>
-<span class="sd">        configfile : :obj:`str`, (optional), default: :obj:`False`</span>
+<span class="sd">        configfile : :obj:`str`</span>
 <span class="sd">            A :obj:`json` configfile for musereduce, where all the parameters</span>
-<span class="sd">            will             be set.</span>
+<span class="sd">            will be set.</span>
 
 <span class="sd">        debug : :obj:`bool`, (optional), default: :obj:`None`</span>
-<span class="sd">            :obj:`True`: musereduce runs in debug mode and ESORex will not be</span>
-<span class="sd">            executed. All products must be available. It can be used for</span>
-<span class="sd">            testing the creation of folder, and creating the ``.sof`` files</span>
+<span class="sd">            :obj:`True`: :class:`MUSEreduce.musereduce` runs in debug mode and</span>
+<span class="sd">            ESORex will not be executed. All products must be available.</span>
+<span class="sd">            It can be used for testing the creation of folder, and creating</span>
+<span class="sd">            the ``.sof`` files</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configfile</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">configfile</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">configfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/config.json&quot;</span>
@@ -220,7 +235,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">OB_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">dithername</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">][</span><span class="s1">&#39;rootpath&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">][</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">auto__sort_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">][</span><span class="s1">&#39;auto__sort_data&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto__sort_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">][</span><span class="s1">&#39;auto_sort_data&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">using_specific_exposure_time</span> <span class="o">=</span>\
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;global&#39;</span><span class="p">][</span><span class="s1">&#39;using_specific_exposure_time&#39;</span><span class="p">]</span>
 
@@ -257,7 +272,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
 
-    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="musereduce.execute"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce.musereduce.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This method executes wrapper and starts the data reduction process</span>
+<span class="sd">        set in the :obj:`json` configfile.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">startime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
@@ -315,9 +336,9 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; Using ESO calibration files&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; Using self-processed calibration files&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; DARK will be reduced and used&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">dark</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; DARK will not be reduced and used&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; DARK will be used: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">))</span>
@@ -328,6 +349,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dithering_multiple_OBs</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; Exposures per pointing are spread over multiple OBs&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;==&gt; The pointing name is: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dithername</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multOB_exp_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; All exposures are located in one OB&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -518,7 +540,7 @@
 
         <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; Total execution time: &#39;</span><span class="p">,</span>\
-        <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">endtime</span> <span class="o">-</span> <span class="n">startime</span><span class="p">))</span></div>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">endtime</span> <span class="o">-</span> <span class="n">startime</span><span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="_get_filelist"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._get_filelist">[docs]</a><span class="k">def</span> <span class="nf">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">filename_wildcard</span><span class="p">):</span>
@@ -803,7 +825,7 @@
 
             <span class="n">raw_data_list</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">[</span><span class="n">exposure_ID</span><span class="p">],</span>\
                 <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;no_header&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">raw_data_list_DARK</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">exp_list_DAR</span><span class="p">[</span><span class="n">exposure_ID</span><span class="p">],</span>\
                 <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;no_header&#39;</span><span class="p">)</span>
             <span class="n">raw_data_list_TWILIGHT</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">exp_list_TWI</span><span class="p">[</span><span class="n">exposure_ID</span><span class="p">],</span>\
@@ -817,7 +839,7 @@
                     <span class="o">+</span> <span class="n">raw_data_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f_science</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">f_dark</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>
                                 <span class="o">+</span> <span class="s1">&#39;DARK/bias_temp.sof&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_data_list_DARK</span><span class="p">[</span><span class="mi">1</span><span class="p">][:])):</span>
@@ -864,7 +886,7 @@
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span>\
                     <span class="n">esorex_cmd</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/bias.sof&#39;</span><span class="p">):</span>
                     <span class="k">assert</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/bias.sof&#39;</span><span class="p">,</span>\
                     <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/bias_temp.sof&#39;</span><span class="p">),</span>\
@@ -994,7 +1016,7 @@
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat.sof&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">exposure_ID</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; processing exposure: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exposure_ID</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>\
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; processing exposure: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exposure_ID</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>\
             <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">)))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; processing: &#39;</span> <span class="o">+</span> <span class="n">exp_list_SCI</span><span class="p">[</span><span class="n">exposure_ID</span><span class="p">])</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
@@ -1042,11 +1064,11 @@
                 <span class="o">+</span> <span class="s1">&#39;DARK/MASTER_DARK.fits MASTER_DARK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat.sof&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat.sof&#39;</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat.sof&#39;</span><span class="p">,</span>\
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat_temp.sof&#39;</span><span class="p">),</span>\
                 <span class="s1">&#39;CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK&#39;</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat_temp.sof&#39;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat_temp.sof&#39;</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat_temp.sof&#39;</span><span class="p">,</span>\
@@ -1117,7 +1139,7 @@
             <span class="o">+</span> <span class="s1">&#39;SCIENCE/MASTER_BIAS.fits MASTER_BIAS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
             <span class="o">+</span> <span class="s1">&#39;SCIENCE/TRACE_TABLE.fits TRACE_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
                 <span class="o">+</span> <span class="s1">&#39;DARK/MASTER_DARK.fits MASTER_DARK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1147,7 +1169,7 @@
             <span class="o">+</span> <span class="s1">&#39;TWILIGHT/MASTER_BIAS.fits MASTER_BIAS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
             <span class="o">+</span> <span class="s1">&#39;TWILIGHT/TRACE_TABLE.fits TRACE_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
                 <span class="o">+</span> <span class="s1">&#39;DARK/MASTER_DARK.fits MASTER_DARK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1231,7 +1253,7 @@
             <span class="o">+</span> <span class="s1">&#39;SCIENCE/TRACE_TABLE.fits TRACE_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
             <span class="o">+</span> <span class="s1">&#39;SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exposure_dir</span>\
                 <span class="o">+</span> <span class="s1">&#39;DARK/MASTER_DARK.fits MASTER_DARK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
@@ -1264,7 +1286,7 @@
             <span class="o">+</span> <span class="s1">&#39;TWILIGHT/TRACE_TABLE.fits TRACE_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
             <span class="o">+</span> <span class="s1">&#39;TWILIGHT/WAVECAL_TABLE.fits WAVECAL_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dark</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exposure_dir</span>\
                 <span class="o">+</span> <span class="s1">&#39;DARK/MASTER_DARK.fits MASTER_DARK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span>\
@@ -1821,14 +1843,14 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyfield</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log</span><span class="se">\</span>
-<span class="s1">                --log-level=debug muse_create_sky --fraction=&#39;</span>\
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39;--log-level=debug muse_create_sky --fraction=&#39;</span>\
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span>\
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log</span><span class="se">\</span>
-<span class="s1">                --log-level=debug muse_create_sky --fraction=&#39;</span>\
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39;--log-level=debug muse_create_sky --fraction=&#39;</span>\
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span>\
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">)</span>
 
@@ -1875,14 +1897,14 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyfield</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log </span><span class="se">\</span>
-<span class="s1">                --log-level=debug muse_create_sky </span><span class="se">\</span>
-<span class="s1">                --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span>\
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39;--log-level=debug muse_create_sky&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39;--fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span>\
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log </span><span class="se">\</span>
-<span class="s1">                --log-level=debug muse_create_sky --fraction=&#39;</span>
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="s1">&#39;--log-file=sky.log&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39;--log-level=debug muse_create_sky --fraction=&#39;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
                 <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">)</span>
 
@@ -2229,27 +2251,33 @@
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits ==&gt; &#39;</span>\
@@ -2287,27 +2315,32 @@
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                        <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span>\
                         <span class="s1">&#39; /PIXTABLE_REDUCED_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
+                        <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
@@ -2346,27 +2379,27 @@
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits ==&gt; &#39;</span>\

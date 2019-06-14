@@ -49,6 +49,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinxjsondomain',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -76,7 +77,7 @@ language = None
 exclude_patterns = ['._*.rst']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = 'sphinx'
 
 
 # -- Options for HTML output -------------------------------------------------

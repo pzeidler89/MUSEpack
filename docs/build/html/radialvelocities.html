@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. Spectral line fitting and radial velocity measurements &mdash; MUSEpack  documentation</title>
+  <title>3. Spectral line fitting and radial velocity measurements &mdash; MUSEpack  documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Disclaimer" href="disclaimer.html" />
-    <link rel="prev" title="3. MUSEreduce" href="MUSEreduce.html" /> 
+    <link rel="next" title="4. cubes" href="cubes.html" />
+    <link rel="prev" title="2. MUSEreduce" href="MUSEreduce.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,19 +88,33 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#history">4.4. History</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">3.1. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#history">3.5. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -150,7 +164,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>4. Spectral line fitting and radial velocity measurements</li>
+      <li>3. Spectral line fitting and radial velocity measurements</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -170,12 +184,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="spectral-line-fitting-and-radial-velocity-measurements">
-<span id="radial-velocities"></span><h1>4. Spectral line fitting and radial velocity measurements<a class="headerlink" href="#spectral-line-fitting-and-radial-velocity-measurements" title="Permalink to this headline">¶</a></h1>
+<span id="radial-velocities"></span><h1>3. Spectral line fitting and radial velocity measurements<a class="headerlink" href="#spectral-line-fitting-and-radial-velocity-measurements" title="Permalink to this headline">¶</a></h1>
 <p>The main purpose of MUSEreduce is the spectral line fitting in order to create template spectra from observations, which are used to measure the radial velocities of stars and gas, especially in the absence of working spectral template libraries, e.e., for pre-main-sequence stars.</p>
 <p>The <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a> and the spectral fitting module <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> are the heart of this package. By using <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> as basic spectral fiutting routine and <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a> for the spectral cross-correlation, including a Monte Carlo bootstrap technique, it is possible to measure radial velocities with an accuracy of <span class="math notranslate nohighlight">\(1-3\,\rm{km/s}\)</span> in the absence of any template library. For a detailed description we refer to Zeidler et al. 2019.</p>
 <div class="section" id="id1">
-<h2>4.1. Radial Velocities<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>This is the main class for measuring the radial velocities. A basic example is descibed in <a class="reference internal" href="quickstart.html#examples"><span class="std std-ref">Examples</span></a>. A detailed description can be found in Zeidler et al. 2019.</p>
+<h2>3.1. Radial Velocities<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>This is the main class for measuring the radial velocities. A basic example is descibed in <a class="reference internal" href="examples.html#examples"><span class="std std-ref">Examples</span></a>. A detailed description can be found in Zeidler et al. 2019.</p>
 <p>Throughout the document the <strong>primary line</strong> is the spectral line of interest for which the line fitting will be executed. <strong>Secondary lines</strong> are spectral lines in blends.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -347,7 +361,8 @@ the form [RV,sepctral_dispersion]</dd>
 <dt>line_sigma: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3):</dt>
 <dd>sigma for the RV clipping for the individual lines</dd>
 <dt>n_CPU <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt>
-<dd>Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of
+<dd>Setting the number of CPUs used for the parallelization. If set 
+to -1 all available system resources are used. Maximum number of
 CPUs is the number of spectral lines the fit is performed to.</dd>
 <dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt>
 <dd>The sigma-level for the spectral line to be above the continuum
@@ -378,9 +393,66 @@ in order to be considered <em>valid</em></dd>
 
 </dd></dl>
 
+<div class="section" id="monte-carlo-radial-velocity-determination">
+<h3>3.1.1. Monte Carlo radial velocity determination<a class="headerlink" href="#monte-carlo-radial-velocity-determination" title="Permalink to this headline">¶</a></h3>
+<p>This is the module that does the Monte Carlo boot strapping to measure RV to desired accuracy. It is automatically called by the <code class="docutils literal notranslate"><span class="pre">rv_fit</span></code> attribute of <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a> and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.</p>
+<span class="target" id="module-ppxf_MC"></span><dl class="function">
+<dt id="ppxf_MC.ppxf_MC">
+<code class="descclassname">ppxf_MC.</code><code class="descname">ppxf_MC</code><span class="sig-paren">(</span><em>log_template_f</em>, <em>log_spec_f</em>, <em>log_spec_err</em>, <em>velscale</em>, <em>guesses</em>, <em>nrand=100</em>, <em>degree=4</em>, <em>goodpixels=None</em>, <em>moments=4</em>, <em>vsyst=0</em>, <em>sigma=5</em>, <em>spec_id=None</em>, <em>n_CPU=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ppxf_MC.html#ppxf_MC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ppxf_MC.ppxf_MC" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module runs the Monte Carlo ppxf runs, which is needed for the RV
+measurements. Most of the input parameters are similar to the standard
+ppxf parameters (see Cappellari &amp; Emsellem (2004) for a more detailed
+explanation).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>log_template_f <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>The logarithmically binned template spectrum</dd>
+<dt>log_spec_f <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>The logarithmically binned source spectrum</dd>
+<dt>log_spec_err <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>The logarithmically source spectrum uncertainties</dd>
+<dt>velscale <span class="classifier-delimiter">:</span> <span class="classifier">obj:<cite>float</cite></span></dt>
+<dd>The velocity scale of the source spectrum</dd>
+<dt>guesses:</dt>
+<dd>the guesses for ppxf. For two moments it reflects (RV, sigma)</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>nrand <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt>
+<dd>The maximum number of iteration if convergence is not reached</dd>
+<dt>degree <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt>
+<dd>The degree of the additive polynomial to fit offsets in the
+continuum. A low order polynominal may be needed to get better
+results</dd>
+<dt>goodpixels <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a> (optional, default: 5)</span></dt>
+<dd>A <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: of pixels that are used by ppxf to fit
+the template to the source spectrum</dd>
+<dt>moments <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt>
+<dd>The moments to be fit (v, sigma, h3, h4)</dd>
+<dt>vsyst <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.)</span></dt>
+<dd>A systematic velocity. This may be needed if the system move at
+high velocities compared to the rest frame. If the guess of vsyst
+is good, the fit runs faster and more stable.</dd>
+<dt>sigma <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt>
+<dd>The sigma used to clip outliers in the histogram determination.</dd>
+<dt>spec_id <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: None)</span></dt>
+<dd>An ID number of the source spectrum. This becomes handy when
+fitting many individual sources because the output files will be
+named with the ID.</dd>
+<dt>n_CPU <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: -1)</span></dt>
+<dd>The number of cores used for the Monte Carlo velocity fitting. If
+n_CPU=-1 than all available cores will be used.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="spectral-line-fitter">
-<h2>4.2. Spectral line fitter<a class="headerlink" href="#spectral-line-fitter" title="Permalink to this headline">¶</a></h2>
+<h2>3.2. Spectral line fitter<a class="headerlink" href="#spectral-line-fitter" title="Permalink to this headline">¶</a></h2>
 <p>This module is the work horse for fitting spectral lines from an input catalog to a given 1D spectrum. The line fitting itself is performed using the module <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a>.</p>
 <p><a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> uses an iterative method to fit the spectral lines and the continuum simultaneously. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> automatically adjusts the input parameters to <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> in the manner to optimize the fitting (<em>continuum order</em> and <em>wavelegth limits</em>)</p>
 <p>The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> determines whether the fit fullfils the set parameters and was, therefore, succesfull and can be further used to do the velocity fitting. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.</p>
@@ -482,15 +554,22 @@ adjusted during fitting)</dd>
 </dd></dl>
 
 </div>
-<div class="section" id="utility-modules">
-<h2>4.3. Utility modules<a class="headerlink" href="#utility-modules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cross-correlating-the-spectra">
+<h2>3.3. Cross correlating the spectra<a class="headerlink" href="#cross-correlating-the-spectra" title="Permalink to this headline">¶</a></h2>
 <div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">The documentation will follow soon</p>
+</div>
+</div>
+<div class="section" id="utility-modules">
+<h2>3.4. Utility modules<a class="headerlink" href="#utility-modules" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="index-1">
 <p class="first admonition-title">Todo</p>
 <p class="last">The documentation of utility modules will follow soon</p>
 </div>
 </div>
 <div class="section" id="history">
-<h2>4.4. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<h2>3.5. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.1.0: </span>working radial velocity fitting package</p>
 </div>
@@ -517,10 +596,10 @@ adjusted during fitting)</dd>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="disclaimer.html" class="btn btn-neutral float-right" title="Disclaimer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="cubes.html" class="btn btn-neutral float-right" title="4. cubes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="MUSEreduce.html" class="btn btn-neutral float-left" title="3. MUSEreduce" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="MUSEreduce.html" class="btn btn-neutral float-left" title="2. MUSEreduce" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -19,9 +19,9 @@ import montage_wrapper as montage
 ''' internal modules'''
 from MUSEpack.utils import ABtoVega
 
-def wcs_cor(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
+def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
             output_file=None, out_frame=None, in_frame=None,
-            correct_flux=False, spec_folder='stars', spec_path=os.getcwd(),
+            correct_flux=False, spec_folder='stars', spec_path=None,
             correctiontype='shift'):
 
     '''
@@ -75,6 +75,14 @@ def wcs_cor(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
 
     '''
 
+    if path == None:
+        path = os.getcwd()
+
+    if prm_path == None:
+        prm_path = os.getcwd()
+
+    if spec_path == None:
+        spec_path = os.getcwd()
 
     cube = fits.open(path + '/' + input_fits + '.fits')
     prm = fits.open(prm_path + '/' + input_prm + '.prm.fits')
@@ -197,7 +205,7 @@ def wcs_cor(input_fits, input_prm, path=os.getcwd(), prm_path=os.getcwd(),
         cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
 
 
-def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=os.getcwd(),
+def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
                    sat=0., mag_sat=None, ifs_sat=None, mag_limit=None):
 
     '''
@@ -234,6 +242,9 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=os.getcwd(),
         path of the output file
     '''
 
+    if path == None:
+        path = os.getcwd()
+
     if idx == None:
         id = np.arange(len(ra)) + 1
     else:
@@ -269,7 +280,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=os.getcwd(),
     format='ascii.basic', delimiter=',', overwrite=True)
 
 
-def linemaps(input_fits, path=os.getcwd(), elements=None, wavelengths=None):
+def linemaps(input_fits, path=None, elements=None, wavelengths=None):
     '''
     This module is intended to create linemaps of specified lines/elements
 
@@ -289,6 +300,9 @@ def linemaps(input_fits, path=os.getcwd(), elements=None, wavelengths=None):
             must be given if `elements` is given
 
     '''
+
+    if path == None:
+        path = os.getcwd()
 
     #predefined elements and their wavelength
     if elements == None:
@@ -311,15 +325,15 @@ def linemaps(input_fits, path=os.getcwd(), elements=None, wavelengths=None):
     shutil.rmtree(path + 'temp/')
 
 
-def mosaics(input_list, name, path=os.getcwd()):
+def mosaics(input_list, name, path=None):
 
     '''
     This module is intended to create mosaics of specified lines/elements.
     linemaps should have been created beforehand using the ``linemaps`` module
 
     Args:
-    input_list : :obj:`list`
-            The list of specific linemaps to be used to mosaic
+        input_list : :obj:`list`
+                The list of specific linemaps to be used to mosaic
 
         name : :obj:`str`
             Name of the created mosaic
@@ -329,6 +343,9 @@ def mosaics(input_list, name, path=os.getcwd()):
             I/O path
 
     '''
+
+    if path == None:
+        path = os.getcwd()
 
     if os.path.exists(path + '/temp/') == False:
         os.mkdir(path + '/temp/')

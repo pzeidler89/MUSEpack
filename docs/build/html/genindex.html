@@ -87,19 +87,33 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2. Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">3. MUSEreduce</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-modules">3.1. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">3.2. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">4. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">4.1. Radial Velocities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">4.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">4.3. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">4.4. History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Disclaimer:</span></p>
 <ul>
@@ -172,10 +186,13 @@
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
  | <a href="#C"><strong>C</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  
 </div>
 <h2 id="_">_</h2>
@@ -229,6 +246,47 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="radialvelocities.html#radial_velocities.RV_spectrum.clean">clean() (radial_velocities.RV_spectrum method)</a>
 </li>
+      <li><a href="cubes.html#module-cubes">cubes (module)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="MUSEreduce.html#MUSEreduce.musereduce.execute">execute() (MUSEreduce.musereduce method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    JSON Objects
+
+      <ul>
+        <li><a href="MUSEreduce.html#calibration">calibration</a>
+</li>
+        <li><a href="MUSEreduce.html#config">config</a>
+</li>
+        <li><a href="MUSEreduce.html#dither_collect">dither_collect</a>
+</li>
+        <li><a href="MUSEreduce.html#exp_align">exp_align</a>
+</li>
+        <li><a href="MUSEreduce.html#exp_combine">exp_combine</a>
+</li>
+        <li><a href="MUSEreduce.html#global">global</a>
+</li>
+        <li><a href="MUSEreduce.html#sci_basic">sci_basic</a>
+</li>
+        <li><a href="MUSEreduce.html#sci_post">sci_post</a>
+</li>
+        <li><a href="MUSEreduce.html#sky">sky</a>
+</li>
+        <li><a href="MUSEreduce.html#std_flux">std_flux</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -237,11 +295,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="radialvelocities.html#module-line_fitter">line_fitter (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="radialvelocities.html#line_fitter.line_fitter">line_fitter() (in module line_fitter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="radialvelocities.html#radial_velocities.RV_spectrum.line_fitting">line_fitting() (radial_velocities.RV_spectrum method)</a>
+</li>
+      <li><a href="cubes.html#cubes.linemaps">linemaps() (in module cubes)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -249,10 +309,12 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="MUSEreduce.html#MUSEreduce.musereduce">musereduce (class in MUSEreduce)</a>
+      <li><a href="cubes.html#cubes.mosaics">mosaics() (in module cubes)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="MUSEreduce.html#MUSEreduce.musereduce">musereduce (class in MUSEreduce)</a>
+</li>
       <li><a href="MUSEreduce.html#module-MUSEreduce">MUSEreduce (module)</a>
 </li>
   </ul></td>
@@ -261,7 +323,15 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cubes.html#cubes.pampelmuse_cat">pampelmuse_cat() (in module cubes)</a>
+</li>
       <li><a href="radialvelocities.html#radial_velocities.RV_spectrum.plot">plot() (radial_velocities.RV_spectrum method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="radialvelocities.html#module-ppxf_MC">ppxf_MC (module)</a>
+</li>
+      <li><a href="radialvelocities.html#ppxf_MC.ppxf_MC">ppxf_MC() (in module ppxf_MC)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -276,6 +346,14 @@
       <li><a href="radialvelocities.html#radial_velocities.RV_spectrum.rv_fit_peak">rv_fit_peak() (radial_velocities.RV_spectrum method)</a>
 </li>
       <li><a href="radialvelocities.html#radial_velocities.RV_spectrum">RV_spectrum (class in radial_velocities)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cubes.html#cubes.wcs_cor">wcs_cor() (in module cubes)</a>
 </li>
   </ul></td>
 </tr></table>
