@@ -179,7 +179,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
             :obj:`False`: The minimum fwhm of the voigt profiles of the fitted
             lines is zero
 
-   
    '''
 
     lprime = self.cat.loc[line_idx, 'l_lab']
