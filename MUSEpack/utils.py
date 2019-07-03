@@ -1,14 +1,4 @@
 #!/usr/bin/env python
-'''
-utils.py
-
-Copyright 2018-2019 Peter Zeidler
-
-vers. 0.1.0: package created
-vers. 0.1.1: moved to pep-8
-vers. 0.1.2: now handles absorption and emission lines
-             emission not tested yet, though
-'''
 
 __version__ = '0.1.2'
 
@@ -47,17 +37,16 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
     Creates the initial guesses for the line fitter
 
     Args:
-    lines : :func:`numpy.array`
-        central wavelengths of the spectral lines
+        lines : :func:`numpy.array`
+            central wavelengths of the spectral lines
 
     Kwargs:
+        linestrength : :obj:`float` (default: 100)
+            initial guess for the line strength
 
-    linestrength : :obj:`float` (default: 100)
-        initial guess for the line strength
-
-    blends : :obj:`str` (optional)
-        A file containing the a list of blended lines in the 
-        format: ** List is coming soon**
+        blends : :obj:`str` (optional)
+            A file containing the a list of blended lines in the 
+            format: ** List is coming soon**
 
     return:
         guesses : :obj:`list`
@@ -140,10 +129,10 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 def update_parinfo(self, guesses, llimits, line_idx, blends,
                    parinfo, autoadjust, fwhm_block):
 
-   '''
-   Updates the parinfo file, created by pyspeckit.
+    '''
+    Updates the parinfo file, created by pyspeckit.
 
-   Args:
+    Args:
         guesses : :func:`numpy.array`
             The initial guesses for the the radial velocity fit guesses in
             the form [RV,sepctral_dispersion]
@@ -179,7 +168,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
             :obj:`False`: The minimum fwhm of the voigt profiles of the fitted
             lines is zero
 
-   '''
+    '''
 
     lprime = self.cat.loc[line_idx, 'l_lab']
     primeidx = np.where(lprime == guesses)[0]

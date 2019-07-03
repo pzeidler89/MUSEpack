@@ -3,35 +3,12 @@
 Spectral line fitting and radial velocity measurements
 ******************************************************
 
-The main purpose of MUSEreduce is the spectral line fitting in order to create template spectra from observations, which are used to measure the radial velocities of stars and gas, especially in the absence of working spectral template libraries, e.e., for pre-main-sequence stars.
+The main purpose of MUSEreduce is the spectral line fitting in order to create template spectra from observations, which are used to measure the radial velocities of stars and gas, especially in the absence of working spectral template libraries, e.g., for pre-main-sequence stars in the optical.
 
-The :class:`radial_velocities.RV_spectrum` and the spectral fitting module :mod:`line_fitter` are the heart of this package. By using `pyspeckit`_ as basic spectral fiutting routine and `ppxf`_ for the spectral cross-correlation, including a Monte Carlo bootstrap technique, it is possible to measure radial velocities with an accuracy of :math:`1-3\,\rm{km/s}` in the absence of any template library. For a detailed description we refer to Zeidler et al. 2019.
+The :class:`radial_velocities.RV_spectrum` class and the spectral fitting module :mod:`line_fitter` are the heart of this package using `pyspeckit`_ as basic spectral fitting routine and `ppxf`_ for the spectral cross-correlation. Together with a Monte Carlo bootstrap technique, it is possible to measure radial velocities with an accuracy of :math:`1-3\,\rm{km}\,\rm{s}^{-1}` in the absence of any template library. For a detailed description on how this technique works, we refer to `Zeidler et al. 2019`_.
 
 .. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
 .. _ppxf: http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf
-
-
-Radial Velocities
------------------
-
-This is the main class for measuring the radial velocities. A basic example is descibed in :ref:`examples`. A detailed description can be found in Zeidler et al. 2019.
-
-Throughout the document the **primary line** is the spectral line of interest for which the line fitting will be executed. **Secondary lines** are spectral lines in blends.
-
-.. warning::
-
-   The automatic handling of absorption and emission lines since vers. 0.1.2 has not been tested yet.
-
-.. autoclass:: radial_velocities.RV_spectrum
-   :members:
-
-Monte Carlo radial velocity determination
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This is the module that does the Monte Carlo boot strapping to measure RV to desired accuracy. It is automatically called by the ``rv_fit`` attribute of :class:`radial_velocities.RV_spectrum` and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.
-
-.. automodule:: ppxf_MC
-   :members:
 
 
 Spectral line fitter
@@ -41,31 +18,48 @@ This module is the work horse for fitting spectral lines from an input catalog t
 
 `pyspeckit`_ uses an iterative method to fit the spectral lines and the continuum simultaneously. :mod:`line_fitter` automatically adjusts the input parameters to `pyspeckit`_ in the manner to optimize the fitting (*continuum order* and *wavelegth limits*)
 
-The :mod:`line_fitter` determines whether the fit fullfils the set parameters and was, therefore, succesfull and can be further used to do the velocity fitting. :mod:`line_fitter` also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.
+The :mod:`line_fitter` determines whether the fit fullfils the set parameters and was succesfull. The :mod:`line_fitter` also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.
 
-In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration based on the solution of the primary line.
+In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration :math:`n` based on the solution :math:`n-1` of the primary line taking into account :math:`\Delta \lambda / \lambda`.
 
 .. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
 
 .. automodule:: line_fitter
    :members:
 
-Cross correlating the spectra
------------------------------
+.. warning::
 
-.. todo::
+   The automatic handling of absorption and emission lines implemented in vers. 0.1.2 has not been tested yet.
 
-   The documentation will follow soon
+Radial Velocities
+-----------------
 
-Utility modules
----------------
+This is the main class for measuring the radial velocities. A basic example is descibed in :ref:`examples`. A detailed description can be found in Zeidler et al. 2019.
 
-.. todo::
+Throughout the document the **primary line** is the spectral line of interest for which the line fitting will be executed. **Secondary lines** are spectral lines in blends.
 
-   The documentation of utility modules will follow soon
+A detailed demonstration on how to use the radial velocity fitter is provided in :ref:`examples` including template files.
+
+The radial velocity fitter
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: radial_velocities.RV_spectrum
+   :members:
+
+.. _Monte Carlo:
+
+Monte Carlo radial velocity determination
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is the module that peforms the Monte Carlo boot strapping to measure radial velocities. It is automatically called by the :class:`radial_velocities.RV_spectrum.rv_fit` attribute of :class:`radial_velocities.RV_spectrum` class and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.
+
+.. automodule:: ppxf_MC
+   :members:
 
 
+.. _Zeidler et al. 2019: www.xyz.com
 
+.. _Cappellari and Emsellem 2004: https://ui.adsabs.harvard.edu/abs/2004PASP..116..138C/abstract
 
 History
 -------

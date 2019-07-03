@@ -2,7 +2,7 @@
 
 __version__ = '0.1.2'
 
-__revision__ = '20190308'
+__revision__ = '20190703'
 
 import sys
 import os
@@ -45,6 +45,9 @@ logging.basicConfig(format='%(asctime)s [%(levelname)8s]:'\
 
 class RV_spectrum:
     """
+    This class contains the 1D spectrum, as well as all fitting parameters
+    and output values including the radial velocity catalog.
+
     Args:
         spec_id : :obj:`str`
             unique identifier of the spectrum
@@ -149,7 +152,7 @@ class RV_spectrum:
 
     def clean(self):
         """
-        This cleans resets all of the output. This **must** be executed before
+        This modules resets all of the output. This **must** be executed before
         repeating the spectral fit without re-initiating the class.
 
         """
@@ -161,7 +164,7 @@ class RV_spectrum:
 
     def catalog(self, initcat=None, save=False, load=None, printcat=False):
         """
-        This instance handles the catalog that will holds the fit results
+        This module handles the catalog that holds the fit results
         of the primary lines.
 
         Kwargs:
@@ -343,10 +346,10 @@ class RV_spectrum:
         Initializing the line fitting by calling :mod:`line_fitter`
 
         Args:
-            input_cat : :func:`numpy.array`: input spectral line catalog with
-            wavelengths in Angstrom
+            input_cat: :func:`numpy.array`
+                input spectral line catalog with wavelengths in Angstrom
 
-            line_idxs : :func:`numpy.array`:
+            line_idxs: :func:`numpy.array`
                 :obj:`str` :func:`numpy.array`: of the line names for which RV
                 fits should be performed, must be identical to "name" in
                 init_cat
@@ -356,8 +359,9 @@ class RV_spectrum:
                 The maximum number of iteration if convergence is not reached
 
             n_CPU : :obj:`float` (optional, default: -1)
-                Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of
-                CPUs is the number of spectral lines the fit is performed to.
+                Setting the number of CPUs used for the parallelization. If set
+                to -1 all available system resources are used. Maximum number of
+                CPUs is the number of spectral lines the fit is performed on.
 
             resid_level: :obj:`float` or :obj:`None` (optional, default: None)
                 The maximum MAD for the fit residuals for a succesfull fit
@@ -370,23 +374,23 @@ class RV_spectrum:
                 Angstrom
 
             adjust_preference: :obj:`str` (optional, default: contorder)
-                contorder: continuum order is adjusted first
+                ``contorder``: continuum order is adjusted first
 
-                wavelength: wavelength range is adjusted first
+                ``wavelength``: wavelength range is adjusted first
 
             input_continuum_deviation :obj:`float` (optional, default: 0.05)
                 Fraction by how much the continuum is allowed to deviate from a
                 running median estimate. This is set to prevent lines mimicking
                 a continuum
 
-            llimits : :obj:`list` (optional, default: [-2., 2.])
-                the limits for the wavelength fit as set in ``ppxf``
+            llimits: :obj:`list` (optional, default: [-2., 2.])
+                the limits for the wavelength fit as set in `ppxf`_
 
             max_exclusion_level :obj:`float` (optional, default: 0.3)
                 The exclusion level for lines to be excluded from the next
-                baseline estimate as set in ``pyspeckit``
+                baseline estimate as set in `pyspeckit`_
 
-            blends: obj:`ascii`-file or :obj:`None` (optional, default: None)
+            blends: :obj:`ascii` or :obj:`None` (optional, default: None)
                 A file with primary lines that contain blends to provide a
                 maximum amplitude ratio of the primary and the blend to prevent
                 that the blend becomes the dominant line in the fit.
@@ -400,10 +404,11 @@ class RV_spectrum:
 
             fwhm_block :obj:`bool` (optional, default: :obj:`False`)
                 :obj:`True`: The minimum fwhm of the voigt profiles of the
-                fitted lines is the instrument's dispersion
+                fitted lines ais the instrument's dispersion. This prevents
+                unphysical lines.
 
                 :obj:`False`: The minimum fwhm of the voigt profiles of the
-                fitted lines is zero
+                fitted lines is zero.
 
         """
 
@@ -491,8 +496,8 @@ class RV_spectrum:
 
     def rv_fit_peak(self, line_sigma=3, line_significants=5):
         '''
-        This instance fit the radial velocity solely on the fitted peaks of
-        the spectral lines
+        This module determines the radial velocity solely on the fitted peaks
+        of the spectral lines
 
         Kwargs:
             line_sigma : :obj:`int` (optional, default: 3)
@@ -531,8 +536,8 @@ class RV_spectrum:
     n_CPU=-1, line_significants=5):
 
         """
-        The instance that runs the radial velocity fit using ``ppxf`` and Monte
-        Carlo bootstrapping.
+        The module runs the radial velocity fit using `ppxf`_ and the 
+        :ref:`Monte Carlo`.
 
         Args:
             guesses : :func:`numpy.array`

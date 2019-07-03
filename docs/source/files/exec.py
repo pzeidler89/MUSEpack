@@ -27,6 +27,6 @@ spfit.plot(oversampled=True)
 
 spfit.rv_fit_peak(line_sigma=3, line_significants=5)
 
-spfit.rv_fit([spfit.rv_peak, 0.], niter=20000, line_sigma=2, n_CPU=-1)
+spfit.rv_fit([spfit.rv_peak, 0.], niter=20000, n_CPU=-1)
 
 spfit.catalog(save=True, printcat=True)

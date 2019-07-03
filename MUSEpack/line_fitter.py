@@ -1,6 +1,6 @@
-__version__ = '0.1.0'
+__version__ = '0.1.2'
 
-__revision__ = '20190422'
+__revision__ = '20190703'
 
 import sys
 import os
@@ -26,6 +26,17 @@ input_continuum_deviation, llimits, max_exclusion_level, blends,\
 autoadjust, fwhm_block):
 
     '''
+    This is module fits the spectral lines using pyspeckit. It automatically
+    determines the goodness of fit and decides the best solution for the line
+    and continuum fit. It handles blended lines in a way a maximum lines ratio
+    can not be exceeded to not make the weaker blend the dominant lines.
+    Additionally, the limits in wavelength range in iteration :math:`n` can be
+    adjusted automatically based on iteration :math:`n` to accomodate for
+    larger wavelength shifts.
+
+    In this way it is possible to fit spectral lines using a line catalog as 
+    only input.
+
     Args:
         linecat : :func:`numpy.array`
             Array with the spectral lines and their wavelengths
@@ -126,7 +137,8 @@ autoadjust, fwhm_block):
             the line strength over the continuum
 
         fit_failed : :obj:`bool`
-            :obj:`True`: if the fit failed for some reason. This line will be               excluded from further analyses
+            :obj:`True`: if the fit failed for some reason. This line will be
+            excluded from further analyses
 
         fit_f_highres : :obj:`float`
             the fitted spectrum and the oversampling resolution

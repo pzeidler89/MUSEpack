@@ -3,11 +3,11 @@
 MUSEreduce
 **********
 
-:class:`MUSEreduce.musereduce` is a easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: https://www.eso.org/sci/software/pipelines/muse/.
+:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: https://www.eso.org/sci/software/pipelines/muse/.
 
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 
-To run :class:`MUSEreduce.musereduce` all of the raw data must be stored in a folder named `user_path/raw/OB_ID`, where `OB_ID` must be a unique name for each individual OB. It is not mandatory (but recommended) to use the same nomenclature as as in the fits header. The script has to point to `user_path` by setting the keyword ``rootpath`` of the :obj:`json` config file to the parent location.
+To run :class:`MUSEreduce.musereduce` all of the raw data must be stored in a folder named `user_path/raw/OB_ID`, where `OB_ID` must be a unique name for each individual OB. It is not mandatory (but recommended) to use the same nomenclature as as in the fits header. The script has to point to `user_path` by setting the keyword ``rootpath`` of the :obj:`json` config file to the parent directory.
 
 .. autoclass:: MUSEreduce.musereduce
    :members:
@@ -21,19 +21,25 @@ If ``auto_sort_data`` = :obj:`True` in the config file and :class:`MUSEreduce.mu
 
 Each *master* OB (`OB1`, `OB2`) has its own folder in the `reduced` folder. Pointing `OB1` consists of the two OBs `OB1a` and `OB1b`. Each OB has the following folders:
 
- * Each individual exposure (e.g., `091315-402023_2800_005_00`) following the structure: RADEC_EXPTIME_ROTANGLE_COUNTER. RADEC is in sexagesimal, EXPTIME in seconds and the ROTANGLE is in degrees. The counter is needed if there are tow exposures with the same configuration.
- * Each individual pointing (e.g., `091315-402023_2800`) following the structure: RADEC_EXPTIME.
- * The `calibrations` containing `DARK`, `TWILIGHT`, and `SCIENCE`, in case the calibration steps are executed.
- * The `ESO_calibrations` where the calibration files delivered by ESO (if available) will be copied to.
- * The `static_calibration_files`, in which a copy of the statics (part of the /`MUSE data reduction pipeline`_ installation) is created.
- * The folder `std`, in which the reduced data of the standard star will be located.
- 
-The calibration files and the standard star is the same for each individual OB and, therefore, these file are only needed once per OB.
+ * Each individual exposure (e.g., `091315-402023_2800_005_00`) following the structure: **RADEC_EXPTIME_ROTANGLE_COUNTER**. **RADEC** are the coordinates in sexagesimal, **EXPTIME** is the exposure time in seconds and the **ROTANGLE** is the rotation angle in degrees. The **COUNTER** is needed if there are two exposures with the same configuration.
+ * Each individual pointing (e.g., `091315-402023_2800`) following the structure: **RADEC_EXPTIME**.
+ * The `calibrations` contain `DARK`, `TWILIGHT`, and `SCIENCE`, in case the calibration files are created from the raw calibration files provided by ESO Therefore, the calibration steps must be executed.
+ * The `ESO_calibrations` is the folder, into which the reduced calibration files delivered by ESO (if available) are copied.
+ * The `static_calibration_files`, is the folder, into which the statics (part of the `MUSE data reduction pipeline`_ installation) are copied.
+ * The folder `std` will contain the reduced data of the standard star.
+
+.. note::
+   The calibration files and the standard star are the same per individual OB and are only needed once.
 
 The config file
 ---------------
 
-The following is a description of the :obj:`json` configuration file, which is needed to be set properly to run :class:`MUSEreduce.musereduce`.
+The :obj:`json` configuration file is needed to run :class:`MUSEreduce.musereduce`. This file contains all of the data reduction setup. The :obj:`json` configuration file can be found in the main directly of MUSEpack and can be downloaded :download:`here <../../MUSEpack/config.json>`.
+
+.. literalinclude:: ../../MUSEpack/config.json
+  :language: JSON
+
+The file :download:`config file <../../MUSEpack/config.json>` is structured the following. If keywords are directly controlling toggles of the `MUSE data reduction pipeline`_ their naming is identical.
 
 .. json:object:: config
    
@@ -66,47 +72,46 @@ The following is a description of the :obj:`json` configuration file, which is n
 
 .. json:object:: global
    
-   :property pipeline_path: The absolut path to the `MUSE data reduction pipeline`_ folder.
+   :property pipeline_path: The absolut path to the `MUSE data reduction pipeline`_ installation folder.
    :proptype pipeline_path: string
    
    :property mode: The observation mode the data was obtained with.
    :proptype mode: string
    :options mode: WFM-NOAO, WFM-AO, NFM-AO
    
-   :property withrvcorr: bariocentric correction. Needs to be turned off, if one wants run their own wavelength calibration 
+   :property withrvcorr: bariocentric correction. Needs to be turned off, if one wants run an own wavelength calibration 
    :proptype withrvcorr: bool
    :options withrvcorr: true, false, default='true'
    
-   :property auto_sort_data: If the raw data is sorted and the calibration files are assigned based on their header information. If :obj:`True` than 
-                             the file lists `ID_DAR.list`, `ID_SCI.list`, and `ID_TWI.list` get created. If these have to be altered manually (e.g., using
+   :property auto_sort_data: The raw data is sorted and the calibration files are assigned based on their header information. If :obj:`True`, 
+                             the file lists `ID_DAR.list`, `ID_SCI.list`, and `ID_TWI.list` are created. If these have to be altered manually (e.g., using
                              different calibration files), we recommend to run it first with ``auto_sort_data`` = :obj:`True`, then make the changes accordingly
                              and from this point on set ``auto_sort_data`` = :obj:`False`.
    :proptype auto_sort_data: bool
    :options auto_sort_data: false, true, default=true
    
-   :property using_specific_exposure_time: The user can choose to only reduce a specific exposure time, if the same OB contains multiple exposures with\
+   :property using_specific_exposure_time: The user can choose to only reduce a specific exposure time, if the same OB contains multiple exposures with 
                                             different exposure times (e.g., long and short exposures)
    :proptype using_specific_exposure_time: float
    
    :property dither_multiple_OBs: Each OB is normally limited to a total exposure time of one hour. Therefore, one pointing may be distributed via multiple OBs.
-                                 If ``dither_multiple_OBs`` = :obj:`True` it is possible to dither exposures that are obtained in more than one OB.
-                                 If ``dither_multiple_OBs`` = :obj:`True` one also must provide an ``OB_list``.
+                                 If ``dither_multiple_OBs`` = :obj:`True` it is possible to dither exposures from multiple OBs.
+                                 In this case one must provide an ``OB_list``.
    :proptype dither_multiple_OBs: bool
    :options dither_multiple_OBs: false, true, default=false
    
-   :property n_CPU: The number of CPUs used to reduce the data. If set to -1 than all available CPUs are used.
+   :property n_CPU: The number of CPUs used to reduce the data. If set to -1 all available cores are used.
    :proptype n_CPU: int
    :options n_CPU: default=-1
    
-   :property rootpath: The absolut path in which the `raw` folder is located and in which the `processed` will be created.
+   :property rootpath: The absolut path in which the `raw` folder is located and in which the `processed` folder will be created.
    :proptype rootpath: string
    
-   :property OB: The name of the OB that must be reduce. It must be the the same name as the OB_ID given in the `raw` folder.
+   :property OB: The name of the OB that shall be reduce. It must identical to the OB_ID given in the `raw` folder.
    :proptype OB: string
    
-   :property OB_list: If ``dither_multiple_OBs`` = :obj:`True` one must give a list of :obj:`string` OB_IDs, which will be dithered in the end.
-                     The calibration and data reduction
-                     runs on wach individual OB to take into account different calibration files.
+   :property OB_list: If ``dither_multiple_OBs`` = :obj:`True` one must give a :obj:`string` list of OB_IDs, which will be dithered in the end.
+                     The calibration and data reduction runs on each individual OB to take into account different calibration files.
    :proptype OB_list: list
    :options OB_list: default=[]
 
@@ -140,7 +145,7 @@ The following is a description of the :obj:`json` configuration file, which is n
    :proptype execute: bool
    :options execute: false, true, default=true
    
-   :property sky_reject: The sigma clipping parameters for the intermediate to do the Gaussian fit to each sky emission line: `high sigma clipping limit` (:obj:`float`),
+   :property sky_reject: The sigma clipping parameters for the Gaussian fit to each sky emission line: `high sigma clipping limit` (:obj:`float`),
                          `low sigma clipping limit` (:obj:`float`), `number of iterations` (:obj:`int`). For a more detailed description we refer to the
                          `MUSE data reduction pipeline`_ manual.
    :proptype sky_reject: string
@@ -168,13 +173,11 @@ The following is a description of the :obj:`json` configuration file, which is n
    :proptype execute: bool
    :options execute: false, true, default=true
    
-   :property modified: If set :obj:`True` the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both                             emitted from the Earth's atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to 
-                        `Zeidler et al. 2019`_. If ``modified`` = :obj:`True` the ``method`` should be `subtract_model`. Other methods will **not** lead to an error
-                        but they may lead to wrong results.
+   :property modified: If set :obj:`True` the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both emitted from the Earth's atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to `Zeidler et al. 2019`_. If ``modified`` = :obj:`True` the ``method`` should be `subtract_model`. Other methods will **not** lead to an error but they may lead to wrong results.
    :proptype modified: bool
    :options modified: false, true, default=false
    
-   :property sky_field: Determines if a sky observation is used (if available) or the science observation itself is used to determine the background
+   :property sky_field: Determines if a sky observation (if available) or the science observation itself is used to determine the background
                         contamination (tellurics). If set to `auto` the pipeline will check if there are sky observations available and use the closest one in time to
                         the science exposures. If the ``skyfield``  = `object`, the science exposure will be used.
    :proptype sky_field: string
@@ -211,13 +214,12 @@ The following is a description of the :obj:`json` configuration file, which is n
    :proptype subtract_sky: bool
    :options subtract_sky: false, true, default=true
    
-   :property raman: If the laser guid stars are used raman scattering in the atmosphere may ve visible in the final data cubes. If set to :obj:`True` the Raman lines
-                     are being removed. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
+   :property raman: If laser guide stars are used raman scattering in the atmosphere may be visible in the final data cubes. If set to :obj:`True` the Raman lines
+                     are removed. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
    :proptype raman: bool
    :options raman: false, true, default=false
    
-   :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
-                        than it must be set to :obj:`False` since it will be overwritten otherwise
+   :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
    :options create_sof: false, true, default=true
 
@@ -249,7 +251,7 @@ The following is a description of the :obj:`json` configuration file, which is n
    :proptype execute: bool
    :options execute: false, true, default=true
    
-   :property weight: The method how the fluxes in each dither position is being weighted before combination. For more details we refer to
+   :property weight: The method how the fluxes in each dither position sre weighted. For more details we refer to
                      the `MUSE data reduction pipeline`_ handbook.
    :proptype weight: string
    :options weight: 'exptime', 'fwhm', 'none', default=exptime
@@ -260,12 +262,7 @@ The following is a description of the :obj:`json` configuration file, which is n
    :options create_sof: false, true, default=true
 
 
-In the following we show how the :obj:`json` configuration file looks like. It can be found in the main directly of MUSEpack under: `config.json`.
 
-.. literalinclude:: ../../MUSEpack/config.json
-  :language: JSON
-  
-  
 Utility methods
 ---------------
 

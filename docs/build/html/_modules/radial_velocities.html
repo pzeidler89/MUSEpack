@@ -94,27 +94,30 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -192,7 +195,7 @@
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.2&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190308&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190703&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -235,6 +238,9 @@
 
 <div class="viewcode-block" id="RV_spectrum"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum">[docs]</a><span class="k">class</span> <span class="nc">RV_spectrum</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class contains the 1D spectrum, as well as all fitting parameters</span>
+<span class="sd">    and output values including the radial velocity catalog.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        spec_id : :obj:`str`</span>
 <span class="sd">            unique identifier of the spectrum</span>
@@ -339,7 +345,7 @@
 
 <div class="viewcode-block" id="RV_spectrum.clean"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This cleans resets all of the output. This **must** be executed before</span>
+<span class="sd">        This modules resets all of the output. This **must** be executed before</span>
 <span class="sd">        repeating the spectral fit without re-initiating the class.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -351,7 +357,7 @@
 
 <div class="viewcode-block" id="RV_spectrum.catalog"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum.catalog">[docs]</a>    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initcat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">printcat</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This instance handles the catalog that will holds the fit results</span>
+<span class="sd">        This module handles the catalog that holds the fit results</span>
 <span class="sd">        of the primary lines.</span>
 
 <span class="sd">        Kwargs:</span>
@@ -533,10 +539,10 @@
 <span class="sd">        Initializing the line fitting by calling :mod:`line_fitter`</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            input_cat : :func:`numpy.array`: input spectral line catalog with</span>
-<span class="sd">            wavelengths in Angstrom</span>
+<span class="sd">            input_cat: :func:`numpy.array`</span>
+<span class="sd">                input spectral line catalog with wavelengths in Angstrom</span>
 
-<span class="sd">            line_idxs : :func:`numpy.array`:</span>
+<span class="sd">            line_idxs: :func:`numpy.array`</span>
 <span class="sd">                :obj:`str` :func:`numpy.array`: of the line names for which RV</span>
 <span class="sd">                fits should be performed, must be identical to &quot;name&quot; in</span>
 <span class="sd">                init_cat</span>
@@ -546,8 +552,9 @@
 <span class="sd">                The maximum number of iteration if convergence is not reached</span>
 
 <span class="sd">            n_CPU : :obj:`float` (optional, default: -1)</span>
-<span class="sd">                Setting the number of CPUs used for the parallelization. If set                 to -1 all available system resources are used. Maximum number of</span>
-<span class="sd">                CPUs is the number of spectral lines the fit is performed to.</span>
+<span class="sd">                Setting the number of CPUs used for the parallelization. If set</span>
+<span class="sd">                to -1 all available system resources are used. Maximum number of</span>
+<span class="sd">                CPUs is the number of spectral lines the fit is performed on.</span>
 
 <span class="sd">            resid_level: :obj:`float` or :obj:`None` (optional, default: None)</span>
 <span class="sd">                The maximum MAD for the fit residuals for a succesfull fit</span>
@@ -560,23 +567,23 @@
 <span class="sd">                Angstrom</span>
 
 <span class="sd">            adjust_preference: :obj:`str` (optional, default: contorder)</span>
-<span class="sd">                contorder: continuum order is adjusted first</span>
+<span class="sd">                ``contorder``: continuum order is adjusted first</span>
 
-<span class="sd">                wavelength: wavelength range is adjusted first</span>
+<span class="sd">                ``wavelength``: wavelength range is adjusted first</span>
 
 <span class="sd">            input_continuum_deviation :obj:`float` (optional, default: 0.05)</span>
 <span class="sd">                Fraction by how much the continuum is allowed to deviate from a</span>
 <span class="sd">                running median estimate. This is set to prevent lines mimicking</span>
 <span class="sd">                a continuum</span>
 
-<span class="sd">            llimits : :obj:`list` (optional, default: [-2., 2.])</span>
-<span class="sd">                the limits for the wavelength fit as set in ``ppxf``</span>
+<span class="sd">            llimits: :obj:`list` (optional, default: [-2., 2.])</span>
+<span class="sd">                the limits for the wavelength fit as set in `ppxf`_</span>
 
 <span class="sd">            max_exclusion_level :obj:`float` (optional, default: 0.3)</span>
 <span class="sd">                The exclusion level for lines to be excluded from the next</span>
-<span class="sd">                baseline estimate as set in ``pyspeckit``</span>
+<span class="sd">                baseline estimate as set in `pyspeckit`_</span>
 
-<span class="sd">            blends: obj:`ascii`-file or :obj:`None` (optional, default: None)</span>
+<span class="sd">            blends: :obj:`ascii` or :obj:`None` (optional, default: None)</span>
 <span class="sd">                A file with primary lines that contain blends to provide a</span>
 <span class="sd">                maximum amplitude ratio of the primary and the blend to prevent</span>
 <span class="sd">                that the blend becomes the dominant line in the fit.</span>
@@ -590,10 +597,11 @@
 
 <span class="sd">            fwhm_block :obj:`bool` (optional, default: :obj:`False`)</span>
 <span class="sd">                :obj:`True`: The minimum fwhm of the voigt profiles of the</span>
-<span class="sd">                fitted lines is the instrument&#39;s dispersion</span>
+<span class="sd">                fitted lines ais the instrument&#39;s dispersion. This prevents</span>
+<span class="sd">                unphysical lines.</span>
 
 <span class="sd">                :obj:`False`: The minimum fwhm of the voigt profiles of the</span>
-<span class="sd">                fitted lines is zero</span>
+<span class="sd">                fitted lines is zero.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -681,8 +689,8 @@
 
 <div class="viewcode-block" id="RV_spectrum.rv_fit_peak"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum.rv_fit_peak">[docs]</a>    <span class="k">def</span> <span class="nf">rv_fit_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_significants</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        This instance fit the radial velocity solely on the fitted peaks of</span>
-<span class="sd">        the spectral lines</span>
+<span class="sd">        This module determines the radial velocity solely on the fitted peaks</span>
+<span class="sd">        of the spectral lines</span>
 
 <span class="sd">        Kwargs:</span>
 <span class="sd">            line_sigma : :obj:`int` (optional, default: 3)</span>
@@ -721,8 +729,8 @@
     <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">line_significants</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The instance that runs the radial velocity fit using ``ppxf`` and Monte</span>
-<span class="sd">        Carlo bootstrapping.</span>
+<span class="sd">        The module runs the radial velocity fit using `ppxf`_ and the </span>
+<span class="sd">        :ref:`Monte Carlo`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            guesses : :func:`numpy.array`</span>

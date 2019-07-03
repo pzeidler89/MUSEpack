@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. cubes &mdash; MUSEpack  documentation</title>
+  <title>4. Cubes &mdash; MUSEpack  documentation</title>
   
 
   
@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5. Examples" href="examples.html" />
+    <link rel="next" title="5. Utility modules" href="utilities.html" />
     <link rel="prev" title="3. Spectral line fitting and radial velocity measurements" href="radialvelocities.html" /> 
 </head>
 
@@ -96,27 +96,27 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">4. cubes</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="examples.html#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="examples.html#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">5. Utility modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-results">6.1.2. The results</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -172,7 +172,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>4. cubes</li>
+      <li>4. Cubes</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,11 +192,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="cubes">
-<span id="id1"></span><h1>4. cubes<a class="headerlink" href="#cubes" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="#module-cubes" title="cubes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cubes</span></code></a> is a model that contains a collection of support functions for the analyses of data cubes, specifically MUSE data cubes.</p>
+<span id="id1"></span><h1>4. Cubes<a class="headerlink" href="#cubes" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#module-cubes" title="cubes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cubes</span></code></a> is a module that contains a collection of support functions for the analyses of data cubes, specifically MUSE data cubes.</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
-<p class="last">A more detailed description will follow.</p>
+<p class="last">A more detailed description will follow soon.</p>
 </div>
 <span class="target" id="module-cubes"></span><dl class="function">
 <dt id="cubes.linemaps">
@@ -342,7 +342,7 @@ stored. This is only needed if correct_flux=:obj:<cite>True</cite></dd>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="examples.html" class="btn btn-neutral float-right" title="5. Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="utilities.html" class="btn btn-neutral float-right" title="5. Utility modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="radialvelocities.html" class="btn btn-neutral float-left" title="3. Spectral line fitting and radial velocity measurements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

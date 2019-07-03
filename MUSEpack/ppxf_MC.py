@@ -16,9 +16,9 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
             nrand=100, degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5,\
             spec_id=None, n_CPU=-1):
     '''
-    This module runs the Monte Carlo ppxf runs, which is needed for the RV
+    This module runs the Monte Carlo `ppxf`_ runs, which is needed for the RV
     measurements. Most of the input parameters are similar to the standard
-    ppxf parameters (see Cappellari & Emsellem (2004) for a more detailed
+    ppxf parameters (see `Cappellari and Emsellem 2004`_) for a more detailed
     explanation).
 
     Args:
@@ -31,7 +31,7 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
         log_spec_err : :func:`numpy.array`
             The logarithmically source spectrum uncertainties
 
-        velscale : obj:`float`
+        velscale: :obj:`float`
             The velocity scale of the source spectrum
 
         guesses : :func:`numpy.array`

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>5. Examples &mdash; MUSEpack  documentation</title>
+  <title>6. Examples &mdash; MUSEpack  documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Credits" href="credits.html" />
-    <link rel="prev" title="4. cubes" href="cubes.html" /> 
+    <link rel="prev" title="5. Utility modules" href="utilities.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,27 +96,27 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. cubes</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="cubes.html">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">5. Utility modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-results">6.1.2. The results</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -172,7 +172,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>5. Examples</li>
+      <li>6. Examples</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,12 +192,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="examples">
-<span id="id1"></span><h1>5. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>6. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="measuring-stellar-radial-velocities">
-<h2>5.1. Measuring stellar radial velocities<a class="headerlink" href="#measuring-stellar-radial-velocities" title="Permalink to this headline">¶</a></h2>
+<h2>6.1. Measuring stellar radial velocities<a class="headerlink" href="#measuring-stellar-radial-velocities" title="Permalink to this headline">¶</a></h2>
 <p>In this tutorial we show the user how to create a spectral measure the stellar radial velocity. All files in including the <a class="reference download internal" download="" href="_downloads/5a413622b2410f9728d436212fd7e3f2/exec.py"><code class="xref download docutils literal notranslate"><span class="pre">example</span></code></a> code may be downloaded by using the individual links or as a zip-archive <a class="reference download internal" download="" href="_downloads/7491dfbf490881758ae7bb3cba52c745/all_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>. The <a class="reference download internal" download="" href="_downloads/04ed6dec914a6950a525093c65cac5d8/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a> used in this example contains the PampelMuse extracted spectrum of a member pre-main-sequence member star of the young massive star cluster Westerlund 2 showing a pronounced CaII-Triplet, which we will use to measure the RV. The user can also see that the Balmer lines are not well extracted, which is caused by the high nebular emission lines (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018AJ....156..211Z/abstract">Zeidler et al. 2018</a>, <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>) demonstrating that this does not influence the radial velocity fit.</p>
 <div class="section" id="the-procedure">
-<h3>5.1.1. The procedure<a class="headerlink" href="#the-procedure" title="Permalink to this headline">¶</a></h3>
+<h3>6.1.1. The procedure<a class="headerlink" href="#the-procedure" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic">
 <li><p class="first">Reading in the necessary data</p>
 <p>As a first step we must read the necessary data. This includes the spectrum, the <a class="reference download internal" download="" href="_downloads/dda135c44d68c9b49c626c65d07b3791/line_library.dat"><code class="xref download docutils literal notranslate"><span class="pre">spectral</span> <span class="pre">line</span> <span class="pre">library</span></code></a>, and the <a class="reference download internal" download="" href="_downloads/42104345242a8d266402b010153c879e/target_lines.list"><code class="xref download docutils literal notranslate"><span class="pre">line</span> <span class="pre">list</span></code></a> of the spectral lines that are used to measure the radial velocity. Since the CaII-Triplet lines are blended with the Paschen Series, we also have to include a catalog of the <a class="reference download internal" download="" href="_downloads/c1bb1e090d3baf6ab1bfe6649f0f41ed/blends.dat"><code class="xref download docutils literal notranslate"><span class="pre">blends</span></code></a>.</p>
@@ -289,7 +289,7 @@ In this step all the necessary arrays are created from the input files. The head
 </ol>
 </div>
 <div class="section" id="the-results">
-<h3>5.1.2. The results<a class="headerlink" href="#the-results" title="Permalink to this headline">¶</a></h3>
+<h3>6.1.2. The results<a class="headerlink" href="#the-results" title="Permalink to this headline">¶</a></h3>
 <p>After successfully executing the script the radial velocity of <em>star_1</em> is <span class="math notranslate nohighlight">\(13.90 \pm 1.949\,{\rm km}\,{\rm s}^{-1}\)</span> based on two out of the three absorption lines. The radial velocity based on the peaks only is <span class="math notranslate nohighlight">\(15.43 \pm 1.144\,{\rm km}\,{\rm s}^{-1}\)</span> and agrees well with the cross correlation.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -377,7 +377,7 @@ In this step all the necessary arrays are created from the input files. The head
 </div>
 </div>
 <div class="section" id="additional-tutorials">
-<h2>5.2. Additional tutorials<a class="headerlink" href="#additional-tutorials" title="Permalink to this headline">¶</a></h2>
+<h2>6.2. Additional tutorials<a class="headerlink" href="#additional-tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p class="last">We will add more tutorials in the near future…</p>
@@ -396,7 +396,7 @@ In this step all the necessary arrays are created from the input files. The head
         <a href="credits.html" class="btn btn-neutral float-right" title="Credits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cubes.html" class="btn btn-neutral float-left" title="4. cubes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="utilities.html" class="btn btn-neutral float-left" title="5. Utility modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

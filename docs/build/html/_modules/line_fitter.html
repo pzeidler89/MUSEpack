@@ -94,27 +94,30 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -188,9 +191,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for line_fitter</h1><div class="highlight"><pre>
-<span></span><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.0&#39;</span>
+<span></span><span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.2&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190422&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190703&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -216,6 +219,17 @@
 <span class="n">autoadjust</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="p">):</span>
 
     <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is module fits the spectral lines using pyspeckit. It automatically</span>
+<span class="sd">    determines the goodness of fit and decides the best solution for the line</span>
+<span class="sd">    and continuum fit. It handles blended lines in a way a maximum lines ratio</span>
+<span class="sd">    can not be exceeded to not make the weaker blend the dominant lines.</span>
+<span class="sd">    Additionally, the limits in wavelength range in iteration :math:`n` can be</span>
+<span class="sd">    adjusted automatically based on iteration :math:`n` to accomodate for</span>
+<span class="sd">    larger wavelength shifts.</span>
+
+<span class="sd">    In this way it is possible to fit spectral lines using a line catalog as </span>
+<span class="sd">    only input.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        linecat : :func:`numpy.array`</span>
 <span class="sd">            Array with the spectral lines and their wavelengths</span>
@@ -316,7 +330,8 @@
 <span class="sd">            the line strength over the continuum</span>
 
 <span class="sd">        fit_failed : :obj:`bool`</span>
-<span class="sd">            :obj:`True`: if the fit failed for some reason. This line will be               excluded from further analyses</span>
+<span class="sd">            :obj:`True`: if the fit failed for some reason. This line will be</span>
+<span class="sd">            excluded from further analyses</span>
 
 <span class="sd">        fit_f_highres : :obj:`float`</span>
 <span class="sd">            the fitted spectrum and the oversampling resolution</span>

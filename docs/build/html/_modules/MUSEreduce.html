@@ -94,27 +94,30 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -192,7 +195,7 @@
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.2&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190416&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190703&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -216,7 +219,7 @@
 <span class="sd">    Kwargs:</span>
 <span class="sd">        configfile : :obj:`str`</span>
 <span class="sd">            A :obj:`json` configfile for musereduce, where all the parameters</span>
-<span class="sd">            will be set.</span>
+<span class="sd">            are set.</span>
 
 <span class="sd">        debug : :obj:`bool`, (optional), default: :obj:`None`</span>
 <span class="sd">            :obj:`True`: :class:`MUSEreduce.musereduce` runs in debug mode and</span>
@@ -284,7 +287,7 @@
 
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        This method executes wrapper and starts the data reduction process</span>
-<span class="sd">        set in the :obj:`json` configfile.</span>
+<span class="sd">        set in the :obj:`json` config file.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
 
@@ -296,7 +299,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####        MUSE data reduction pipeline wrapper        #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####   Must be used with ESORex and ESO MUSE pipeline   #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####      author: Peter Zeidler (zeidler@stsci.edu)     #####&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Jan 22, 2019                    #####&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Jul 03, 2019                    #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                   Version: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;   </span><span class="se">\</span>
 <span class="s1">                #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                                                    #####&#39;</span><span class="p">)</span>
@@ -1772,7 +1775,7 @@
 
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This module calls *ESORex&#39;* ``muse_sky`` with the modified continuum and</span>
-<span class="sd">    line subtraction as described in Zeidler et al. 2019.</span>
+<span class="sd">    line subtraction as described in `Zeidler et al. 2019`_.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        exp_list_SCI : :obj:`list`</span>

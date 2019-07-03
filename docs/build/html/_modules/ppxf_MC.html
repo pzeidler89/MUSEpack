@@ -94,27 +94,30 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id1">3.1. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.1.1. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.2. Spectral line fitter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#cross-correlating-the-spectra">3.3. Cross correlating the spectra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#utility-modules">3.4. Utility modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.5. History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. cubes</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">5. Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">5.1.1. The procedure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">5.1.2. The results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
 </ul>
 </li>
 </ul>
@@ -206,9 +209,9 @@
             <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">goodpixels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">vsyst</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>\
             <span class="n">spec_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This module runs the Monte Carlo ppxf runs, which is needed for the RV</span>
+<span class="sd">    This module runs the Monte Carlo `ppxf`_ runs, which is needed for the RV</span>
 <span class="sd">    measurements. Most of the input parameters are similar to the standard</span>
-<span class="sd">    ppxf parameters (see Cappellari &amp; Emsellem (2004) for a more detailed</span>
+<span class="sd">    ppxf parameters (see `Cappellari and Emsellem 2004`_) for a more detailed</span>
 <span class="sd">    explanation).</span>
 
 <span class="sd">    Args:</span>
@@ -221,7 +224,7 @@
 <span class="sd">        log_spec_err : :func:`numpy.array`</span>
 <span class="sd">            The logarithmically source spectrum uncertainties</span>
 
-<span class="sd">        velscale : obj:`float`</span>
+<span class="sd">        velscale: :obj:`float`</span>
 <span class="sd">            The velocity scale of the source spectrum</span>
 
 <span class="sd">        guesses : :func:`numpy.array`</span>

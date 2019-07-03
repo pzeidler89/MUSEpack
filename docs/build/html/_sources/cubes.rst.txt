@@ -1,13 +1,13 @@
 .. _cubes:
 
-cubes
+Cubes
 *****
 
-:mod:`cubes` is a model that contains a collection of support functions for the analyses of data cubes, specifically MUSE data cubes.
+:mod:`cubes` is a module that contains a collection of support functions for the analyses of data cubes, specifically MUSE data cubes.
 
 .. todo::
 
-   A more detailed description will follow.
+   A more detailed description will follow soon.
 
 .. automodule:: cubes
    :members:

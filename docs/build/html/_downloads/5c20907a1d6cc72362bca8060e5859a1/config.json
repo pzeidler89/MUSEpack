@@ -1,0 +1,59 @@
+{
+  "global": {
+    "pipeline_path": "path_to_pipeline/muse/2.4.2/",
+    "mode": "WFM-NOAO",
+    "withrvcorr": true,
+    "auto_sort_data": true,
+    "using_specific_exposure_time": ,
+    "dither_multiple_OBs": false,
+    "n_CPU": -1,
+    "rootpath": "path_to_data_folder",
+    "OB": "",
+    "OB_list": []
+  },
+  "calibration":{
+    "execute": true,
+    "using_ESO_calibration": true,
+    "renew_statics": false,
+    "dark": false,
+    "create_sof": true
+  },
+  "sci_basic":{
+    "execute": true,
+    "skyreject": "15.,15.,1",
+    "create_sof": true
+  },
+  "std_flux":{
+    "execute": true,
+    "create_sof": true
+  },
+  "sky":{
+    "execute": true,
+    "modified": false,
+    "sky_field": "auto",
+    "fraction": 0.05,
+    "ignore": 0.05,
+    "method": "model",
+    "create_sof": true
+  },
+  "sci_post":{
+    "execute": true,
+    "subtract_sky": true,
+    "raman": false,
+    "create_sof": true
+  },
+  "dither_collect":{
+    "execute": true,
+    "user_list": []
+  },
+  "exp_align":{
+    "execute": true,
+    "create_sof": true
+  },
+  "exp_combine":{
+    "execute": true,
+    "weight": "exptime",
+    "create_sof": true
+  }
+
+}
