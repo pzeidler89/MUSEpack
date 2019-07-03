@@ -110,7 +110,15 @@
 <li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">5. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#measuring-stellar-radial-velocities">5.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-procedure">5.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-results">5.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#additional-tutorials">5.2. Additional tutorials</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Credits:</span></p>
 <ul>
@@ -414,8 +422,9 @@ explanation).</p>
 <dd>The logarithmically source spectrum uncertainties</dd>
 <dt>velscale <span class="classifier-delimiter">:</span> <span class="classifier">obj:<cite>float</cite></span></dt>
 <dd>The velocity scale of the source spectrum</dd>
-<dt>guesses:</dt>
-<dd>the guesses for ppxf. For two moments it reflects (RV, sigma)</dd>
+<dt>guesses <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.16)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt>
+<dd>The initial guesses for the the radial velocity fit guesses in
+the form [RV,sepctral_dispersion]</dd>
 </dl>
 </dd>
 <dt>Kwargs:</dt>

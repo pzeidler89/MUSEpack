@@ -17,7 +17,7 @@ The basic folder structure
 
 If ``auto_sort_data`` = :obj:`True` in the config file and :class:`MUSEreduce.musereduce` is executed, the basic folder structure is created in the ``rootpath``. As example, we consider that three OBs were observed: OB1a, OB1b, and OB2. OB1a and OB1b are two dither positions (with rotation angles of 5 and 95 deg and an exposure time of 2800s) of the same pointing OB1, while OB2 consists of three dither postions observed in one OB (with rotation angles of 10, 100, and 190 deg and an exposure time of 220s). The folder structure looks the following:
 
-.. image:: folder_struct.png
+.. image:: images/folder_struct.png
 
 Each *master* OB (`OB1`, `OB2`) has its own folder in the `reduced` folder. Pointing `OB1` consists of the two OBs `OB1a` and `OB1b`. Each OB has the following folders:
 
