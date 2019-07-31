@@ -1,33 +1,14 @@
 #!/usr/bin/env python
-"""
-ppxf_MC.py
 
-Copyright 2018-2018 Peter Zeidler
+__version__ = '0.1.0'
 
-This module is part of MUSEpack and adds and subtracts the spectral uncertainties in a radom fashion
-and then for each random draw the routine recalculates RV.
-The final result is the mean of the gaussian dristibution and its uncertanty is
-the 1sigma width.
+__revision__ = '20190731'
 
-MUSEpack is a free software package: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-MUSEpack is distributed in the hope that it will be useful for working with
-MUSE data and spectra, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License
-along with MUSEpack. If not, see <http://www.gnu.org/licenses/>.
-
-"""
 import numpy as np
 from astropy.stats import sigma_clip
 from lmfit import Model
 from ppxf import ppxf
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
 from functools import partial
 import matplotlib.pyplot as plt
 from astropy.stats import median_absolute_deviation as MAD
@@ -35,117 +16,219 @@ import logging
 import dask
 
 
-def gaussian_fit(x, a, b, c):
-    return a * np.exp(-(x - b)**2.0 / (2 * c**2))
+def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
+            nrand=100, degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5,\
+            spec_id=None, n_CPU=-1):
+    '''
+    This module runs the Monte Carlo `ppxf`_ runs, which is needed for the RV
+    measurements. Most of the input parameters are similar to the standard
+    ppxf parameters (see `Cappellari and Emsellem 2004`_) for a more detailed
+    explanation).
 
-def ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale, degree, goodpixels, guesses,moments, vsyst,iter_spec,noise):
+    Args:
+        log_template_f : :func:`numpy.array`
+            The logarithmically binned template spectrum
 
-    # Use negligible BIAS=0 to estimate Bootstrap errors
-    # See Section 3.4 of Cappellari & Emsellem (2004)
-    
-    ### add or subtract the uncertainties
-    
-    pm = np.random.randint(1,3,size=len(log_spec_err))
-    pm[np.where(pm == 2)] = -1
-    pm_log_spec_err = pm*log_spec_err
-    
-    #random draw of uncertainties and add them
-    np.random.seed()
-    scramble = goodpixels[(np.random.rand(len(goodpixels))*len(goodpixels)).astype(int)]
-    new_log_spec_err = pm_log_spec_err[scramble]
-    iter_spec[goodpixels] = log_spec_f[goodpixels] + new_log_spec_err
+        log_spec_f : :func:`numpy.array`
+            The logarithmically binned source spectrum
 
-    pp1 = ppxf.ppxf(log_template_f, iter_spec, noise, velscale, guesses, goodpixels=goodpixels,
-                    plot=False, degree=degree, moments=moments, vsyst=vsyst, quiet=1,bias=0,velscale_ratio=1) 
+        log_spec_err : :func:`numpy.array`
+            The logarithmically source spectrum uncertainties
 
-    if moments <= 2: uncert=np.array([pp1.sol[0],pp1.sol[1]])
-    if moments > 2: uncert=np.array([pp1.sol[0],pp1.sol[1],pp1.sol[2],pp1.sol[3]])
-    
-    return uncert
+        velscale: :obj:`float`
+            The velocity scale of the source spectrum
 
-def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses, nrand=100,
-                    degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5, spec_id = None,n_CPU = -1):
+        guesses : :func:`numpy.array`
+            The initial guesses for the the radial velocity fit guesses in
+            the form [RV,sepctral_dispersion]
+
+    Kwargs:
+        nrand : :obj:`int` (optional, default: 5)
+            The maximum number of iteration if convergence is not reached
+
+        degree : :obj:`int` (optional, default: 4)
+            The degree of the additive polynomial to fit offsets in the
+            continuum. A low order polynominal may be needed to get better
+            results
+
+        goodpixels : :func:`numpy.array` (optional, default: 5)
+            A :func:`numpy.array`: of pixels that are used by ppxf to fit
+            the template to the source spectrum
+
+        moments : :obj:`int` (optional, default: 4)
+            The moments to be fit (v, sigma, h3, h4)
+
+        vsyst : :obj:`float` (optional, default: 0.)
+            A systematic velocity. This may be needed if the system move at
+            high velocities compared to the rest frame. If the guess of vsyst
+            is good, the fit runs faster and more stable.
+
+        sigma : :obj:`int` (optional, default: 5)
+            The sigma used to clip outliers in the histogram determination.
+
+        spec_id : :obj:`str` (optional, default: None)
+            An ID number of the source spectrum. This becomes handy when
+            fitting many individual sources because the output files will be
+            named with the ID.
+
+        n_CPU : :obj:`int` (optional, default: -1)
+            The number of cores used for the Monte Carlo velocity fitting. If
+            n_CPU=-1 than all available cores will be used.
 
     '''
-    log_template_f: array, logarithmically binned template spectrum
-    log_spec_f:     array, logarithmically binned spectrum
-    log_spec_err:   array, logarithmically binned uncertainties
-    velscale:       float, velocity scale
 
-    THE ABOVE DEFINED VALUES CAN BE CALCULAYED WITH log_rebin OF THE ppxf_util package
-
-    degree         float, optional, default =4, degree of the additive continuum
-    goodpixels     array, optional, bool, default: None; same dimension as log_template_f, array of spectral bins used for fit
-    moments=4      int, optional, default = 4, moments to calculate velcoities
-    vsyst=0        flat, optional, default: 0, velocity of the system
-
-    THE ABOVE PARAMETERS ARE ALSO DEFINED AND FURTHER EXPLAINED IN Cappellari & Emsellem (2004)
-
-    guesses:        array[velocity,1sigma], starting value for RV fit
-    nrand:          float, default: 100, number of iterations for MC
-    sigma:          float, optional, default: 5, sigma for sigma clipping of velocity results for plotting the gaussian
-    spec_id:        str, optional, default: -1, identifier of the spectrum to name the plot, if plot is named it is also safed
-    n_CPU:          int, optional, default: None, number of cores to use for calculation                
-                    
-    '''
     noise = np.ones_like(log_spec_f) # Constant error spectrum
-    if goodpixels.any() == None: goodpixels = np.arange(len(log_spec_f))
+
+    if goodpixels.any() == None:
+        goodpixels = np.arange(len(log_spec_f))
+
     iter_spec = log_spec_f.copy()
 
-    if n_CPU > 0: cpu = n_CPU
-    if n_CPU ==-1 : cpu = cpu_count()
-    
-    # pool=Pool(cpu)
-    # uncert_ppxf=pool.map(partial(ppxf_bootstrap,log_template_f, log_spec_f, log_spec_err, velscale,
-    #                              degree, goodpixels, guesses, moments, vsyst,iter_spec,noise),np.arange(nrand))
-    #
-    # pool.close()
-    # pool.join()
-    #
-   
-    results = [dask.delayed(ppxf_bootstrap)(log_template_f, log_spec_f, log_spec_err, velscale,degree, goodpixels, guesses, moments, vsyst,iter_spec,noise) for n in np.arange(nrand)]
-   
-    if cpu == 1: uncert_ppxf = dask.compute(*results,num_worker=1,scheduler='single-threaded')
-    if cpu > 0: uncert_ppxf = dask.compute(*results,num_worker=cpu,scheduler='processes')
-   
-   
-   
-    clipped=sigma_clip(np.array(uncert_ppxf)[:,0], sigma=sigma, stdfunc=MAD)
-    clipped=clipped.data[~clipped.mask]
-    
-    
+    results = [dask.delayed(_ppxf_bootstrap)(log_template_f, log_spec_f,\
+    log_spec_err, velscale, degree, goodpixels, guesses, moments, vsyst,\
+    iter_spec, noise) for n in np.arange(nrand)]
+
+    if n_CPU == 1:
+        uncert_ppxf = dask.compute(*results, num_workers=1,\
+        scheduler='single-threaded')
+
+    if n_CPU > 0:
+        uncert_ppxf = dask.compute(*results, num_workers=n_CPU,\
+        scheduler='processes')
+
+    clipped = sigma_clip(np.array(uncert_ppxf)[:, 0], sigma=sigma, stdfunc=MAD)
+    clipped = clipped.data[~clipped.mask]
+
     if not spec_id:
-        ret = np.histogram(clipped,bins=int(20),density=True)
-        bins = [ret[1][i]+0.5*(ret[1][i+1]-ret[1][i]) for i in range(len(ret[0]))]
-        
-        result=Model(gaussian_fit).fit(ret[0], x=bins, a=np.max(ret[0]), b=np.mean(clipped), c=np.std(clipped))
-        popt=[result.best_values['a'],result.best_values['b'],result.best_values['c']]
-    
+        ret = np.histogram(clipped, bins=int(20), density=True)
+        bins = [ret[1][i] + 0.5 * (ret[1][i + 1] - ret[1][i])\
+        for i in range(len(ret[0]))]
+
+        result = Model(_gaussian_fit).fit(ret[0], x=bins, a=np.max(ret[0]),\
+        b=np.mean(clipped), c=np.std(clipped))
+
+        popt = [result.best_values['a'], result.best_values['b'],\
+        result.best_values['c']]
+
     if spec_id:
         plt.figure(spec_id)
-        ret = plt.hist(clipped, bins=int(20),density=True,label='n realizations: '+str(nrand))
-        bins = [ret[1][i]+0.5*(ret[1][i+1]-ret[1][i]) for i in range(len(ret[0]))]
-        
-        binlength=bins[1]-bins[0]
-        
-        result=Model(gaussian_fit).fit(ret[0], x=bins, a=np.max(ret[0]), b=np.mean(clipped), c=np.std(clipped))
-        popt=[result.best_values['a'],result.best_values['b'],result.best_values['c']]
-        
-        x=((np.arange(20000*len(bins))-10000*len(bins))/(100*len(bins)))+popt[1]
-        
-        plt.plot(x,gaussian_fit(x,*popt),lw=3)
-        plt.axvline(x=popt[1],c='r',lw=3,
-                    label=r'mean$=$'+str('{:4.2f}'.format(popt[1]))+r'$\,\frac{\rm km}{\rm s}$')
-        plt.axvline(x=popt[1]+popt[2],c='r',linestyle='--',lw=3,
-                    label=r'$1\sigma = $'+str('{:5.3f}'.format(popt[2]))+r'$\,\frac{\rm km}{\rm s}$')
-        plt.axvline(x=popt[1]-popt[2],c='r',linestyle='--',lw=3)
-        
-        plt.xlim(popt[1]-3*popt[2],popt[1]+3*popt[2])
+        ret = plt.hist(clipped, bins=int(20), density=True,\
+        label='n\ realizations: ' + str(nrand))
+
+        bins = [ret[1][i] + 0.5 * (ret[1][i + 1] - ret[1][i])\
+        for i in range(len(ret[0]))]
+
+        binlength = bins[1] - bins[0]
+
+        result = Model(_gaussian_fit).fit(ret[0], x=bins, a=np.max(ret[0]),\
+        b=np.mean(clipped), c=np.std(clipped))
+
+        popt = [result.best_values['a'], result.best_values['b'],\
+        result.best_values['c']]
+
+        x = ((np.arange(20000 * len(bins)) - 10000 * len(bins))\
+        / (100 * len(bins))) + popt[1]
+
+        plt.plot(x, _gaussian_fit(x, *popt), lw=3)
+        plt.axvline(x=popt[1], c='r', lw=3,\
+        label=r'mean$=$' + str('{:4.2f}'.format(popt[1]))\
+        + r'$\,\frac{\rm km}{\rm s}$')
+
+        plt.axvline(x=popt[1] + popt[2], c='r', linestyle='--', lw=3,\
+        label=r'$1\sigma = $' + str('{:5.3f}'.format(popt[2]))\
+        + r'$\,\frac{\rm km}{\rm s}$')
+
+        plt.axvline(x=popt[1] - popt[2], c='r', linestyle='--', lw=3)
+        plt.xlim(popt[1] - 3 * popt[2], popt[1] + 3 * popt[2])
         plt.xlabel(r'velocity [$\frac{\rm km}{\rm s}$]')
         plt.ylabel(r'relative number')
         plt.legend()
         plt.tight_layout()
-        plt.savefig(spec_id+'_v_dist.png',dpi=600)
+        plt.savefig(spec_id + '_v_dist.png', dpi=600)
         plt.close()
-     
+
     return popt[1], popt[2]
+
+
+def _ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale,\
+    degree, goodpixels, guesses, moments, vsyst, iter_spec, noise):
+
+    '''
+    This is the bootstrap Monte Carlo module of the ppxf MC code.
+    Use negligible BIAS=0 to estimate Bootstrap errors. See Section 3.4 of
+    Cappellari & Emsellem (2004).
+
+    Args:
+        log_template_f : :func:`numpy.array`
+            The logarithmically binned template spectrum
+
+        log_spec_f : :func:`numpy.array`
+            The logarithmically binned source spectrum
+
+        log_spec_err : :func:`numpy.array`
+            The logarithmically source spectrum uncertainties
+
+        velscale : obj:`float`
+            The velocity scale of the source spectrum
+
+        degree : :obj:`int`
+            The degree of the additive polynomial to fit offsets in the
+            continuum. A low order polynominal may be needed to get better
+            results
+
+        goodpixels : :func:`numpy.array`
+            A :func:`numpy.array`: of pixels that are used by ppxf to fit
+            the template to the source spectrum
+
+        guesses: :func:`numpy.array`
+            the guesses for ppxf. For two moments it reflects (RV, sigma)
+
+        moments : :obj:`int`
+            The moments to be fit (v, sigma, h3, h4)
+
+        vsyst : :obj:`float`
+            A systematic velocity. This may be needed if the system move at
+            high velocities compared to the rest frame. If the guess of vsyst
+            is good, the fit runs faster and more stable.
+
+        iterspec: :func:`numpy.array`
+            a copy of log_template_f that can be manipulated in each step
+
+        noise: :func:`numpy.array`
+            constant error spectrum
+
+    '''
+
+
+    pm = np.random.randint(1, 3, size=len(log_spec_err))
+    pm[np.where(pm == 2)] = -1
+    pm_log_spec_err = pm * log_spec_err
+
+    np.random.seed()
+    scramble = goodpixels[(np.random.rand(len(goodpixels))\
+    * len(goodpixels)).astype(int)]
+
+    new_log_spec_err = pm_log_spec_err[scramble]
+    iter_spec[goodpixels] = log_spec_f[goodpixels] + new_log_spec_err
+
+    pp1 = ppxf.ppxf(log_template_f, iter_spec, noise, velscale, guesses,\
+    goodpixels=goodpixels, plot=False, degree=degree, moments=moments,\
+    vsyst=vsyst, quiet=1, bias=0, velscale_ratio=1, fixed=[0, 1])
+
+    if moments <= 2:
+        uncert = np.array([pp1.sol[0], pp1.sol[1]])
+    if moments > 2:
+        uncert = np.array([pp1.sol[0], pp1.sol[1], pp1.sol[2], pp1.sol[3]])
+
+    return uncert
+
+
+def _gaussian_fit(x, a, b, c):
+
+    '''
+    A function for a gaussian, which is conform with the fitting
+
+    '''
+
+    g = a * np.exp((-1) * (x - b) ** 2.0 / (2 * c ** 2))
+    return g

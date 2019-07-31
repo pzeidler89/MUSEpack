@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>utils &mdash; MUSEpack  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MUSEpack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">1. Installing MUSEpack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-python-packages">1.1. Additional python packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">2.4. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Disclaimer:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../disclaimer.html">Disclaimer</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MUSEpack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.2&#39;</span>
+
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190422&#39;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pyspeckit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">ascii</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="k">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="k">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="k">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="k">import</span> <span class="n">median_absolute_deviation</span> <span class="k">as</span> <span class="n">MAD</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="k">import</span> <span class="n">observation</span>
+<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="k">import</span> <span class="n">spectrum</span>
+<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="k">import</span> <span class="n">ObsBandpass</span>
+<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="k">import</span> <span class="n">BlackBody</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">find_peaks</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">wofz</span>
+
+
+<div class="viewcode-block" id="initial_guesses"><a class="viewcode-back" href="../utilities.html#utils.initial_guesses">[docs]</a><span class="k">def</span> <span class="nf">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">blends</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestrength</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>\
+                    <span class="n">llimits</span><span class="o">=</span><span class="p">[</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mf">2.</span><span class="p">]):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Creates the initial guesses for the line fitter</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lines : :func:`numpy.array`</span>
+<span class="sd">            central wavelengths of the spectral lines</span>
+
+<span class="sd">    Kwargs:</span>
+<span class="sd">        linestrength : :obj:`float` (default: 100)</span>
+<span class="sd">            initial guess for the line strength</span>
+
+<span class="sd">        blends : :obj:`str` (optional)</span>
+<span class="sd">            A file containing the a list of blended lines in the </span>
+<span class="sd">            format: ** List is coming soon**</span>
+
+<span class="sd">    return:</span>
+<span class="sd">        guesses : :obj:`list`</span>
+<span class="sd">            lists containing the guesses</span>
+
+<span class="sd">        limits : :obj:`list`</span>
+<span class="sd">            lists containing the limits</span>
+
+<span class="sd">        limited : :obj:`list`</span>
+<span class="sd">            lists containing the limited</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;absorption&#39;</span><span class="p">:</span>
+        <span class="n">linestrength</span> <span class="o">=</span> <span class="n">linestrength</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">guesses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">limited</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+
+        <span class="n">guesses</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">linestrength</span>
+        <span class="n">guesses</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+        <span class="n">guesses</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span>
+        <span class="n">guesses</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span>
+
+        <span class="n">limits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="c1">#Amplitude</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;absorption&#39;</span><span class="p">:</span>
+            <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span> <span class="c1">#Amplitude</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;emission&#39;</span><span class="p">:</span>
+            <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="c1">#Amplitude</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
+            <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="c1">#Amplitude</span>
+
+        <span class="n">limits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">line</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">line</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span> <span class="c1">#Center</span>
+
+        <span class="n">limits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="c1">#width (gausssigma)</span>
+        <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="c1">#width</span>
+
+        <span class="n">limits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="c1">#width (lorentzsigma)</span>
+        <span class="n">limited</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="c1">#width</span>
+
+    <span class="k">if</span> <span class="n">blends</span><span class="p">:</span>
+        <span class="n">blendlist</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blends</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">blendidx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">blendlist</span><span class="p">)):</span>
+
+            <span class="n">lprime</span> <span class="o">=</span> <span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;lprime&#39;</span><span class="p">]</span>
+            <span class="n">lsec</span> <span class="o">=</span> <span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;lsec&#39;</span><span class="p">]</span>
+            <span class="n">primeidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lprime</span> <span class="o">==</span> <span class="n">guesses</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">secidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lsec</span> <span class="o">==</span> <span class="n">guesses</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primeidx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Blend detected: &#39;</span>\
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;prime&#39;</span><span class="p">])</span>\
+                <span class="o">+</span> <span class="s1">&#39; and &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;sec&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; with ratio &#39;</span>\
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;ratio&#39;</span><span class="p">]))</span>
+
+                <span class="n">guesses</span><span class="p">[</span><span class="n">secidx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;ratio&#39;</span><span class="p">]</span>\
+                <span class="o">*</span> <span class="n">guesses</span><span class="p">[</span><span class="n">primeidx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">lprime</span> <span class="o">&lt;</span> <span class="n">lsec</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lprime</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">lsec</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>\
+                    <span class="o">=</span> <span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="n">limits</span><span class="p">[</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">&gt;=</span> <span class="n">lsec</span><span class="p">:</span>
+                        <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lsec</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">lprime</span> <span class="o">&gt;</span> <span class="n">lsec</span> <span class="ow">and</span> <span class="p">(</span><span class="n">lprime</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">lsec</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span>\
+                                         <span class="n">limits</span><span class="p">[</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">limits</span><span class="p">[</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">&lt;=</span> <span class="n">lsec</span><span class="p">:</span>
+                        <span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">limits</span><span class="p">[</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span> <span class="n">lsec</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">limited</span></div>
+
+
+<div class="viewcode-block" id="update_parinfo"><a class="viewcode-back" href="../utilities.html#utils.update_parinfo">[docs]</a><span class="k">def</span> <span class="nf">update_parinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">llimits</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span>
+                   <span class="n">parinfo</span><span class="p">,</span> <span class="n">autoadjust</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Updates the parinfo file, created by pyspeckit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        guesses : :func:`numpy.array`</span>
+<span class="sd">            The initial guesses for the the radial velocity fit guesses in</span>
+<span class="sd">            the form [RV,sepctral_dispersion]</span>
+
+<span class="sd">        llimits : :obj:`list`</span>
+<span class="sd">            the limits for the wavelength fit as set in ``ppxf``</span>
+
+<span class="sd">        line_idx : :obj:`str`</span>
+<span class="sd">            Name of the primary line</span>
+
+<span class="sd">       blends : :obj:`ascii`-file or :obj:`None`</span>
+<span class="sd">           A file with primary lines that contain blends to provide a maximum</span>
+<span class="sd">           amplitude ratio of the primary and the blend to prevent that the</span>
+<span class="sd">           blend becomes the dominant line in the fit.</span>
+
+<span class="sd">        parinfo: :obj:`dict`</span>
+<span class="sd">            the parinfo file created by pyspeckit, which contains the fitted</span>
+<span class="sd">            parameters for all input lines</span>
+
+<span class="sd">        autoadjust : :obj:`bool`</span>
+<span class="sd">            :obj:`True`: the wavelength limits ``llimit`` will be adjusted to</span>
+<span class="sd">            the fit of the previous iteration. All other wavelength range are</span>
+<span class="sd">            adjusted accordingly taking into account the proper velocity</span>
+<span class="sd">            corrected shift :math:`\Delta \lambda/\lambda`. This is especially</span>
+<span class="sd">            important to detect hyper-velocity stars.</span>
+
+<span class="sd">            :obj:`False`: no adjustment to the limits done</span>
+
+<span class="sd">        fwhm_block : :obj:`bool:obj:`</span>
+<span class="sd">            :obj:`True`: The minimum fwhm of the voigt profiles of the fitted</span>
+<span class="sd">            lines is the instrument&#39;s dispersion</span>
+
+<span class="sd">            :obj:`False`: The minimum fwhm of the voigt profiles of the fitted</span>
+<span class="sd">            lines is zero</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">lprime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]</span>
+    <span class="n">primeidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lprime</span> <span class="o">==</span> <span class="n">guesses</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">autoadjust</span><span class="p">:</span>
+
+        <span class="n">lshift_in</span> <span class="o">=</span> <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">])][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>\
+        <span class="o">-</span> <span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+
+        <span class="k">for</span> <span class="n">adj_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">guesses</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)):</span>
+
+            <span class="n">lshift</span> <span class="o">=</span> <span class="n">lambda_shift</span><span class="p">(</span><span class="n">lshift_in</span><span class="p">,</span> <span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span>\
+            <span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+
+        <span class="c1"># if parinfo[int(primeidx[0])][&#39;value&#39;] &gt; lprime\</span>
+        <span class="c1"># + 0.8\ * (parinfo[int(primeidx[0])][&#39;limits&#39;][1] - lprime) or\</span>
+        <span class="c1">#    parinfo[int(primeidx[0])][&#39;value&#39;] &lt; lprime\</span>
+        <span class="c1"># - 0.8 * (lprime - parinfo[int(primeidx[0])][&#39;limits&#39;][0]):</span>
+
+            <span class="c1"># self.logger.info(line_idx+\</span>
+            <span class="c1"># &#39;: Automatic adjustments of wavelength limits&#39;)</span>
+            <span class="c1"># for adj_idx in range(int(len(guesses)/4.)):</span>
+
+            <span class="c1"># lshift = lambda_shift(lshift_in,guesses[int(primeidx[0])],\</span>
+            <span class="c1"># guesses[int(4*adj_idx+1)])</span>
+
+            <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span>\
+            <span class="o">=</span> <span class="p">(</span><span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>\
+            <span class="o">+</span> <span class="n">lshift</span><span class="p">,</span> <span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>\
+            <span class="o">+</span> <span class="n">llimits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">lshift</span><span class="p">)</span>
+
+            <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>\
+            <span class="o">=</span> <span class="n">guesses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">adj_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="n">lshift</span>
+
+    <span class="c1">#### check that fwhm is always &gt; dispersion:</span>
+
+    <span class="k">if</span> <span class="n">fwhm_block</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">paridx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">guesses</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.</span><span class="p">)):</span>
+
+            <span class="n">fwhm_g</span><span class="p">,</span> <span class="n">fwhm_l</span><span class="p">,</span> <span class="n">fwhm_v</span>\
+            <span class="o">=</span> <span class="n">voigt_FWHM</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">paridx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]],</span>\
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">paridx</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]],</span>\
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">fwhm_v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+                <span class="n">target_fwhm_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">-</span> <span class="n">fwhm_l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">s</span> <span class="o">=</span> <span class="n">target_fwhm_g</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span><span class="p">))</span>
+                <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">paridx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span>\
+                <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">paridx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">paridx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
+    <span class="k">if</span> <span class="n">blends</span><span class="p">:</span>
+        <span class="n">blendlist</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blends</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">blendidx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">blendlist</span><span class="p">)):</span>
+            <span class="n">blendration</span> <span class="o">=</span> <span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;ratio&#39;</span><span class="p">]</span>
+            <span class="n">lsec</span> <span class="o">=</span> <span class="n">blendlist</span><span class="p">[</span><span class="n">blendidx</span><span class="p">][</span><span class="s1">&#39;lsec&#39;</span><span class="p">]</span>
+            <span class="n">secidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lsec</span> <span class="o">==</span> <span class="n">guesses</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">secidx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">prime_profile</span> <span class="o">=</span> <span class="n">voigt_funct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">])][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="n">sec_profile</span> <span class="o">=</span> <span class="n">voigt_funct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_lambda_highres</span><span class="p">,</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">])][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span>\
+                                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+                <span class="n">ind_max_prime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prime_profile</span><span class="p">))</span>
+                <span class="n">ind_max_sec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sec_profile</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sec_profile</span><span class="p">))</span> <span class="o">&gt;=</span> \
+                <span class="n">blendration</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prime_profile</span><span class="p">)):</span>
+
+                <span class="c1"># if parinfo[int(secidx[0] - 1)][&#39;value&#39;] &gt;= \</span>
+                <span class="c1"># blendration * parinfo[int(primeidx[0] - 1)][&#39;value&#39;]:</span>
+
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limited&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> \
+                    <span class="o">=</span> <span class="p">(</span><span class="n">blendration</span> <span class="o">*</span> <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> \
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>\
+                    <span class="o">=</span> <span class="mf">0.99</span> <span class="o">*</span> <span class="n">blendration</span> <span class="o">*</span> <span class="n">prime_profile</span><span class="p">[</span><span class="n">ind_max_prime</span><span class="p">]</span>
+                    <span class="c1"># = 0.99 * blendration\</span>
+                    <span class="c1"># * parinfo[int(primeidx[0] - 1)][&#39;value&#39;]</span>
+
+                <span class="k">if</span> <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">primeidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> \
+                    <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> \
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;limits&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">secidx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>\
+                    <span class="o">=</span> <span class="n">blendration</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parinfo</span></div>
+
+
+<span class="k">def</span> <span class="nf">lambda_shift</span><span class="p">(</span><span class="n">dlin</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">lout</span><span class="p">):</span>
+    <span class="n">dlout</span> <span class="o">=</span> <span class="n">dlin</span> <span class="o">*</span> <span class="n">lout</span> <span class="o">/</span> <span class="n">lin</span>
+    <span class="k">return</span> <span class="n">dlout</span>
+
+
+<span class="k">def</span> <span class="nf">plotcolor</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">colarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Lime&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Magenta&#39;</span><span class="p">,</span> <span class="s1">&#39;Olive&#39;</span><span class="p">,</span> <span class="s1">&#39;Maroon&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;indigo&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;Cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;Yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;Silver&#39;</span><span class="p">])</span>
+    <span class="n">colselect</span> <span class="o">=</span> <span class="n">colarray</span><span class="p">[</span><span class="n">n</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colarray</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">colselect</span>
+
+
+<span class="k">def</span> <span class="nf">baseline_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specfit</span><span class="p">,</span> <span class="n">poly_order</span><span class="p">):</span>
+    <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">coeff</span><span class="p">[</span><span class="n">order</span><span class="p">]</span> <span class="o">=</span> <span class="n">specfit</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;BLCOEF&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:02d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="p">))]</span>
+    <span class="n">baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">coeff</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specbinsize</span> <span class="o">**</span> <span class="n">power</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">baseline</span>
+
+
+<span class="k">def</span> <span class="nf">voigt_FWHM</span><span class="p">(</span><span class="n">sigma_g</span><span class="p">,</span> <span class="n">gamma_l</span><span class="p">):</span>
+    <span class="c1">#calculating the FWHM of the voigt, gauss, and lorentz profile</span>
+    <span class="n">c_0</span> <span class="o">=</span> <span class="mf">2.0056</span>
+    <span class="n">c_1</span> <span class="o">=</span> <span class="mf">1.0593</span>
+    <span class="n">fwhm_g</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span><span class="p">))</span> <span class="o">*</span> <span class="n">sigma_g</span>
+    <span class="n">fwhm_l</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">gamma_l</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">fwhm_l</span> <span class="o">/</span> <span class="n">fwhm_g</span>
+    <span class="n">fwhm_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sigma_g</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fwhm_g</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">fwhm_g</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fwhm_v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwhm_l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fwhm_v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fwhm_g</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">c_0</span> <span class="o">*</span> <span class="n">c_1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>\
+            <span class="o">+</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">c_1</span> <span class="o">*</span> <span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">c_0</span> <span class="o">*</span> <span class="n">c_1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">fwhm_g</span><span class="p">,</span> <span class="n">fwhm_l</span><span class="p">,</span> <span class="n">fwhm_v</span>
+
+
+<span class="k">def</span> <span class="nf">_gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="n">prefact</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">exponetial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">returnfunction</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">exponetial</span>
+    <span class="k">return</span> <span class="n">returnfunction</span>
+
+
+<span class="k">def</span> <span class="nf">_lorentzian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+    <span class="n">returnfunction</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">returnfunction</span>
+
+
+<span class="k">def</span> <span class="nf">voigt_funct</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">x_cen</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">gamma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_array</span> <span class="o">-</span> <span class="n">x_cen</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">))</span>
+        <span class="n">y_arr</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">wofz</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">sigma</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">y_arr</span> <span class="o">=</span> <span class="n">_lorentzian</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">x_cen</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gamma</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">y_arr</span> <span class="o">=</span> <span class="n">_gaussian</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">x_cen</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y_arr</span>
+
+
+<span class="k">def</span> <span class="nf">spec_res_downgrade</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">spec_in</span><span class="p">,</span> <span class="n">l_out</span><span class="p">):</span>
+    <span class="n">templ_spec</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">ArraySourceSpectrum</span><span class="p">(</span><span class="n">wave</span><span class="o">=</span><span class="n">l_in</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">spec_in</span><span class="p">)</span>
+    <span class="n">white_filter</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">ArraySpectralElement</span><span class="p">(</span><span class="n">l_out</span><span class="p">,</span>\
+    <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l_out</span><span class="p">)),</span> <span class="n">waveunits</span><span class="o">=</span><span class="s1">&#39;angstrom&#39;</span><span class="p">)</span>
+    <span class="n">convolved_spec</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">templ_spec</span><span class="p">,</span>\
+    <span class="n">white_filter</span><span class="p">,</span> <span class="n">binset</span><span class="o">=</span><span class="n">l_out</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="s1">&#39;taper&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">binflux</span>
+
+    <span class="k">return</span> <span class="n">convolved_spec</span>
+
+
+<span class="k">def</span> <span class="nf">line_clipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">line_significants</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ind_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span>\
+    <span class="s1">&#39;significance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">line_significants</span><span class="p">)</span>\
+                       <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;used&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">))</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">ind_sig</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">x_red1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span>
+            <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">x_red</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">x_red1</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">x_red1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)])</span>
+            <span class="n">median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x_red</span><span class="p">)</span>
+            <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x_red</span><span class="p">)</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">median</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">median</span>\
+        <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">x_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">x_masked</span>
+
+
+<span class="k">def</span> <span class="nf">clipped_MAD</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
+        <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mad</span>
+
+
+<span class="k">def</span> <span class="nf">continuum_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_in</span><span class="p">,</span> <span class="n">f_in</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">contorder</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;absorption&#39;</span><span class="p">:</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">f_in</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">f_in</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">f_in</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">peaks</span><span class="p">:</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">p</span> <span class="o">-</span> <span class="mi">3</span><span class="p">:</span><span class="n">p</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">remove</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">mask</span>
+
+    <span class="n">l_masked</span> <span class="o">=</span> <span class="n">l_in</span><span class="p">[</span><span class="n">remove</span><span class="p">]</span>
+    <span class="n">f_masked</span> <span class="o">=</span> <span class="n">f_in</span><span class="p">[</span><span class="n">remove</span><span class="p">]</span>
+    <span class="n">baseline_masked</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="n">remove</span><span class="p">]</span>
+
+    <span class="n">masked_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">l_masked</span><span class="p">,</span> <span class="n">f_masked</span><span class="p">,</span> <span class="n">contorder</span><span class="p">)</span>
+    <span class="n">masked_fitfunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">masked_fit</span><span class="p">)</span>
+
+    <span class="n">cont_dev</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">f_masked</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">f_masked</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">baseline_masked</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">baseline_masked</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">cont_dev</span>
+
+
+<span class="k">def</span> <span class="nf">ABtoVega</span><span class="p">(</span><span class="n">instrument</span><span class="p">,</span> <span class="n">bandpass</span><span class="p">):</span>
+
+    <span class="n">bp</span> <span class="o">=</span> <span class="n">ObsBandpass</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">instrument</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,wfc1,&#39;</span>\
+    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bandpass</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,mjd#57754&#39;</span><span class="p">)</span>
+    <span class="n">spec_bb</span> <span class="o">=</span> <span class="n">BlackBody</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">spec_bb_norm</span> <span class="o">=</span> <span class="n">spec_bb</span><span class="o">.</span><span class="n">renorm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;counts&#39;</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">spec_bb_norm</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
+
+    <span class="c1"># Get photometric calibration information.</span>
+    <span class="n">photflam</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;flam&#39;</span><span class="p">)</span>
+    <span class="n">photplam</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">pivot</span><span class="p">()</span>
+
+    <span class="n">zp_vega</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;vegamag&#39;</span><span class="p">)</span>
+    <span class="n">zp_st</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;stmag&#39;</span><span class="p">)</span>
+    <span class="n">zp_ab</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;abmag&#39;</span><span class="p">)</span>
+
+    <span class="n">difference</span> <span class="o">=</span> <span class="n">zp_vega</span> <span class="o">-</span> <span class="n">zp_ab</span>
+
+    <span class="k">return</span> <span class="n">difference</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Peter Zeidler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4. Cubes &mdash; MUSEpack  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5. Utility modules" href="utilities.html" />
+    <link rel="prev" title="3. Spectral line fitting and radial velocity measurements" href="radialvelocities.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MUSEpack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">1. Installing MUSEpack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#additional-python-packages">1.1. Additional python packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#additional-3rd-party-software">1.2. Additional 3rd party software</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#the-config-file">2.2. The config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MUSEreduce.html#history">2.4. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="radialvelocities.html#history">3.3. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#history">4.1. History</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">5. Utility modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">6. Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-procedure">6.1.1. The procedure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html#the-results">6.1.2. The results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#additional-tutorials">6.2. Additional tutorials</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Credits:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Disclaimer:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="disclaimer.html">Disclaimer</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MUSEpack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>4. Cubes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cubes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cubes">
+<span id="id1"></span><h1>4. Cubes<a class="headerlink" href="#cubes" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#module-cubes" title="cubes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cubes</span></code></a> is a module that contains a collection of support functions for the analyses of data cubes, specifically MUSE data cubes.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">A more detailed description will follow soon.</p>
+</div>
+<span class="target" id="module-cubes"></span><dl class="function">
+<dt id="cubes.linemaps">
+<code class="descclassname">cubes.</code><code class="descname">linemaps</code><span class="sig-paren">(</span><em>input_fits</em>, <em>path=None</em>, <em>elements=None</em>, <em>wavelengths=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#linemaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.linemaps" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module is intended to create linemaps of specified lines/elements</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>input_fits <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>The fully reduced datacube Pampelmuse has been run on</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>path <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt>
+<dd>I/O path</dd>
+<dt>element <span class="classifier-delimiter">:</span> <span class="classifier">obj:<cite>list</cite> (optional)</span></dt>
+<dd>list of elements the linemaps shall be produced</dd>
+<dt>wavelength <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> (optional)</span></dt>
+<dd>list of wavelength for givene elements, optional,
+must be given if <cite>elements</cite> is given</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cubes.mosaics">
+<code class="descclassname">cubes.</code><code class="descname">mosaics</code><span class="sig-paren">(</span><em>input_list</em>, <em>name</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#mosaics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.mosaics" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module is intended to create mosaics of specified lines/elements.
+linemaps should have been created beforehand using the <code class="docutils literal notranslate"><span class="pre">linemaps</span></code> module</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>input_list <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></span></dt>
+<dd>The list of specific linemaps to be used to mosaic</dd>
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>Name of the created mosaic</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>path: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</dt>
+<dd>I/O path</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cubes.pampelmuse_cat">
+<code class="descclassname">cubes.</code><code class="descname">pampelmuse_cat</code><span class="sig-paren">(</span><em>ra</em>, <em>dec</em>, <em>mag</em>, <em>filter</em>, <em>idx=None</em>, <em>path=None</em>, <em>sat=0.0</em>, <em>mag_sat=None</em>, <em>ifs_sat=None</em>, <em>mag_limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#pampelmuse_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.pampelmuse_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>This modules uses input parameters to create a catalog that is compatible
+with pampelmuse</p>
+<p>Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ra <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>RA coordinates of the stars</dd>
+<dt>dec <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>Dec coordinates of the stars</dd>
+<dt>mag <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>magnitudes of the stars</dd>
+<dt>filter <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt>
+<dd>filter used for the magnitudes</dd>
+</dl>
+</div></blockquote>
+<p>Kwargs:</p>
+<dl class="docutils">
+<dt>idx <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default</span> <span class="classifier-delimiter">:</span> <span class="classifier">counting up from 1)</span></dt>
+<dd>catalog index of the stars</dd>
+<dt>sat <span class="classifier-delimiter">:</span> <span class="classifier">:obj`float` (optional, default: 0)</span></dt>
+<dd>value assigned to saturated sources in the catalog</dd>
+<dt>mag_sat <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt>
+<dd>magnitude that replaces saturated sources in the catalog</dd>
+<dt>path <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt>
+<dd>path of the output file</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="cubes.wcs_cor">
+<code class="descclassname">cubes.</code><code class="descname">wcs_cor</code><span class="sig-paren">(</span><em>input_fits</em>, <em>input_prm</em>, <em>path=None</em>, <em>prm_path=None</em>, <em>output_file=None</em>, <em>out_frame=None</em>, <em>in_frame=None</em>, <em>correct_flux=False</em>, <em>spec_folder='stars'</em>, <em>spec_path=None</em>, <em>correctiontype='shift'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#wcs_cor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.wcs_cor" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>inputfits <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>The fully reduced datacube, whose WCS has to be corrected</dd>
+<dt>input_prm <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt>
+<dd>The prm file produced by Pampelmuse</dd>
+</dl>
+</dd>
+<dt>Kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>path <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, Default: current directory)</span></dt>
+<dd>I/O path</dd>
+<dt>prm_path <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt>
+<dd>I/O path of prm file</dd>
+<dt>output_file <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: input file name +_cor)</span></dt>
+<dd>outputfile name</dd>
+<dt>output_frame <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default</span> <span class="classifier-delimiter">:</span> <span class="classifier">input frame)</span></dt>
+<dd>coordinate frame of the output cube in case one want to
+change</dd>
+<dt>in_frame <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: input frame)</span></dt>
+<dd>coordinate frame of the output cube in case it cannot be
+determined from the header information or it has to be manually
+changed</dd>
+<dt>correct_flux <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt>
+<dd>If set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the fluxes of the data cube will be corrected
+to match the input catalog to correct for calibration offsets.
+This step is only recommended if the input fluxes can be trusted.
+CUBEFIT and GETSPECTRA have to executed again using the corrected
+data cube to correct the prm file and to extract the corrected
+spectra.</dd>
+<dt>spec_folder <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">spectra</span></code>)</span></dt>
+<dd>The folder name, in which the the extracted stellar spectra are
+stored. This is only needed if correct_flux=:obj:<cite>True</cite></dd>
+<dt>spec_path <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt>
+<dd>I/O path of the <code class="docutils literal notranslate"><span class="pre">spec_folder</span></code></dd>
+<dt>correctiontype <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">shift</span></code>)</span></dt>
+<dd><p class="first">the type of distortion correction</p>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code>: the full 2D CD matrix,</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">shift</span></code>: shift in XY only.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="history">
+<h2>4.1. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.0: </span>The functions <a class="reference internal" href="#cubes.wcs_cor" title="cubes.wcs_cor"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.wcs_cor()</span></code></a>, <a class="reference internal" href="#cubes.pampelmuse_cat" title="cubes.pampelmuse_cat"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.pampelmuse_cat()</span></code></a>, <a class="reference internal" href="#cubes.linemaps" title="cubes.linemaps"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.linemaps()</span></code></a>, and <a class="reference internal" href="#cubes.mosaics" title="cubes.mosaics"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.mosaics()</span></code></a> were added.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utilities.html" class="btn btn-neutral float-right" title="5. Utility modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="radialvelocities.html" class="btn btn-neutral float-left" title="3. Spectral line fitting and radial velocity measurements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Peter Zeidler
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>
