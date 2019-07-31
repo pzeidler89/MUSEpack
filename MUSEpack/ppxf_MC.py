@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+__version__ = '0.1.0'
+
+__revision__ = '20190731'
+
 import numpy as np
 from astropy.stats import sigma_clip
 from lmfit import Model

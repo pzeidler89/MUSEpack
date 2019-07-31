@@ -2,7 +2,7 @@
 
 __version__ = '0.5.2'
 
-__revision__ = '20190416'
+__revision__ = '20190703'
 
 import sys
 import shutil
@@ -24,19 +24,20 @@ class musereduce:
 
     '''
     Kwargs:
-        configfile : :obj:`str`, (optional), default: :obj:`False`
+        configfile : :obj:`str`
             A :obj:`json` configfile for musereduce, where all the parameters
-            will             be set.
+            are set.
 
         debug : :obj:`bool`, (optional), default: :obj:`None`
-            :obj:`True`: musereduce runs in debug mode and ESORex will not be
-            executed. All products must be available. It can be used for
-            testing the creation of folder, and creating the ``.sof`` files
+            :obj:`True`: :class:`MUSEreduce.musereduce` runs in debug mode and
+            ESORex will not be executed. All products must be available.
+            It can be used for testing the creation of folder, and creating
+            the ``.sof`` files
 
     '''
 
 
-    def __init__(self, configfile=None, debug=False):
+    def __init__(self, configfile, debug=False):
 
         if configfile == None:
             configfile = os.path.dirname(__file__) + "/config.json"
@@ -91,6 +92,12 @@ class musereduce:
 
     def execute(self):
 
+        '''
+        This method executes wrapper and starts the data reduction process
+        set in the :obj:`json` config file.
+
+        '''
+
         startime = time.time()
 
         print(' ')
@@ -99,7 +106,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 22, 2019                    #####')
+        print('#####                    Jul 03, 2019                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1575,7 +1582,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
     '''
     This module calls *ESORex'* ``muse_sky`` with the modified continuum and
-    line subtraction as described in Zeidler et al. 2019.
+    line subtraction as described in `Zeidler et al. 2019`_.
 
     Args:
         exp_list_SCI : :obj:`list`
