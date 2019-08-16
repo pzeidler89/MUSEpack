@@ -29,3 +29,7 @@ History
 
 .. versionadded:: 0.1.2
    now handles absorption and emission lines emission not tested yet, though
+
+.. versionadded:: 0.1.3
+   The :mod:`util.Line_clipping` was adjusted in how the two outliers are clipped before the MAD is calculated. It now keeps the :math:`N-2`-lines
+   that have the smaller deviation from each other.

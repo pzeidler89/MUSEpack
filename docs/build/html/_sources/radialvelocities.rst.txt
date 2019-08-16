@@ -51,7 +51,7 @@ The radial velocity fitter
 Monte Carlo radial velocity determination
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is the module that peforms the Monte Carlo boot strapping to measure radial velocities. It is automatically called by the :class:`radial_velocities.RV_spectrum.rv_fit` attribute of :class:`radial_velocities.RV_spectrum` class and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.
+This is the module that performs the Monte Carlo boot strapping to measure radial velocities. It is automatically called by the :class:`radial_velocities.RV_spectrum.rv_fit` attribute of :class:`radial_velocities.RV_spectrum` class and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.
 
 .. automodule:: ppxf_MC
    :members:
@@ -65,6 +65,7 @@ History
 -------
 .. versionadded:: 0.1.0
    working radial velocity fitting package
+
 .. versionadded:: 0.1.0
    no RV calculation for lines that are below the significance level
 .. versionadded:: 0.1.0
@@ -73,3 +74,7 @@ History
    moved to pep-8
 .. versionadded:: 0.1.2
    now handles absorption and emission lines. **Not tested yet, though**
+.. versionadded:: 0.1.3
+   During the boot strap procedure, the initial guesses of the velocities are varied between certain limits, to ensure more stability to the
+   fit in the case of an "unlucky choice of initial parameters. Added Kwarg to :mod:`RV_spectrum.rv_fit` is `RV_guess_var`, which is by default 0. 
+   It describes the min/max variation of the initial RV guess for each fit.
