@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-MUSEpack v0.4.6.dev20190703
+MUSEpack v0.4.6.dev20190904
 ===========================
 
 Introduction
