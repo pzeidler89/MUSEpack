@@ -123,9 +123,11 @@ class RV_spectrum:
         self.cat = None # pandas dataframe for all the line fit parameters
         self.rv = None      #radial velocity of the star
         self.erv = None     #1sigma radial velocity uncertainty
+        self.n_lines = None  # number of lines used to fit the RVs
 
         self.rv_peak = None      #radial velocity of the star
         self.erv_peak = None     #1sigma radial velocity uncertainty
+        self.n_lines_peak = None  # number of lines used to fit the peak RVs
 
         self.loglevel = loglevel
 
@@ -519,6 +521,7 @@ class RV_spectrum:
 
         remaining_lines\
         = line_clipping(self, v, line_significants, sigma=line_sigma)
+        self.n_lines_peak = len(v[~remaining_lines.mask])
 
         if remaining_lines.mask.all():
             self.logger.error('NO USABLE LINE FOUND WITH SET PARAMETER !!')
@@ -529,11 +532,11 @@ class RV_spectrum:
             self.logger.info('Finished Calculating RVs based on peaks only: '\
             + 'RV=(' + str('{:4.2f}'.format(self.rv_peak)) + '+-'\
             + str('{:4.3f}'.format(self.erv_peak)) + ')km/s based on '\
-            + str(len(v[~remaining_lines.mask]))\
+            + str(self.n_lines_peak)\
             + '/' + str(len(v)) + ' lines')
 
     def rv_fit(self, guesses, niter=10000, line_sigma=3,\
-    n_CPU=-1, line_significants=5):
+    n_CPU=-1, line_significants=5, RV_guess_var = 0.):
 
         """
         The module runs the radial velocity fit using `ppxf`_ and the 
@@ -640,11 +643,14 @@ class RV_spectrum:
                 log_spec_err, velscale_spec, guesses,\
                 mask=mask, degree=-1, clean=False, quiet=True,\
                 plot=False, fixed=[0, 1])
+                
+                self.logger.info('RV guess variation line ' + line_name[i]\
+                + ': ' + str('{:4.2f}'.format(RV_guess_var)) + 'km/s')
 
                 v[i], ev[i] = ppxf_MC(log_template_f, log_spec_f,\
                 log_spec_err, velscale_spec, guesses, nrand=0.5 * niter,\
                 goodpixels=pp_outliers_init.goodpixels, degree=-1,\
-                moments=2, n_CPU=n_CPU)
+                moments=2, RV_guess_var=RV_guess_var, n_CPU=n_CPU)
 
                 self.logger.info('Finished line ' + line_name[i]\
                 + ': RV=(' + str('{:4.2f}'.format(v[i])) + '+-'\
@@ -670,6 +676,16 @@ class RV_spectrum:
 
             l_fit = l_fit[~remaining_lines.mask]
             fwhm_v = fwhm_v[~remaining_lines.mask]
+
+            rv_var_lines = MAD(self.cat.loc[line_name[~remaining_lines.mask],\
+            'RV'])
+            RV_guess_var_min = RV_guess_var
+            if rv_var_lines > RV_guess_var:
+                RV_guess_var = rv_var_lines
+
+            self.logger.info('RV guess variation: min = '\
+            + str(RV_guess_var_min) + 'km/s; used = '\
+            + str('{:4.2f}'.format(RV_guess_var)) + 'km/s')
 
             mask = np.zeros(len(self.spec_lambda), dtype=bool)
 
@@ -700,7 +716,8 @@ class RV_spectrum:
             self.rv, self.erv = ppxf_MC(log_template_f, log_spec_f,\
             log_spec_err, velscale_spec, guesses,\
             nrand=niter, goodpixels=pp_final_init.goodpixels, degree=-1,\
-            moments=2, spec_id=self.spec_id, n_CPU=n_CPU)
+            moments=2, spec_id=self.spec_id, RV_guess_var=RV_guess_var,\
+            n_CPU=n_CPU)
 
             elapsed_time = time.time() - start_time
             self.logger.info('Used lines for RV fit: '\

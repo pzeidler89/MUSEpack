@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
-__revision__ = '20190422'
+__revision__ = '20190731'
 
 import sys
 import os
@@ -28,6 +28,7 @@ from pysynphot import BlackBody
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
 from scipy.special import wofz
+from itertools import combinations as inter_comb
 
 
 def initial_guesses(self, lines, blends=None, linestrength=100.,\
@@ -359,12 +360,23 @@ def line_clipping(self, x, line_significants, sigma=3):
         if len(x_red1) == 3:
             median = np.median(x_red1)
             mad = MAD(x_red1)
+            ind = np.where((x < median - sigma * mad) | (x > median\
+            + sigma * mad))[0]
         if len(x) > 3:
-            x_red = np.delete(x_red1, [np.argmin(x_red1), np.argmax(x_red1)])
+            # x_red = np.delete(x_red1, [np.argmin(x_red1), np.argmax(x_red1)])
+            gr = np.array(list(inter_comb(x_red1, len(x_red1) - 2)))
+            
+            std_gr = [np.std(it) for it in gr]
+            x_red = gr[np.argmin(std_gr)]
+            
             median = np.median(x_red)
             mad = MAD(x_red)
-        ind = np.where((x < median - sigma * mad) | (x > median\
-        + sigma * mad))[0]
+            # if len(x_red) >= 3:
+            ind = np.where((x < median - sigma * mad) | (x > median\
+            + sigma * mad))[0]
+            # else:
+            #     ind = np.where((x < median - 0.5 * sigma * mad) | (x > median\
+            #     + 0.5 * sigma * mad))[0]
         mask[ind] = 1
     x_masked = np.ma.masked_array(x, mask=[mask])
     return x_masked

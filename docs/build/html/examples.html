@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Credits" href="credits.html" />
-    <link rel="prev" title="5. Utility modules" href="utilities.html" /> 
+    <link rel="prev" title="5. Utility module" href="utilities.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -109,7 +109,10 @@
 <li class="toctree-l2"><a class="reference internal" href="cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">5. Utility modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#history">5.1. History</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">6. Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#measuring-stellar-radial-velocities">6.1. Measuring stellar radial velocities</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-procedure">6.1.1. The procedure</a></li>
@@ -199,7 +202,7 @@
 <div class="section" id="the-procedure">
 <h3>6.1.1. The procedure<a class="headerlink" href="#the-procedure" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic">
-<li><p class="first">Reading in the necessary data</p>
+<li><p>Reading in the necessary data</p>
 <p>As a first step we must read the necessary data. This includes the spectrum, the <a class="reference download internal" download="" href="_downloads/dda135c44d68c9b49c626c65d07b3791/line_library.dat"><code class="xref download docutils literal notranslate"><span class="pre">spectral</span> <span class="pre">line</span> <span class="pre">library</span></code></a>, and the <a class="reference download internal" download="" href="_downloads/42104345242a8d266402b010153c879e/target_lines.list"><code class="xref download docutils literal notranslate"><span class="pre">line</span> <span class="pre">list</span></code></a> of the spectral lines that are used to measure the radial velocity. Since the CaII-Triplet lines are blended with the Paschen Series, we also have to include a catalog of the <a class="reference download internal" download="" href="_downloads/c1bb1e090d3baf6ab1bfe6649f0f41ed/blends.dat"><code class="xref download docutils literal notranslate"><span class="pre">blends</span></code></a>.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -221,11 +224,11 @@
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">Creating the flux, flux uncertainty, and wavelength arrays, as well as the line lists
+<li><p>Creating the flux, flux uncertainty, and wavelength arrays, as well as the line lists
 In this step all the necessary arrays are created from the input files. The header information of the stellar spectrum is used to create the wavelength array. The flux is stored in the first extension while the flux uncertainties are stored in the second extension of the <a class="reference download internal" download="" href="_downloads/04ed6dec914a6950a525093c65cac5d8/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The MUSE fluxes are stored in <span class="math notranslate nohighlight">\(10^{20}\,{\rm erg}\,{\rm s}^{-1}\,{\rm cm}^{-2}\,{\rm A}^{-1}\)</span>. Therefore, we need to multiply the flux and uncertainty array with <span class="math notranslate nohighlight">\(10^{-20}\)</span></p>
+<p class="admonition-title">Note</p>
+<p>The MUSE fluxes are stored in <span class="math notranslate nohighlight">\(10^{20}\,{\rm erg}\,{\rm s}^{-1}\,{\rm cm}^{-2}\,{\rm A}^{-1}\)</span>. Therefore, we need to multiply the flux and uncertainty array with <span class="math notranslate nohighlight">\(10^{-20}\)</span></p>
 </div>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>11
 12
@@ -237,12 +240,12 @@ In this step all the necessary arrays are created from the input files. The head
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">We are now initiating the spectral instance. The ID of the star will be <em>star_1</em>. We initiate the instance in INFO mode.</p>
+<li><p>We are now initiating the spectral instance. The ID of the star will be <em>star_1</em>. We initiate the instance in INFO mode.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span> <span class="o">=</span> <span class="n">RV_spectrum</span><span class="p">(</span><span class="s1">&#39;star_1&#39;</span><span class="p">,</span> <span class="n">spec_data</span><span class="p">,</span> <span class="n">spec_error</span><span class="p">,</span> <span class="n">spec_wave</span><span class="p">,</span> <span class="n">loglevel</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">As next step we need to initiate the catalog populated with the absorption lines, with which we want to measure the radial velocity. This catalog will contain all the fitted parameters and may be called at any point calling <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.cat</span></code></p>
+<li><p>As next step we need to initiate the catalog populated with the absorption lines, with which we want to measure the radial velocity. This catalog will contain all the fitted parameters and may be called at any point calling <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.cat</span></code></p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>18</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="n">initcat</span><span class="o">=</span><span class="n">target_lines</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
@@ -250,7 +253,7 @@ In this step all the necessary arrays are created from the input files. The head
 </ol>
 <p>At this point the spectral instance is fully initiated and we can start working with it.</p>
 <ol class="arabic" start="5">
-<li><p class="first">We now run the spectral fit using all available cores. The line indices may be read directly from the instance’s catalog. A log file named <em>star_1.log</em> will be automatically created</p>
+<li><p>We now run the spectral fit using all available cores. The line indices may be read directly from the instance’s catalog. A log file named <em>star_1.log</em> will be automatically created</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>20
 21
 22
@@ -263,7 +266,7 @@ In this step all the necessary arrays are created from the input files. The head
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">We will now plot the fitted spectrum to a file called <em>star_1_plot.png</em>. The fitted spectrum will be oversampled.</p>
+<li><p>We will now plot the fitted spectrum to a file called <em>star_1_plot.png</em>. The fitted spectrum will be oversampled.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oversampled</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
@@ -271,17 +274,17 @@ In this step all the necessary arrays are created from the input files. The head
 </ol>
 <p>At this point the spectral instance contains the spectrum as well as the fitted template. The next steps will execute the radial velocity determination.</p>
 <ol class="arabic" start="7">
-<li><p class="first">First we determine the radial velocity purely based on the line peaks. The measured peak velocity and its uncertainty may be called at any time using <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv_peak</span></code> and <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.erv_peak</span></code>, respectively.</p>
+<li><p>First we determine the radial velocity purely based on the line peaks. The measured peak velocity and its uncertainty may be called at any time using <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv_peak</span></code> and <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.erv_peak</span></code>, respectively.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>28</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">rv_fit_peak</span><span class="p">(</span><span class="n">line_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_significants</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">Now we measure the radial velocities using the Monte Carlo bootstrap method. As initial guess we use the peak velocity <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv_peak</span></code>. We sample the spectrum 20000 times and use all available CPUs. The measured radial velocity and its uncertainty may be called at any time using <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv</span></code> and <cite>:mod:`spfit.erv</cite>, respectively`.</p>
+<li><p>Now we measure the radial velocities using the Monte Carlo bootstrap method. As initial guess we use the peak velocity <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv_peak</span></code>. We sample the spectrum 20000 times and use all available CPUs. The measured radial velocity and its uncertainty may be called at any time using <code class="xref py py-mod docutils literal notranslate"><span class="pre">spfit.rv</span></code> and <cite>:mod:`spfit.erv</cite>, respectively`.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>30</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">rv_fit</span><span class="p">([</span><span class="n">spfit</span><span class="o">.</span><span class="n">rv_peak</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">niter</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
-<li><p class="first">The measured radial velocities (per line and for the star) are added to the spectral instance. We may now write the fitted parameters to an ASCII file. Additionally we may print the radial velocity of the star measure with the peaks only and with the the full spectrum.</p>
+<li><p>The measured radial velocities (per line and for the star) are added to the spectral instance. We may now write the fitted parameters to an ASCII file. Additionally we may print the radial velocity of the star measure with the peaks only and with the the full spectrum.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>32</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">printcat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
@@ -292,82 +295,82 @@ In this step all the necessary arrays are created from the input files. The head
 <h3>6.1.2. The results<a class="headerlink" href="#the-results" title="Permalink to this headline">¶</a></h3>
 <p>After successfully executing the script the radial velocity of <em>star_1</em> is <span class="math notranslate nohighlight">\(13.90 \pm 1.949\,{\rm km}\,{\rm s}^{-1}\)</span> based on two out of the three absorption lines. The radial velocity based on the peaks only is <span class="math notranslate nohighlight">\(15.43 \pm 1.144\,{\rm km}\,{\rm s}^{-1}\)</span> and agrees well with the cross correlation.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The user should keep in mind that the radial velocity fit is a statistical Monte Carlo process so the final result may fluctuate slightly. All tests showed that these fluctuations are magnitudes smaller than the intrinsic uncertainty caused by a the limited spectral resolution and S/N.</p>
+<p class="admonition-title">Note</p>
+<p>The user should keep in mind that the radial velocity fit is a statistical Monte Carlo process so the final result may fluctuate slightly. All tests showed that these fluctuations are magnitudes smaller than the intrinsic uncertainty caused by a the limited spectral resolution and S/N.</p>
 </div>
 <p>The final results for each individual line, also documented in the <em>star_1.cat</em> file, are the following:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="7%" />
-<col width="7%" />
-<col width="7%" />
-<col width="6%" />
-<col width="10%" />
-<col width="11%" />
-<col width="8%" />
-<col width="9%" />
-<col width="9%" />
-<col width="6%" />
-<col width="6%" />
-<col width="5%" />
-<col width="9%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 6%" />
+<col style="width: 10%" />
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 5%" />
+<col style="width: 9%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>&#160;</td>
-<td>l_lab</td>
-<td>l_start</td>
-<td>l_end</td>
-<td>l_fit</td>
-<td>a_fit</td>
-<td>sg_fit</td>
-<td>sl_fit</td>
-<td>cont_order</td>
-<td>RV</td>
-<td>eRV</td>
-<td>used</td>
-<td>significance</td>
+<tbody>
+<tr class="row-odd"><td></td>
+<td><p>l_lab</p></td>
+<td><p>l_start</p></td>
+<td><p>l_end</p></td>
+<td><p>l_fit</p></td>
+<td><p>a_fit</p></td>
+<td><p>sg_fit</p></td>
+<td><p>sl_fit</p></td>
+<td><p>cont_order</p></td>
+<td><p>RV</p></td>
+<td><p>eRV</p></td>
+<td><p>used</p></td>
+<td><p>significance</p></td>
 </tr>
-<tr class="row-even"><td>CaII8498</td>
-<td>8498.02</td>
-<td>8475.0</td>
-<td>8575.0</td>
-<td>8498.528526</td>
-<td>-3.17e-16</td>
-<td>1.59</td>
-<td>0.00</td>
-<td>2</td>
-<td>19.67</td>
-<td>3.797</td>
-<td>&#160;</td>
-<td>17.628082</td>
+<tr class="row-even"><td><p>CaII8498</p></td>
+<td><p>8498.02</p></td>
+<td><p>8475.0</p></td>
+<td><p>8575.0</p></td>
+<td><p>8498.528526</p></td>
+<td><p>-3.17e-16</p></td>
+<td><p>1.59</p></td>
+<td><p>0.00</p></td>
+<td><p>2</p></td>
+<td><p>19.67</p></td>
+<td><p>3.797</p></td>
+<td></td>
+<td><p>17.628082</p></td>
 </tr>
-<tr class="row-odd"><td>CaII8542</td>
-<td>8542.09</td>
-<td>8475.0</td>
-<td>8575.0</td>
-<td>8542.529694</td>
-<td>-1.14e-15</td>
-<td>1.29</td>
-<td>1.63</td>
-<td>2</td>
-<td>14.58</td>
-<td>2.395</td>
-<td>x</td>
-<td>63.591358</td>
+<tr class="row-odd"><td><p>CaII8542</p></td>
+<td><p>8542.09</p></td>
+<td><p>8475.0</p></td>
+<td><p>8575.0</p></td>
+<td><p>8542.529694</p></td>
+<td><p>-1.14e-15</p></td>
+<td><p>1.29</p></td>
+<td><p>1.63</p></td>
+<td><p>2</p></td>
+<td><p>14.58</p></td>
+<td><p>2.395</p></td>
+<td><p>x</p></td>
+<td><p>63.591358</p></td>
 </tr>
-<tr class="row-even"><td>CaII8662</td>
-<td>8662.14</td>
-<td>8625.0</td>
-<td>8710.0</td>
-<td>8662.552815</td>
-<td>-5.64e-16</td>
-<td>1.58</td>
-<td>0.33</td>
-<td>2</td>
-<td>13.84</td>
-<td>2.709</td>
-<td>x</td>
-<td>30.051289</td>
+<tr class="row-even"><td><p>CaII8662</p></td>
+<td><p>8662.14</p></td>
+<td><p>8625.0</p></td>
+<td><p>8710.0</p></td>
+<td><p>8662.552815</p></td>
+<td><p>-5.64e-16</p></td>
+<td><p>1.58</p></td>
+<td><p>0.33</p></td>
+<td><p>2</p></td>
+<td><p>13.84</p></td>
+<td><p>2.709</p></td>
+<td><p>x</p></td>
+<td><p>30.051289</p></td>
 </tr>
 </tbody>
 </table>
@@ -378,9 +381,9 @@ In this step all the necessary arrays are created from the input files. The head
 </div>
 <div class="section" id="additional-tutorials">
 <h2>6.2. Additional tutorials<a class="headerlink" href="#additional-tutorials" title="Permalink to this headline">¶</a></h2>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">We will add more tutorials in the near future…</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>We will add more tutorials in the near future…</p>
 </div>
 </div>
 </div>
@@ -396,7 +399,7 @@ In this step all the necessary arrays are created from the input files. The head
         <a href="credits.html" class="btn btn-neutral float-right" title="Credits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="utilities.html" class="btn btn-neutral float-left" title="5. Utility modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="utilities.html" class="btn btn-neutral float-left" title="5. Utility module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -193,6 +193,10 @@
   <h1>Source code for ppxf_MC</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.1&#39;</span>
+
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190731&#39;</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="k">import</span> <span class="n">sigma_clip</span>
 <span class="kn">from</span> <span class="nn">lmfit</span> <span class="k">import</span> <span class="n">Model</span>
@@ -207,7 +211,7 @@
 
 <div class="viewcode-block" id="ppxf_MC"><a class="viewcode-back" href="../radialvelocities.html#ppxf_MC.ppxf_MC">[docs]</a><span class="k">def</span> <span class="nf">ppxf_MC</span><span class="p">(</span><span class="n">log_template_f</span><span class="p">,</span> <span class="n">log_spec_f</span><span class="p">,</span> <span class="n">log_spec_err</span><span class="p">,</span> <span class="n">velscale</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span>\
             <span class="n">nrand</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">goodpixels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">vsyst</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>\
-            <span class="n">spec_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">spec_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">RV_guess_var</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This module runs the Monte Carlo `ppxf`_ runs, which is needed for the RV</span>
 <span class="sd">    measurements. Most of the input parameters are similar to the standard</span>
@@ -259,6 +263,10 @@
 <span class="sd">            An ID number of the source spectrum. This becomes handy when</span>
 <span class="sd">            fitting many individual sources because the output files will be</span>
 <span class="sd">            named with the ID.</span>
+<span class="sd">            </span>
+<span class="sd">        RV_guess_var : :obj:`float` (optional, default: 0)</span>
+<span class="sd">            The maximum variation the RV guess will be varied using a </span>
+<span class="sd">            uniform distribution.</span>
 
 <span class="sd">        n_CPU : :obj:`int` (optional, default: -1)</span>
 <span class="sd">            The number of cores used for the Monte Carlo velocity fitting. If</span>
@@ -275,7 +283,7 @@
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">dask</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">_ppxf_bootstrap</span><span class="p">)(</span><span class="n">log_template_f</span><span class="p">,</span> <span class="n">log_spec_f</span><span class="p">,</span>\
     <span class="n">log_spec_err</span><span class="p">,</span> <span class="n">velscale</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">goodpixels</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">moments</span><span class="p">,</span> <span class="n">vsyst</span><span class="p">,</span>\
-    <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nrand</span><span class="p">)]</span>
+    <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">RV_guess_var</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nrand</span><span class="p">)]</span>
 
     <span class="k">if</span> <span class="n">n_CPU</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">uncert_ppxf</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>\
@@ -340,7 +348,8 @@
 
 
 <span class="k">def</span> <span class="nf">_ppxf_bootstrap</span><span class="p">(</span><span class="n">log_template_f</span><span class="p">,</span> <span class="n">log_spec_f</span><span class="p">,</span> <span class="n">log_spec_err</span><span class="p">,</span> <span class="n">velscale</span><span class="p">,</span>\
-    <span class="n">degree</span><span class="p">,</span> <span class="n">goodpixels</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">moments</span><span class="p">,</span> <span class="n">vsyst</span><span class="p">,</span> <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">):</span>
+    <span class="n">degree</span><span class="p">,</span> <span class="n">goodpixels</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">moments</span><span class="p">,</span> <span class="n">vsyst</span><span class="p">,</span> <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span>\
+    <span class="n">RV_guess_var</span><span class="p">):</span>
 
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This is the bootstrap Monte Carlo module of the ppxf MC code.</span>
@@ -400,7 +409,10 @@
     <span class="n">new_log_spec_err</span> <span class="o">=</span> <span class="n">pm_log_spec_err</span><span class="p">[</span><span class="n">scramble</span><span class="p">]</span>
     <span class="n">iter_spec</span><span class="p">[</span><span class="n">goodpixels</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_spec_f</span><span class="p">[</span><span class="n">goodpixels</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_log_spec_err</span>
 
-    <span class="n">pp1</span> <span class="o">=</span> <span class="n">ppxf</span><span class="o">.</span><span class="n">ppxf</span><span class="p">(</span><span class="n">log_template_f</span><span class="p">,</span> <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">velscale</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span>\
+    <span class="n">rv_var</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="n">RV_guess_var</span>
+    <span class="n">var_guesses</span> <span class="o">=</span>  <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">guesses</span><span class="p">,</span> <span class="p">[</span><span class="n">rv_var</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])]</span>
+
+    <span class="n">pp1</span> <span class="o">=</span> <span class="n">ppxf</span><span class="o">.</span><span class="n">ppxf</span><span class="p">(</span><span class="n">log_template_f</span><span class="p">,</span> <span class="n">iter_spec</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">velscale</span><span class="p">,</span> <span class="n">var_guesses</span><span class="p">,</span>\
     <span class="n">goodpixels</span><span class="o">=</span><span class="n">goodpixels</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="n">degree</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="n">moments</span><span class="p">,</span>\
     <span class="n">vsyst</span><span class="o">=</span><span class="n">vsyst</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">velscale_ratio</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 

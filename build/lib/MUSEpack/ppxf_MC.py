@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+__version__ = '0.1.1'
+
+__revision__ = '20190731'
+
 import numpy as np
 from astropy.stats import sigma_clip
 from lmfit import Model
@@ -14,7 +18,7 @@ import dask
 
 def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
             nrand=100, degree=4, goodpixels=None, moments=4, vsyst=0, sigma=5,\
-            spec_id=None, n_CPU=-1):
+            spec_id=None, RV_guess_var=0., n_CPU=-1):
     '''
     This module runs the Monte Carlo `ppxf`_ runs, which is needed for the RV
     measurements. Most of the input parameters are similar to the standard
@@ -66,6 +70,10 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
             An ID number of the source spectrum. This becomes handy when
             fitting many individual sources because the output files will be
             named with the ID.
+            
+        RV_guess_var : :obj:`float` (optional, default: 0)
+            The maximum variation the RV guess will be varied using a 
+            uniform distribution.
 
         n_CPU : :obj:`int` (optional, default: -1)
             The number of cores used for the Monte Carlo velocity fitting. If
@@ -82,7 +90,7 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
 
     results = [dask.delayed(_ppxf_bootstrap)(log_template_f, log_spec_f,\
     log_spec_err, velscale, degree, goodpixels, guesses, moments, vsyst,\
-    iter_spec, noise) for n in np.arange(nrand)]
+    iter_spec, noise, RV_guess_var) for n in np.arange(nrand)]
 
     if n_CPU == 1:
         uncert_ppxf = dask.compute(*results, num_workers=1,\
@@ -147,7 +155,8 @@ def ppxf_MC(log_template_f, log_spec_f, log_spec_err, velscale, guesses,\
 
 
 def _ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale,\
-    degree, goodpixels, guesses, moments, vsyst, iter_spec, noise):
+    degree, goodpixels, guesses, moments, vsyst, iter_spec, noise,\
+    RV_guess_var):
 
     '''
     This is the bootstrap Monte Carlo module of the ppxf MC code.
@@ -207,7 +216,10 @@ def _ppxf_bootstrap(log_template_f, log_spec_f, log_spec_err, velscale,\
     new_log_spec_err = pm_log_spec_err[scramble]
     iter_spec[goodpixels] = log_spec_f[goodpixels] + new_log_spec_err
 
-    pp1 = ppxf.ppxf(log_template_f, iter_spec, noise, velscale, guesses,\
+    rv_var = np.random.uniform(-1.,1.) * RV_guess_var
+    var_guesses =  [sum(x) for x in zip(guesses, [rv_var, 0.])]
+
+    pp1 = ppxf.ppxf(log_template_f, iter_spec, noise, velscale, var_guesses,\
     goodpixels=goodpixels, plot=False, degree=degree, moments=moments,\
     vsyst=vsyst, quiet=1, bias=0, velscale_ratio=1, fixed=[0, 1])
 

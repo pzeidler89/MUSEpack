@@ -193,9 +193,9 @@
   <h1>Source code for utils</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.2&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.3&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190422&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190731&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -221,6 +221,7 @@
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">gaussian_filter</span>
 <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">find_peaks</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">wofz</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations</span> <span class="k">as</span> <span class="n">inter_comb</span>
 
 
 <div class="viewcode-block" id="initial_guesses"><a class="viewcode-back" href="../utilities.html#utils.initial_guesses">[docs]</a><span class="k">def</span> <span class="nf">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">blends</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestrength</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>\
@@ -552,12 +553,23 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span>
             <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">median</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">median</span>\
+            <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">x_red</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">x_red1</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">x_red1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)])</span>
+            <span class="c1"># x_red = np.delete(x_red1, [np.argmin(x_red1), np.argmax(x_red1)])</span>
+            <span class="n">gr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">inter_comb</span><span class="p">(</span><span class="n">x_red1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_red1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)))</span>
+            
+            <span class="n">std_gr</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">gr</span><span class="p">]</span>
+            <span class="n">x_red</span> <span class="o">=</span> <span class="n">gr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">std_gr</span><span class="p">)]</span>
+            
             <span class="n">median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x_red</span><span class="p">)</span>
             <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x_red</span><span class="p">)</span>
-        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">median</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">median</span>\
-        <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># if len(x_red) &gt;= 3:</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">median</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">median</span>\
+            <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">mad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     ind = np.where((x &lt; median - 0.5 * sigma * mad) | (x &gt; median\</span>
+            <span class="c1">#     + 0.5 * sigma * mad))[0]</span>
         <span class="n">mask</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">x_masked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">x_masked</span>
