@@ -1,1 +1,1 @@
-pip install -q sphinx sphinx-jsondomain
+pip install sphinx sphinx-jsondomain
