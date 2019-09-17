@@ -69,7 +69,7 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'pysynphot', 'ppxf']
+autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'pysynphot', 'ppxf', 'spectral_cube', 'lmfit']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
