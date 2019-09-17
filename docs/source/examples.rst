@@ -90,7 +90,7 @@ At this point the spectral instance contains the spectrum as well as the fitted 
 
       spfit.rv_fit_peak(line_sigma=3, line_significants=5)
 
-8. Now we measure the radial velocities using the Monte Carlo bootstrap method. As initial guess we use the peak velocity :mod:`spfit.rv_peak`. We sample the spectrum 20000 times and use all available CPUs. The measured radial velocity and its uncertainty may be called at any time using :mod:`spfit.rv` and `:mod:`spfit.erv`, respectively`.
+8. Now we measure the radial velocities using the Monte Carlo bootstrap method. As initial guess we use the peak velocity :mod:`spfit.rv_peak`. We sample the spectrum 20000 times and use all available CPUs. The measured radial velocity and its uncertainty may be called at any time using :mod:`spfit.rv` and :mod:`spfit.erv`, respectively.
 
    .. code-block:: python
       :lineno-start: 30
