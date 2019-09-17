@@ -19,36 +19,17 @@ sys.path.insert(0, os.path.abspath('../../MUSEpack'))
 
 
 
-# read the docs mocks
-__import__(setup_cfg['package_name'])
-package = sys.modules[setup_cfg['package_name']]
-
-class Mock(object):
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return Mock()
-
+# read the docs mocks	
+from mock import Mock as MagicMock
+ 
+class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
-        if name in ('__file__', '__path__'):
-            return '/dev/null'
-        elif name[0] == name[0].upper():
-            return type(name, (), {})
-        else:
-            return Mock()
+        return MagicMock()
+ 
+MOCK_MODULES = ['numpy', 'scipy', 'astropy', 'pyspeckit']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
-MOCK_MODULES = {'matplotlib', 'matplotlib.pyplot', 'matplotlib.figure',
-                'matplotlib.widgets', 'matplotlib.cbook', 'pyfits', 'scipy',
-                'scipy', 'pyfits', 'pytest',
-                'scipy.interpolate', 'scipy.ndimage', 'pywcs', 'matplotlib',
-                'matplotlib.pyplot', 'h5py', 'atpy','progressbar'}
-for mod_name in MOCK_MODULES:
-    if mod_name not in sys.modules:
-        sys.modules[mod_name] = Mock()
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = Mock()
 
 
 # -- Project information -----------------------------------------------------
