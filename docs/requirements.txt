@@ -1,1 +1,2 @@
-pip install sphinx sphinx-jsondomain
+python3 -mvenv env
+env/bin/pip install -q sphinx sphinx-jsondomain
