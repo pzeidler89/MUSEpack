@@ -4,4 +4,4 @@
 
 The main purpose of *MUSEpack* is to measure stellar and gas radial velocities to an accuracy of 1-2km/s without the need of a stellar spectral template library.
 
-For a detailed description of *MUSEpack* we refer to www.xyz.com and to `Zeidler et al. 2019, accepted to AJ`.
+For a detailed description of *MUSEpack* we refer to https://musepack.readthedocs.io/en/latest/index.html and to `Zeidler et al. 2019, accepted to AJ`.
