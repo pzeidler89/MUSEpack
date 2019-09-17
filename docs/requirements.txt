@@ -8,3 +8,4 @@ lmfit
 pysynphot
 git+https://github.com/pzeidler89/MUSEpack.git
 dask
+montage_wrapper
