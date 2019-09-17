@@ -2,3 +2,7 @@ sphinx
 sphinx-jsondomain
 astropy
 pyspeckit
+spectral_cube
+ppxf
+lmfit
+pysynphot
