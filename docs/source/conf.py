@@ -18,20 +18,6 @@ sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../MUSEpack'))
 
 
-
-# read the docs mocks	
-# from mock import Mock as MagicMock
-#
-# class Mock(MagicMock):
-#     @classmethod
-#     def __getattr__(cls, name):
-#         return MagicMock()
-#
-# MOCK_MODULES = ['numpy', 'numpy.polynomial', 'astropy', 'astropy.stats', 'astropy.coordinates', 'astropy.io', 'astropy.table', 'astropy.wcs', 'astropy.extern','astropy.extern.six.moves', 'astropy.utils.data', 'pyspeckit', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.gridspec', 'matplotlib.ticker', 'matplotlib.lines', 'pandas', 'scipy', 'scipy.special', 'scipy.optimize', 'scipy.stats', 'pysynphot', 'ppxf']
-# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-
-
 # -- Project information -----------------------------------------------------
 
 project = 'MUSEpack'
