@@ -6,3 +6,4 @@ spectral_cube
 ppxf
 lmfit
 pysynphot
+git+https://github.com/pzeidler89/MUSEpack.git

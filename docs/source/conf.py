@@ -27,7 +27,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return MagicMock()
  
-MOCK_MODULES = ['numpy', 'scipy', 'astropy','astropy.stats','astropy.coordinates','astropy.io','astropy.table','astropy.wcs' ,'pyspeckit', 'matplotlib','matplotlib.pyplot','matplotlib.gridspec', 'matplotlib.ticker','matplotlib.lines','pandas', 'scipy', 'scipy.special']
+MOCK_MODULES = ['numpy', 'numpy.polynomial', 'astropy', 'astropy.stats', 'astropy.coordinates', 'astropy.io', 'astropy.table', 'astropy.wcs', 'astropy.extern', 'astropy.utils.data', 'pyspeckit', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.gridspec', 'matplotlib.ticker', 'matplotlib.lines', 'pandas', 'scipy', 'scipy.special', 'scipy.optimize']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
