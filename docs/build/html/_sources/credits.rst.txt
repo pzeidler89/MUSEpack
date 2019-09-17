@@ -10,7 +10,9 @@ We ask the user of *MUSEpack* to cite the following paper(s) when using the soft
 
 We would like to thank B. James for her patience for being the first user of the *MUSEpack* and, especially, :class:`MUSEreduce.musereduce`, which highly improved the user-friendliness of the package and tracing errors in the code
 
-We thank N. Lützgendorf for helping us developing the Monte Carlo module :mod:`ppxf_MC`.  
+We thank N. Lützgendorf for helping us developing the Monte Carlo module :mod:`ppxf_MC`.
+
+We thanks N. Miles for his continuous support and patience to creat the documentation.
 
 
 .. _Zeidler et al. 2018: https://ui.adsabs.harvard.edu/abs/2018AJ....156..211Z/abstract
