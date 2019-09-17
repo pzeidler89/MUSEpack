@@ -78,3 +78,5 @@ History
    During the boot strap procedure, the initial guesses of the velocities are varied between certain limits, to ensure more stability to the
    fit in the case of an "unlucky choice of initial parameters. Added Kwarg to :mod:`RV_spectrum.rv_fit` is `RV_guess_var`, which is by default 0. 
    It describes the min/max variation of the initial RV guess for each fit.
+.. versionadded:: 1.0
+   The release version as originally published in `Zeidler et al. 2019`_.

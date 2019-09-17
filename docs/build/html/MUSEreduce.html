@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. MUSEreduce &mdash; MUSEpack  documentation</title>
+  <title>2. MUSEreduce &mdash; MUSEpack 1.0dev20190916 documentation</title>
   
 
   
@@ -59,6 +59,10 @@
 
           
             
+            
+              <div class="version">
+                1.0
+              </div>
             
           
 
@@ -383,7 +387,7 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 <li><p><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 <li><p><strong>sky_reject</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The sigma clipping parameters for the Gaussian fit to each sky emission line: <cite>high sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>),
 <cite>low sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>), <cite>number of iterations</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>). For a more detailed description we refer to the
-<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> manual.<span> (</span><em>default=‘15.</em><span>, </span><em>15.</em><span>, </span><em>1’</em><span>)</span></p></li>
+<a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> manual.<span> (</span><em>default=’15.</em><span>, </span><em>15.</em><span>, </span><em>1’</em><span>)</span></p></li>
 <li><p><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
 than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 </ul>
@@ -891,6 +895,9 @@ by the user</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.5.2: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.0: </span>The release version as originally published in <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
 </div>
 </div>
 </div>

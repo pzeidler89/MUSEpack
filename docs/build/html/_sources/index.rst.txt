@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-MUSEpack v0.4.6.dev20190904
+MUSEpack v1.0dev20191609
 ===========================
 
 Introduction
@@ -56,5 +56,5 @@ On this website we introduce the individual python classes and modules of *MUSEp
 References
 ----------
 
-* Zeidler, P., Nota, A., Sabbi, E., Luljak, P., McLeod, A. F., Grebel, E. K., Pasquali, A., Tosi, M. 2019, submitted to AJ
+* Zeidler, P., Nota, A., Sabbi, E., Luljak, P., McLeod, A. F., Grebel, E. K., Pasquali, A., Tosi, M. 2019, accepted to AJ
 * Bacon, R., Accardo, M., Adjali, L., et al. 2010, Proc. SPIE, 7735, 773508

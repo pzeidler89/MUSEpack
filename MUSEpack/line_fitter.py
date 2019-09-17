@@ -1,6 +1,6 @@
-__version__ = '0.1.2'
+__version__ = '1.0'
 
-__revision__ = '20190703'
+__revision__ = '20190916'
 
 import sys
 import os

@@ -329,3 +329,5 @@ History
    added *skymethod*
 .. versionadded:: 0.5.2
    :class:`MUSEreduce.musereduce` can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.
+.. versionadded:: 1.0
+   The release version as originally published in `Zeidler et al. 2019`_.

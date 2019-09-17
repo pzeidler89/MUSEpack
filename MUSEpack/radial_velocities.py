@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.3'
+__version__ = '1.0'
 
-__revision__ = '20190731'
+__revision__ = '20190916'
 
 import sys
 import os
