@@ -15,6 +15,12 @@ The main purpose of MUSEpack is to measure stellar and gas radial velocities to 
 
 On this website we introduce the individual python classes and modules of *MUSEpack*. In :ref:`examples` we present detailed instructions on how to use the main modules and classes of *MUSEpack*. For any suggestions and bug reports please create a pull request in GitHub https://github.com/pzeidler89/MUSEpack or send an email to peterzeidler89@gmail.com.
 
+
+.. image:: https://zenodo.org/badge/144210611.svg
+   :target: https://zenodo.org/badge/latestdoi/144210611
+
+
+
 .. toctree::
    :maxdepth: 2
    :numbered:
