@@ -179,7 +179,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>6. Examples</li>
+      <li><span class="section-number">6. </span>Examples</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -199,15 +199,15 @@
            <div itemprop="articleBody">
             
   <div class="section" id="examples">
-<span id="id1"></span><h1>6. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1><span class="section-number">6. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="measuring-stellar-radial-velocities">
-<h2>6.1. Measuring stellar radial velocities<a class="headerlink" href="#measuring-stellar-radial-velocities" title="Permalink to this headline">¶</a></h2>
-<p>In this tutorial we show the user how to create a spectral measure the stellar radial velocity. All files in including the <a class="reference download internal" download="" href="_downloads/5a413622b2410f9728d436212fd7e3f2/exec.py"><code class="xref download docutils literal notranslate"><span class="pre">example</span></code></a> code may be downloaded by using the individual links or as a zip-archive <a class="reference download internal" download="" href="_downloads/7491dfbf490881758ae7bb3cba52c745/all_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>. The <a class="reference download internal" download="" href="_downloads/04ed6dec914a6950a525093c65cac5d8/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a> used in this example contains the PampelMuse extracted spectrum of a member pre-main-sequence member star of the young massive star cluster Westerlund 2 showing a pronounced CaII-Triplet, which we will use to measure the RV. The user can also see that the Balmer lines are not well extracted, which is caused by the high nebular emission lines (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018AJ....156..211Z/abstract">Zeidler et al. 2018</a>, <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>) demonstrating that this does not influence the radial velocity fit.</p>
+<h2><span class="section-number">6.1. </span>Measuring stellar radial velocities<a class="headerlink" href="#measuring-stellar-radial-velocities" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial we show the user how to create a spectral measure the stellar radial velocity. All files in including the <a class="reference download internal" download="" href="_downloads/875ca4f08a443972c97c8843bb2b7202/exec.py"><code class="xref download docutils literal notranslate"><span class="pre">example</span></code></a> code may be downloaded by using the individual links or as a zip-archive <a class="reference download internal" download="" href="_downloads/f95efed4d28510c408e8bd8cc9670629/all_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>. The <a class="reference download internal" download="" href="_downloads/8d15ff7580651a7032f1074e6feb9012/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a> used in this example contains the PampelMuse extracted spectrum of a member pre-main-sequence member star of the young massive star cluster Westerlund 2 showing a pronounced CaII-Triplet, which we will use to measure the RV. The user can also see that the Balmer lines are not well extracted, which is caused by the high nebular emission lines (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018AJ....156..211Z/abstract">Zeidler et al. 2018</a>, <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>) demonstrating that this does not influence the radial velocity fit.</p>
 <div class="section" id="the-procedure">
-<h3>6.1.1. The procedure<a class="headerlink" href="#the-procedure" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">6.1.1. </span>The procedure<a class="headerlink" href="#the-procedure" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic">
 <li><p>Reading in the necessary data</p>
-<p>As a first step we must read the necessary data. This includes the spectrum, the <a class="reference download internal" download="" href="_downloads/dda135c44d68c9b49c626c65d07b3791/line_library.dat"><code class="xref download docutils literal notranslate"><span class="pre">spectral</span> <span class="pre">line</span> <span class="pre">library</span></code></a>, and the <a class="reference download internal" download="" href="_downloads/42104345242a8d266402b010153c879e/target_lines.list"><code class="xref download docutils literal notranslate"><span class="pre">line</span> <span class="pre">list</span></code></a> of the spectral lines that are used to measure the radial velocity. Since the CaII-Triplet lines are blended with the Paschen Series, we also have to include a catalog of the <a class="reference download internal" download="" href="_downloads/c1bb1e090d3baf6ab1bfe6649f0f41ed/blends.dat"><code class="xref download docutils literal notranslate"><span class="pre">blends</span></code></a>.</p>
+<p>As a first step we must read the necessary data. This includes the spectrum, the <a class="reference download internal" download="" href="_downloads/5fe990ed890c7a6a99d1d3c21aaa3759/line_library.dat"><code class="xref download docutils literal notranslate"><span class="pre">spectral</span> <span class="pre">line</span> <span class="pre">library</span></code></a>, and the <a class="reference download internal" download="" href="_downloads/850216bf8f16dd763485ca00bdcee3c0/target_lines.list"><code class="xref download docutils literal notranslate"><span class="pre">line</span> <span class="pre">list</span></code></a> of the spectral lines that are used to measure the radial velocity. Since the CaII-Triplet lines are blended with the Paschen Series, we also have to include a catalog of the <a class="reference download internal" download="" href="_downloads/382fec49ae0b3dee9354681e0008e535/blends.dat"><code class="xref download docutils literal notranslate"><span class="pre">blends</span></code></a>.</p>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
@@ -218,7 +218,7 @@
 8
 9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>
 <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">MUSEpack.radial_velocities</span> <span class="kn">import</span> <span class="n">RV_spectrum</span>
 
 <span class="n">spec_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;star.fits&#39;</span><span class="p">)</span>
@@ -229,7 +229,7 @@
 </td></tr></table></div>
 </li>
 <li><p>Creating the flux, flux uncertainty, and wavelength arrays, as well as the line lists
-In this step all the necessary arrays are created from the input files. The header information of the stellar spectrum is used to create the wavelength array. The flux is stored in the first extension while the flux uncertainties are stored in the second extension of the <a class="reference download internal" download="" href="_downloads/04ed6dec914a6950a525093c65cac5d8/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a>.</p>
+In this step all the necessary arrays are created from the input files. The header information of the stellar spectrum is used to create the wavelength array. The flux is stored in the first extension while the flux uncertainties are stored in the second extension of the <a class="reference download internal" download="" href="_downloads/8d15ff7580651a7032f1074e6feb9012/star.fits"><code class="xref download docutils literal notranslate"><span class="pre">stellar</span> <span class="pre">spectrum</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The MUSE fluxes are stored in <span class="math notranslate nohighlight">\(10^{20}\,{\rm erg}\,{\rm s}^{-1}\,{\rm cm}^{-2}\,{\rm A}^{-1}\)</span>. Therefore, we need to multiply the flux and uncertainty array with <span class="math notranslate nohighlight">\(10^{-20}\)</span></p>
@@ -265,13 +265,13 @@ In this step all the necessary arrays are created from the input files. The head
 24</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">line_fitting</span><span class="p">(</span><span class="n">lcat</span><span class="p">,</span> <span class="n">spfit</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">resid_level</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>\
 <span class="n">max_contorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">adjust_preference</span><span class="o">=</span><span class="s1">&#39;contorder&#39;</span><span class="p">,</span> <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>\
 <span class="n">max_ladjust</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_exclusion_level</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">blends</span><span class="o">=</span><span class="n">blends</span><span class="p">,</span>\
-<span class="n">llimits</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">autoadjust</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>\
+<span class="n">llimits</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">],</span> <span class="n">autoadjust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
 <span class="n">input_continuum_deviation</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
 <li><p>We will now plot the fitted spectrum to a file called <em>star_1_plot.png</em>. The fitted spectrum will be oversampled.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oversampled</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>26</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oversampled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
@@ -289,14 +289,14 @@ In this step all the necessary arrays are created from the input files. The head
 </td></tr></table></div>
 </li>
 <li><p>The measured radial velocities (per line and for the star) are added to the spectral instance. We may now write the fitted parameters to an ASCII file. Additionally we may print the radial velocity of the star measure with the peaks only and with the the full spectrum.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>32</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">printcat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>32</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">spfit</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">printcat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </li>
 </ol>
 </div>
 <div class="section" id="the-results">
-<h3>6.1.2. The results<a class="headerlink" href="#the-results" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">6.1.2. </span>The results<a class="headerlink" href="#the-results" title="Permalink to this headline">¶</a></h3>
 <p>After successfully executing the script the radial velocity of <em>star_1</em> is <span class="math notranslate nohighlight">\(13.90 \pm 1.949\,{\rm km}\,{\rm s}^{-1}\)</span> based on two out of the three absorption lines. The radial velocity based on the peaks only is <span class="math notranslate nohighlight">\(15.43 \pm 1.144\,{\rm km}\,{\rm s}^{-1}\)</span> and agrees well with the cross correlation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -384,7 +384,7 @@ In this step all the necessary arrays are created from the input files. The head
 </div>
 </div>
 <div class="section" id="additional-tutorials">
-<h2>6.2. Additional tutorials<a class="headerlink" href="#additional-tutorials" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">6.2. </span>Additional tutorials<a class="headerlink" href="#additional-tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="admonition-todo admonition" id="id2">
 <p class="admonition-title">Todo</p>
 <p>We will add more tutorials in the near future…</p>

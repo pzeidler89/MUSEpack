@@ -179,7 +179,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>3. Spectral line fitting and radial velocity measurements</li>
+      <li><span class="section-number">3. </span>Spectral line fitting and radial velocity measurements</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -199,11 +199,11 @@
            <div itemprop="articleBody">
             
   <div class="section" id="spectral-line-fitting-and-radial-velocity-measurements">
-<span id="radial-velocities"></span><h1>3. Spectral line fitting and radial velocity measurements<a class="headerlink" href="#spectral-line-fitting-and-radial-velocity-measurements" title="Permalink to this headline">¶</a></h1>
+<span id="radial-velocities"></span><h1><span class="section-number">3. </span>Spectral line fitting and radial velocity measurements<a class="headerlink" href="#spectral-line-fitting-and-radial-velocity-measurements" title="Permalink to this headline">¶</a></h1>
 <p>The main purpose of MUSEreduce is the spectral line fitting in order to create template spectra from observations, which are used to measure the radial velocities of stars and gas, especially in the absence of working spectral template libraries, e.g., for pre-main-sequence stars in the optical.</p>
 <p>The <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a> class and the spectral fitting module <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> are the heart of this package using <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> as basic spectral fitting routine and <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a> for the spectral cross-correlation. Together with a Monte Carlo bootstrap technique, it is possible to measure radial velocities with an accuracy of <span class="math notranslate nohighlight">\(1-3\,\rm{km}\,\rm{s}^{-1}\)</span> in the absence of any template library. For a detailed description on how this technique works, we refer to <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
 <div class="section" id="spectral-line-fitter">
-<h2>3.1. Spectral line fitter<a class="headerlink" href="#spectral-line-fitter" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.1. </span>Spectral line fitter<a class="headerlink" href="#spectral-line-fitter" title="Permalink to this headline">¶</a></h2>
 <p>This module is the work horse for fitting spectral lines from an input catalog to a given 1D spectrum. The line fitting itself is performed using the module <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a>.</p>
 <p><a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> uses an iterative method to fit the spectral lines and the continuum simultaneously. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> automatically adjusts the input parameters to <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> in the manner to optimize the fitting (<em>continuum order</em> and <em>wavelegth limits</em>)</p>
 <p>The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> determines whether the fit fullfils the set parameters and was succesfull. The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.</p>
@@ -224,56 +224,56 @@ only input.</p>
 <dt>Args:</dt><dd><dl>
 <dt>linecat<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>Array with the spectral lines and their wavelengths</p>
 </dd>
-<dt>line_idx<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the primary line</p>
+<dt>line_idx<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the primary line</p>
 </dd>
-<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations</p>
+<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of iterations</p>
 </dd>
-<dt>input_resid_level<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>The maximum MAD for the fit residuals for a succesfull fit</p>
+<dt>input_resid_level<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>The maximum MAD for the fit residuals for a succesfull fit</p>
 </dd>
-<dt>max_contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The maximum polynominal order of the continuum to have</p>
+<dt>max_contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The maximum polynominal order of the continuum to have</p>
 </dd>
-<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The maximum number of wavelength range adjustments in steps of 5
+<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The maximum number of wavelength range adjustments in steps of 5
 Angstrom</p>
 </dd>
-<dt>adjust_preference<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>contorder: continuum order is adjusted first</p>
+<dt>adjust_preference<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>contorder: continuum order is adjusted first</p>
 <p>wavelength: wavelength range is adjusted first</p>
 </dd>
-<dt>input_continuum_deviation<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>by how much the continuum is allowed to deviate from a running
+<dt>input_continuum_deviation<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>by how much the continuum is allowed to deviate from a running
 median estimate. This is set to prevent lines mimicking a continuum</p>
 </dd>
-<dt>llimits<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>the limits for the wavelength fit as set in <code class="docutils literal notranslate"><span class="pre">ppxf</span></code></p>
+<dt>llimits<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>the limits for the wavelength fit as set in <code class="docutils literal notranslate"><span class="pre">ppxf</span></code></p>
 </dd>
-<dt>max_exclusion_level<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>The exclusion level for lines to be excluded from the next baseline
+<dt>max_exclusion_level<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>The exclusion level for lines to be excluded from the next baseline
 estimate as set in <code class="docutils literal notranslate"><span class="pre">pyspeckit</span></code></p>
 </dd>
-<dt>blends<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a>-file or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>A file with primary lines that contain blends to provide a maximum
+<dt>blends<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a>-file or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>A file with primary lines that contain blends to provide a maximum
 amplitude ratio of the primary and the blend to prevent that the
 blend becomes the dominant line in the fit.</p>
 </dd>
-<dt>autoadjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted to
+<dt>autoadjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted to
 the fit of the previous iteration. All other wavelength range are
 adjusted accordingly taking into account the proper velocity
 corrected shift <span class="math notranslate nohighlight">\(\Delta \lambda/\lambda\)</span>. This is especially
 important to detect hyper-velocity stars.</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: no adjustment to the limits done</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: no adjustment to the limits done</p>
 </dd>
-<dt>fwhm_block<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool:obj:</span></code></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
+<dt>fwhm_block<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool:obj:</span></code></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
 lines is the instrument’s dispersion</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
+<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the fitted
 lines is zero</p>
 </dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl>
-<dt>line_idx<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the primary line</p>
+<dt>line_idx<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the primary line</p>
 </dd>
-<dt>temp_l<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted wavelength of the primary line</p>
+<dt>temp_l<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted wavelength of the primary line</p>
 </dd>
-<dt>temp_a<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted amplitude of the primary line</p>
+<dt>temp_a<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted amplitude of the primary line</p>
 </dd>
-<dt>temp_sl<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted Lorentzian gamma of the primary line</p>
+<dt>temp_sl<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted Lorentzian gamma of the primary line</p>
 </dd>
-<dt>temp_sg<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted Gaussian sigma of the primary line</p>
+<dt>temp_sg<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>fitted Gaussian sigma of the primary line</p>
 </dd>
 <dt>spec_select_idx<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>indices of the used part of the spectrum</p>
 </dd>
@@ -281,22 +281,22 @@ lines is zero</p>
 </dd>
 <dt>continuum<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>the fitted continuum</p>
 </dd>
-<dt>lstart<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>first used wavelength bin (might differ from input if it was
+<dt>lstart<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>first used wavelength bin (might differ from input if it was
 adjusted during fitting)</p>
 </dd>
-<dt>lend<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>last used wavelength bin (might differ from input if it was
+<dt>lend<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>last used wavelength bin (might differ from input if it was
 adjusted during fitting)</p>
 </dd>
-<dt>contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The order of the polynominal used for the continuum</p>
+<dt>contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>The order of the polynominal used for the continuum</p>
 </dd>
 <dt>fit_f<span class="classifier">array</span></dt><dd><p>the fitted spectrum</p>
 </dd>
-<dt>significance<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>the line strength over the continuum</p>
+<dt>significance<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>the line strength over the continuum</p>
 </dd>
-<dt>fit_failed<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: if the fit failed for some reason. This line will be
+<dt>fit_failed<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: if the fit failed for some reason. This line will be
 excluded from further analyses</p>
 </dd>
-<dt>fit_f_highres<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>the fitted spectrum and the oversampling resolution</p>
+<dt>fit_f_highres<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>the fitted spectrum and the oversampling resolution</p>
 </dd>
 <dt>spec_select_idx_highres<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>indices of the used part of the over sampled spectrum</p>
 </dd>
@@ -315,12 +315,12 @@ excluded from further analyses</p>
 </div>
 </div>
 <div class="section" id="id2">
-<h2>3.2. Radial Velocities<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.2. </span>Radial Velocities<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <p>This is the main class for measuring the radial velocities. A basic example is descibed in <a class="reference internal" href="examples.html#examples"><span class="std std-ref">Examples</span></a>. A detailed description can be found in Zeidler et al. 2019.</p>
 <p>Throughout the document the <strong>primary line</strong> is the spectral line of interest for which the line fitting will be executed. <strong>Secondary lines</strong> are spectral lines in blends.</p>
 <p>A detailed demonstration on how to use the radial velocity fitter is provided in <a class="reference internal" href="examples.html#examples"><span class="std std-ref">Examples</span></a> including template files.</p>
 <div class="section" id="the-radial-velocity-fitter">
-<h3>3.2.1. The radial velocity fitter<a class="headerlink" href="#the-radial-velocity-fitter" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.2.1. </span>The radial velocity fitter<a class="headerlink" href="#the-radial-velocity-fitter" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="radial_velocities.RV_spectrum">
 <em class="property">class </em><code class="sig-prename descclassname">radial_velocities.</code><code class="sig-name descname">RV_spectrum</code><span class="sig-paren">(</span><em class="sig-param">spec_id</em>, <em class="sig-param">spec_f</em>, <em class="sig-param">spec_err</em>, <em class="sig-param">spec_lambda</em>, <em class="sig-param">loglevel='INFO'</em>, <em class="sig-param">templatebins=100000</em>, <em class="sig-param">specbinsize=1.25</em>, <em class="sig-param">dispersion=2.4</em>, <em class="sig-param">linetype='absorption'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum" title="Permalink to this definition">¶</a></dt>
@@ -328,7 +328,7 @@ excluded from further analyses</p>
 and output values including the radial velocity catalog.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
-<dt>spec_id<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>unique identifier of the spectrum</p>
+<dt>spec_id<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>unique identifier of the spectrum</p>
 </dd>
 <dt>spec_f<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>flux array of the spectrum in erg/s/cm:math:<cite>^2</cite>/Angstrom</p>
 </dd>
@@ -339,18 +339,18 @@ and output values including the radial velocity catalog.</p>
 </dl>
 </dd>
 <dt>Kwargs:</dt><dd><dl>
-<dt>loglevel<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">INFO</span></code>)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>: all functions run on a single core to obtain proper
+<dt>loglevel<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">INFO</span></code>)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>: all functions run on a single core to obtain proper
 output in the correct order for proper debugging.</p>
 </dd>
-<dt>templatebins<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 100000)</span></dt><dd><p>Number of wavelength bins for the oversampled spectrum used to fit
+<dt>templatebins<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 100000)</span></dt><dd><p>Number of wavelength bins for the oversampled spectrum used to fit
 the spectral lines.</p>
 </dd>
-<dt>specbinsize<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 1.25)</span></dt><dd><p>The spectral bin size. The default is set to fit the MUSE dataset</p>
+<dt>specbinsize<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 1.25)</span></dt><dd><p>The spectral bin size. The default is set to fit the MUSE dataset</p>
 </dd>
-<dt>dispersion<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 2.4)</span></dt><dd><p>The dispersion of the spectrograph. The default is set to the
+<dt>dispersion<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 2.4)</span></dt><dd><p>The dispersion of the spectrograph. The default is set to the
 nominal MUSE instrument dispersion</p>
 </dd>
-<dt>linetype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: absorption)</dt><dd><p>absorption: All spectral lines are absorption lines</p>
+<dt>linetype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: absorption)</dt><dd><p>absorption: All spectral lines are absorption lines</p>
 <p>emission: All spectral lines are emission lines</p>
 <p>both : spectral lines can be absorption or emission lines. <strong>This</strong>
 <strong>mode has not been tested yet !!!</strong></p>
@@ -365,14 +365,14 @@ nominal MUSE instrument dispersion</p>
 of the primary lines.</p>
 <dl>
 <dt>Kwargs:</dt><dd><dl>
-<dt>initcat<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> file containing the primary lines
+<dt>initcat<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> file containing the primary lines
 format: name, lambda, start, end</p>
 </dd>
-<dt>save<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is written to a file.</p>
+<dt>save<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is written to a file.</p>
 </dd>
-<dt>load<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt><dd><p>Loads a catalog from catalog file.</p>
+<dt>load<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</span></dt><dd><p>Loads a catalog from catalog file.</p>
 </dd>
-<dt>printcat<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is printed to the terminal</p>
+<dt>printcat<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The catalog is printed to the terminal</p>
 </dd>
 </dl>
 </dd>
@@ -394,52 +394,52 @@ repeating the spectral fit without re-initiating the class.</p>
 <dt>Args:</dt><dd><dl class="simple">
 <dt>input_cat: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></dt><dd><p>input spectral line catalog with wavelengths in Angstrom</p>
 </dd>
-<dt>line_idxs: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: of the line names for which RV
+<dt>line_idxs: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: of the line names for which RV
 fits should be performed, must be identical to “name” in
 init_cat</p>
 </dd>
 </dl>
 </dd>
 <dt>Kwargs:</dt><dd><dl>
-<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The maximum number of iteration if convergence is not reached</p>
+<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The maximum number of iteration if convergence is not reached</p>
 </dd>
-<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set
+<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set
 to -1 all available system resources are used. Maximum number of
 CPUs is the number of spectral lines the fit is performed on.</p>
 </dd>
-<dt>resid_level: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt><dd><p>The maximum MAD for the fit residuals for a succesfull fit</p>
+<dt>resid_level: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt><dd><p>The maximum MAD for the fit residuals for a succesfull fit</p>
 </dd>
-<dt>max_contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 2)</span></dt><dd><p>The maximum polynominal order of the continuum</p>
+<dt>max_contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 2)</span></dt><dd><p>The maximum polynominal order of the continuum</p>
 </dd>
-<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>Ahe maximum number of wavelength range adjustments in steps of 5
+<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>Ahe maximum number of wavelength range adjustments in steps of 5
 Angstrom</p>
 </dd>
-<dt>adjust_preference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: contorder)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">contorder</span></code>: continuum order is adjusted first</p>
+<dt>adjust_preference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: contorder)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">contorder</span></code>: continuum order is adjusted first</p>
 <p><code class="docutils literal notranslate"><span class="pre">wavelength</span></code>: wavelength range is adjusted first</p>
 </dd>
-<dt>input_continuum_deviation <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.05)</dt><dd><p>Fraction by how much the continuum is allowed to deviate from a
+<dt>input_continuum_deviation <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.05)</dt><dd><p>Fraction by how much the continuum is allowed to deviate from a
 running median estimate. This is set to prevent lines mimicking
 a continuum</p>
 </dd>
-<dt>llimits: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> (optional, default: [-2., 2.])</dt><dd><p>the limits for the wavelength fit as set in <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a></p>
+<dt>llimits: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> (optional, default: [-2., 2.])</dt><dd><p>the limits for the wavelength fit as set in <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a></p>
 </dd>
-<dt>max_exclusion_level <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.3)</dt><dd><p>The exclusion level for lines to be excluded from the next
+<dt>max_exclusion_level <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.3)</dt><dd><p>The exclusion level for lines to be excluded from the next
 baseline estimate as set in <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a></p>
 </dd>
-<dt>blends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt><dd><p>A file with primary lines that contain blends to provide a
+<dt>blends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#ascii" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ascii</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt><dd><p>A file with primary lines that contain blends to provide a
 maximum amplitude ratio of the primary and the blend to prevent
 that the blend becomes the dominant line in the fit.</p>
 </dd>
-<dt>autoadjust <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted
+<dt>autoadjust <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: the wavelength limits <code class="docutils literal notranslate"><span class="pre">llimit</span></code> will be adjusted
 to the fit of the previous iteration. All other wavelength
 range are adjusted accordingly taking into account the proper
 velocity corrected shift <span class="math notranslate nohighlight">\(\Delta \lambda/\lambda\)</span>. This
 is especially important to detect hyper-velocity stars.</p>
 </dd>
-<dt>fwhm_block <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the
+<dt>fwhm_block <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The minimum fwhm of the voigt profiles of the
 fitted lines ais the instrument’s dispersion. This prevents
 unphysical lines.</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the
+<p><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>: The minimum fwhm of the voigt profiles of the
 fitted lines is zero.</p>
 </dd>
 </dl>
@@ -454,7 +454,7 @@ fitted lines is zero.</p>
 including the spectral fit and the template.</p>
 <dl>
 <dt>Kwargs:</dt><dd><dl>
-<dt>oversampled<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The oversampled spectral fit and the template are
+<dt>oversampled<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>: The oversampled spectral fit and the template are
 used in the plot.</p>
 </dd>
 </dl>
@@ -475,18 +475,18 @@ the form [RV,sepctral_dispersion]</p>
 </dl>
 </dd>
 <dt>Kwargs:</dt><dd><dl>
-<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 10000)</span></dt><dd><p>number of iterations to bootstrap the spectrum</p>
+<dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 10000)</span></dt><dd><p>number of iterations to bootstrap the spectrum</p>
 </dd>
-<dt>line_sigma: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3):</dt><dd><p>sigma for the RV clipping for the individual lines</p>
+<dt>line_sigma: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3):</dt><dd><p>sigma for the RV clipping for the individual lines</p>
 </dd>
-<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set 
+<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set 
 to -1 all available system resources are used. Maximum number of
 CPUs is the number of spectral lines the fit is performed to.</p>
 </dd>
-<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt><dd><p>The sigma-level for the spectral line to be above the continuum
+<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt><dd><p>The sigma-level for the spectral line to be above the continuum
 in order to be considered <em>valid</em></p>
 </dd>
-<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a 
+<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a 
 uniform distribution.</p>
 </dd>
 </dl>
@@ -501,10 +501,10 @@ uniform distribution.</p>
 of the spectral lines</p>
 <dl>
 <dt>Kwargs:</dt><dd><dl>
-<dt>line_sigma<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3)</span></dt><dd><p>The sigma-level for the sigma clipping before determining peak
+<dt>line_sigma<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3)</span></dt><dd><p>The sigma-level for the sigma clipping before determining peak
 radial velocity measurement</p>
 </dd>
-<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt><dd><p>The sigma-level for the spectral line to be above the continuum
+<dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt><dd><p>The sigma-level for the spectral line to be above the continuum
 in order to be considered <em>valid</em></p>
 </dd>
 </dl>
@@ -516,7 +516,7 @@ in order to be considered <em>valid</em></p>
 
 </div>
 <div class="section" id="monte-carlo-radial-velocity-determination">
-<span id="monte-carlo"></span><h3>3.2.2. Monte Carlo radial velocity determination<a class="headerlink" href="#monte-carlo-radial-velocity-determination" title="Permalink to this headline">¶</a></h3>
+<span id="monte-carlo"></span><h3><span class="section-number">3.2.2. </span>Monte Carlo radial velocity determination<a class="headerlink" href="#monte-carlo-radial-velocity-determination" title="Permalink to this headline">¶</a></h3>
 <p>This is the module that performs the Monte Carlo boot strapping to measure radial velocities. It is automatically called by the <a class="reference internal" href="#radial_velocities.RV_spectrum.rv_fit" title="radial_velocities.RV_spectrum.rv_fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum.rv_fit</span></code></a> attribute of <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a> class and there is no need to repeat this step manually. Nevertheless, we show this part of the code since it may be useful for other applications to measure RVs.</p>
 <span class="target" id="module-ppxf_MC"></span><dl class="function">
 <dt id="ppxf_MC.ppxf_MC">
@@ -533,7 +533,7 @@ explanation).</p>
 </dd>
 <dt>log_spec_err<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>The logarithmically source spectrum uncertainties</p>
 </dd>
-<dt>velscale: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>The velocity scale of the source spectrum</p>
+<dt>velscale: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a></dt><dd><p>The velocity scale of the source spectrum</p>
 </dd>
 <dt>guesses<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a></span></dt><dd><p>The initial guesses for the the radial velocity fit guesses in
 the form [RV,sepctral_dispersion]</p>
@@ -541,31 +541,31 @@ the form [RV,sepctral_dispersion]</p>
 </dl>
 </dd>
 <dt>Kwargs:</dt><dd><dl>
-<dt>nrand<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The maximum number of iteration if convergence is not reached</p>
+<dt>nrand<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The maximum number of iteration if convergence is not reached</p>
 </dd>
-<dt>degree<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>The degree of the additive polynomial to fit offsets in the
+<dt>degree<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>The degree of the additive polynomial to fit offsets in the
 continuum. A low order polynominal may be needed to get better
 results</p>
 </dd>
 <dt>goodpixels<span class="classifier"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a> (optional, default: 5)</span></dt><dd><p>A <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.array()</span></code></a>: of pixels that are used by ppxf to fit
 the template to the source spectrum</p>
 </dd>
-<dt>moments<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>The moments to be fit (v, sigma, h3, h4)</p>
+<dt>moments<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>The moments to be fit (v, sigma, h3, h4)</p>
 </dd>
-<dt>vsyst<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.)</span></dt><dd><p>A systematic velocity. This may be needed if the system move at
+<dt>vsyst<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0.)</span></dt><dd><p>A systematic velocity. This may be needed if the system move at
 high velocities compared to the rest frame. If the guess of vsyst
 is good, the fit runs faster and more stable.</p>
 </dd>
-<dt>sigma<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The sigma used to clip outliers in the histogram determination.</p>
+<dt>sigma<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The sigma used to clip outliers in the histogram determination.</p>
 </dd>
-<dt>spec_id<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: None)</span></dt><dd><p>An ID number of the source spectrum. This becomes handy when
+<dt>spec_id<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: None)</span></dt><dd><p>An ID number of the source spectrum. This becomes handy when
 fitting many individual sources because the output files will be
 named with the ID.</p>
 </dd>
-<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a 
+<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a 
 uniform distribution.</p>
 </dd>
-<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: -1)</span></dt><dd><p>The number of cores used for the Monte Carlo velocity fitting. If
+<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: -1)</span></dt><dd><p>The number of cores used for the Monte Carlo velocity fitting. If
 n_CPU=-1 than all available cores will be used.</p>
 </dd>
 </dl>
@@ -576,7 +576,7 @@ n_CPU=-1 than all available cores will be used.</p>
 </div>
 </div>
 <div class="section" id="history">
-<h2>3.3. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.3. </span>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.1.0: </span>working radial velocity fitting package</p>
 </div>
