@@ -1264,7 +1264,7 @@ def _science_pre(self, exp_list_SCI, create_sof):
     esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug \
     muse_scibasic --nifu=-1 --resample --saveimage=true \
     --skyreject=' + self.skyreject + '--skylines=' + self.skylines \
-    + '--merge  sci_basic_object.sof'
+    + ' --merge  sci_basic_object.sof'
     esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug \
     muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 \
     --merge  sci_basic_std.sof'
