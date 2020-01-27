@@ -107,8 +107,8 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Sep 16, 2019                    #####')
-        print('#####                   Version: '+str(__version__)+'   \
+        print('#####                    Jan 27, 2020                    #####')
+        print('#####                  Version: '+str(__version__)+'   \
                   #####')
         print('#####                                                    #####')
         print('##############################################################')
