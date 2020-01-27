@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.0'
+__version__ = '1.0.1'
 
-__revision__ = '20190916'
+__revision__ = '20200127'
 
 import sys
 import shutil
@@ -65,6 +65,7 @@ class musereduce:
         self.renew_statics = self.config['calibration']['renew_statics']
 
         self.skyreject = self.config['sci_basic']['skyreject']
+        self.skylines = self.config['sci_basic']['skylines']
 
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
@@ -1262,7 +1263,8 @@ def _science_pre(self, exp_list_SCI, create_sof):
 
     esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug \
     muse_scibasic --nifu=-1 --resample --saveimage=true \
-    --skyreject=' + self.skyreject + ' --merge  sci_basic_object.sof'
+    --skyreject=' + self.skyreject + '--skylines=' + self.skylines \
+    + '--merge  sci_basic_object.sof'
     esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug \
     muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 \
     --merge  sci_basic_std.sof'
