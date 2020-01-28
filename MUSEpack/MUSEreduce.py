@@ -108,8 +108,8 @@ class musereduce:
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
         print('#####                    Jan 27, 2020                    #####')
-        print('#####                  Version: '+str(__version__)+'   \
-                  #####')
+        print('#####                   Version: '+str(__version__)+'   \
+                #####')
         print('#####                                                    #####')
         print('##############################################################')
 
