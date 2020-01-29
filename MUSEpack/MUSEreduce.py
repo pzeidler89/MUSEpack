@@ -69,7 +69,7 @@ class musereduce:
             self.skylines = '5577.339,6300.304'
         else:
             self.skylines = self.config['sci_basic']['skylines']
-        if not 'skylines' in self.config['reduce_std']:
+        if not 'execute_std' in self.config['sci_basic']:
             self.reduce_std = True
         else:
             self.reduce_std = self.config['sci_basic']['execute_std']
