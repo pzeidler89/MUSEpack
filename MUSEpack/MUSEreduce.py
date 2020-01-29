@@ -72,7 +72,7 @@ class musereduce:
         if not 'skylines' in self.config['reduce_std']:
             self.reduce_std = True
         else:
-            self.reduce_std = self.config['sci_basic']['reduce_std']
+            self.reduce_std = self.config['sci_basic']['execute_std']
 
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
@@ -114,7 +114,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 27, 2020                    #####')
+        print('#####                    Jan 29, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
