@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
-__revision__ = '20200127'
+__revision__ = '20200129'
 
 import sys
 import shutil
@@ -69,6 +69,10 @@ class musereduce:
             self.skylines = '5577.339,6300.304'
         else:
             self.skylines = self.config['sci_basic']['skylines']
+        if not 'skylines' in self.config['reduce_std']:
+            self.reduce_std = True
+        else:
+            self.reduce_std = self.config['sci_basic']['reduce_std']
 
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
@@ -194,6 +198,8 @@ class musereduce:
             print('>>> TWILIGHT')
         if self.config['sci_basic']['execute']:
             print('>>> SCIBASIC')
+            if not self.reduce_std:
+                print('    Caution SCIBASIC will not be executed on STD star!!')
         if self.config['std_flux']['execute']:
             print('>>> STANDARD')
         if self.config['sky']['execute']:
@@ -1428,7 +1434,8 @@ def _science_pre(self, exp_list_SCI, create_sof):
             self.working_dir + 'std/sci_basic_std.sof')
 
     if not self.debug:
-        _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std)
+        if self.reduce_std:
+            _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std)
 
 
 def _std_flux(self, exp_list_SCI, create_sof):
