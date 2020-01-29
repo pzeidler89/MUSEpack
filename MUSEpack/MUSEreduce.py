@@ -65,7 +65,10 @@ class musereduce:
         self.renew_statics = self.config['calibration']['renew_statics']
 
         self.skyreject = self.config['sci_basic']['skyreject']
-        self.skylines = self.config['sci_basic']['skylines']
+        if not 'skylines' in self.config['sci_basic']:
+            self.skylines = '5577.339,6300.304'
+        else:
+            self.skylines = self.config['sci_basic']['skylines']
 
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
