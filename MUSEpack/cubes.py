@@ -224,7 +224,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
         mag : :obj:`float`
             magnitudes of the stars
 
-        filter : :obj:`float`
+        filter : :obj:`str`
             filter used for the magnitudes
 
     Kwargs:
@@ -240,27 +240,30 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
 
     path : :obj:`str` (optional, default: current directory)
         path of the output file
+
+    mag_limit : :obj:`float` (optional, default: :obj:`None`)
+        the magnitude at which the output catalog should be truncated
     '''
 
-    if path == None:
+    if not path:
         path = os.getcwd()
 
-    if idx == None:
+    if not idx:
         id = np.arange(len(ra)) + 1
     else:
         id = idx
 
-    if mag_limit != None:
+    if mag_limit:
         mag_lim_id = np.where(mag <= mag_limit)
         id = id[mag_lim_id]
         ra = ra[mag_lim_id]
         dec = dec[mag_lim_id]
         mag = mag[mag_lim_id]
 
-    if mag_sat != None:
+    if mag_sat:
         sat_source = np.where(mag == sat)
 
-    if ifs_sat != None:
+    if ifs_sat:
         ifs_sat_id = id[np.where((mag < ifs_sat) & (mag != sat))]
         f_ifs_sat_id = open(path + '/ifs_sat_id.list', 'w')
         f_ifs_sat_id.write('[')
