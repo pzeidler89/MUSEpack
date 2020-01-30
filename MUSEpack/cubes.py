@@ -248,7 +248,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     if not path:
         path = os.getcwd()
 
-    if not idx:
+    if not idx.all():
         id = np.arange(len(ra)) + 1
     else:
         id = idx
