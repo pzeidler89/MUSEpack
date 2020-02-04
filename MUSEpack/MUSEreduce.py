@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 
-__revision__ = '20200129'
+__revision__ = '20200204'
 
 import sys
 import shutil
@@ -80,6 +80,7 @@ class musereduce:
         self.skymethod = self.config['sky']['method']
 
         self.skysub = self.config['sci_post']['subtract_sky']
+        self.autocalib = self.config['sci_post']['autocalib']
         self.raman = self.config['sci_post']['raman']
         if self.mode != 'NFM-AO':
             self.raman = False
@@ -114,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 29, 2020                    #####')
+        print('#####                    Feb 04, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1857,7 +1858,14 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     f.write(self.static_calibration_dir\
                     + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
                 if self.mode == 'NFM-AO':
-                    print("CURRENTLY NO ASTRONOMY_WCS_NFM AVAILABLE !!!!")
+                    f.write(self.static_calibration_dir\
+                    + 'astrometry_wcs_nfm.fits ASTROMETRY_WCS\n')
+                if not self.autocalib == 'none':
+                    f.write(exp_list[exp_num][:-9]\
+                    + '/' + 'SKY_MASK.fits SKY_MASK\n')
+                if self.autocalib == 'user':
+                    f.write(exp_list[exp_num][:-9]\
+                    + '/' + 'AUTOCAL_FACTORS.fits AUTOCAL_FACTORS\n')
 
                 f.write(self.static_calibration_dir\
                 + 'extinct_table.fits EXTINCT_TABLE\n')
@@ -1869,24 +1877,22 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
 
                 f.close()
             if self.withrvcorr:
+
                 if self.skysub:
-                    print('without sky ...')
+                    print('with sky subtraction...')
+                if not self.skysub:
+                    print('without sky subtraction...')
 
-                    if self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug\
-                            muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod='+self.skymethod+' \
-                            --filter=white scipost.sof')
+                if not self.debug:
+                    _call_esorex(self, exp_list[exp_num][:-9],\
+                    '--log-file=scipost.log --log-level=debug'\
+                    + ' muse_scipost'\
+                    + ' --save=cube,skymodel,individual,raman,autocal'\
+                    + ' --skymethod=' + self.skymethod\
+                    + ' --filter=white scipost.sof'\
+                    + ' --autocalib=' + self.autocalib)
 
-                    if not self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual \
-                            --skymethod='+self.skymethod+' \
-                            --filter=white scipost.sof')
+                if self.skysub:
 
                     os.chdir(exp_list[exp_num][:-9])
                     if not self.debug:
@@ -1899,20 +1905,6 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     os.chdir(self.rootpath)
 
                 if not self.skysub:
-                    print('with sky ...')
-
-                    if self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod=none --filter=white scipost.sof')
-                    if not self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual \
-                            --skymethod=none --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
                     if not self.debug:
@@ -1923,20 +1915,19 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                         os.rename('PIXTABLE_REDUCED_0001.fits',\
                         'PIXTABLE_REDUCED_0001_wsky.fits')
                     os.chdir(self.rootpath)
+
             else:
 
                 if self.raman:
                     if not self.debug:
                         _call_esorex(self, exp_list[exp_num][:-9],\
-                        '--log-file=scipost.log --log-level=debug muse_scipost\
-                        --save=cube,skymodel,individual,raman --skymethod=none\
-                        --rvcorr=none --filter=white scipost.sof')
-                if not self.raman:
-                    if not self.debug:
-                        _call_esorex(self, exp_list[exp_num][:-9],\
-                        '--log-file=scipost.log --log-level=debug muse_scipost\
-                        --save=cube,skymodel,individual --skymethod=none \
-                        --rvcorr=none --filter=white scipost.sof')
+                        '--log-file=scipost.log --log-level=debug'\
+                        + ' muse_scipost'\
+                        + ' --save=cube,skymodel,individual,raman,autocal'\
+                        + ' --skymethod=none'\
+                        + ' --filter=white scipost.sof'\
+                        + ' --autocalib=' + self.autocalib)\
+                        + ' --rvcorr=none'
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:

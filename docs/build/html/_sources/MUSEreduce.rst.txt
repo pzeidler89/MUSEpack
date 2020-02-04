@@ -3,7 +3,7 @@
 MUSEreduce
 **********
 
-:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: https://www.eso.org/sci/software/pipelines/muse/.
+:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.1 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has not been tested with other version of the data reduction pipeline.
 
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 
