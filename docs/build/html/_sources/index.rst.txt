@@ -1,9 +1,11 @@
-MUSEpack v1.0.2dev20200204
-===========================
+MUSEpack v1.0.2 (legacy)
+========================
+
+.. warning::
+   **This version of MUSEpack v1.0.2 will be kept as a legacy version that specifically supports ESO's MUSE data reduction v2.4.2. This particular version can be    downloaded from https://github.com/pzeidler89/MUSEpack/tree/legacy_MUSEpipeline_v2.4.2**
 
 Introduction
 ------------
-
 *MUSEpack* is a python package written to support the data analyzes from Integral Field Units, specifically tailored to use datasets of the Multi Unit Spectroscopic Explorer (`MUSE`_) mounted at UT4 of the VLT (`Bacon et al. 2010`_).
 
 The main purpose of MUSEpack is to measure stellar and gas radial velocities to an accuracy of :math:`1-2\,{\rm kms}\,{\rm s}^{-1}` without the need for spectral template libraries using :class:`radial_velocities.RV_spectrum`. With strong stellar absorption lines or gas emission lines and a high-resolution spectral line library such as the `NIST Atomic Spectra Database`_ it is possible to create templates using the observed spectra, which can be cross correlated with the spectra using a Monte Carlo method. For a detailed description and the citation of the code we refer to `Zeidler et al. 2019`_.
