@@ -145,11 +145,20 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :proptype execute: bool
    :options execute: false, true, default=true
    
+   :property execute_std: Must be set :obj:`True` if the STD star should be reduced
+   :proptype execute_std: bool
+   :options execute_std: false, true, default=true
+   
    :property sky_reject: The sigma clipping parameters for the Gaussian fit to each sky emission line: `high sigma clipping limit` (:obj:`float`),
                          `low sigma clipping limit` (:obj:`float`), `number of iterations` (:obj:`int`). For a more detailed description we refer to the
                          `MUSE data reduction pipeline`_ manual.
    :proptype sky_reject: string
    :options sky_reject: default='15.,15.,1'
+   
+   :property skylines: The sky lines used to calibrate the wavelength offset in each IFU. the default are two lines but more strong skylines may be provided. For a
+                       more detailed description we refer to the `MUSE data reduction pipeline`_ manual.
+   :proptype skylines: string
+   :options skylines: default='5577.339,6300.304'
    
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
@@ -331,3 +340,6 @@ History
    :class:`MUSEreduce.musereduce` can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.
 .. versionadded:: 1.0
    The release version as originally published in `Zeidler et al. 2019`_.
+.. versionadded:: 1.0.2
+   It is possible to omit the data reduction of the standard star in ``muse_scibasic`` by setting the *execute_std* to :obj:`False`.
+   More skylines can be added in the ``muse_scibasic`` module but adding additional wavelengths in Angstrom to *skylines*.

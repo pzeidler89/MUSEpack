@@ -1,9 +1,4 @@
-.. MUSEpack documentation master file, created by
-   sphinx-quickstart on Fri Mar  1 14:10:22 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-MUSEpack v1.0.1dev20200122
+MUSEpack v1.0.2dev20200204
 ===========================
 
 Introduction
@@ -56,11 +51,11 @@ On this website we introduce the individual python classes and modules of *MUSEp
 .. _MUSE: https://www.eso.org/sci/facilities/develop/instruments/muse.html
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 .. _NIST Atomic Spectra Database: https://www.nist.gov/pml/atomic-spectra-database
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract
 .. _Bacon et al. 2010: https://ui.adsabs.harvard.edu/abs/2010SPIE.7735E..08B/abstract
 
 References
 ----------
 
-* Zeidler, P., Nota, A., Sabbi, E., Luljak, P., McLeod, A. F., Grebel, E. K., Pasquali, A., Tosi, M. 2019, accepted to AJ
+* Zeidler, P., Nota, A., Sabbi, E., Luljak, P., McLeod, A. F., Grebel, E. K., Pasquali, A., Tosi, M. 2019, AJ, 158, 201
 * Bacon, R., Accardo, M., Adjali, L., et al. 2010, Proc. SPIE, 7735, 773508

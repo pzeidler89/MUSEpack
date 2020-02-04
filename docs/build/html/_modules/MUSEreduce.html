@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MUSEreduce &mdash; MUSEpack 1.0.0dev20190917 documentation</title>
+  <title>MUSEreduce &mdash; MUSEpack 1.0.2dev20200204 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.0.2
               </div>
             
           
@@ -197,9 +197,9 @@
   <h1>Source code for MUSEreduce</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.0.2&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190916&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20200129&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -262,6 +262,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">renew_statics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;calibration&#39;</span><span class="p">][</span><span class="s1">&#39;renew_statics&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skyreject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">][</span><span class="s1">&#39;skyreject&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;skylines&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">skylines</span> <span class="o">=</span> <span class="s1">&#39;5577.339,6300.304&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">skylines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">][</span><span class="s1">&#39;skylines&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;execute_std&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reduce_std</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reduce_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">][</span><span class="s1">&#39;execute_std&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skyfield</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">][</span><span class="s1">&#39;sky_field&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">][</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span>
@@ -303,9 +311,9 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####        MUSE data reduction pipeline wrapper        #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####   Must be used with ESORex and ESO MUSE pipeline   #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####      author: Peter Zeidler (zeidler@stsci.edu)     #####&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Sep 16, 2019                    #####&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Jan 29, 2020                    #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                   Version: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;   </span><span class="se">\</span>
-<span class="s1">                  #####&#39;</span><span class="p">)</span>
+<span class="s1">                #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                                                    #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;##############################################################&#39;</span><span class="p">)</span>
 
@@ -387,6 +395,8 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; TWILIGHT&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_basic&#39;</span><span class="p">][</span><span class="s1">&#39;execute&#39;</span><span class="p">]:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; SCIBASIC&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_std</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Caution SCIBASIC will not be executed on STD star!!&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;std_flux&#39;</span><span class="p">][</span><span class="s1">&#39;execute&#39;</span><span class="p">]:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&gt;&gt;&gt; STANDARD&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">][</span><span class="s1">&#39;execute&#39;</span><span class="p">]:</span>
@@ -1459,7 +1469,8 @@
 
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=sci_basic_object.log --log-level=debug </span><span class="se">\</span>
 <span class="s1">    muse_scibasic --nifu=-1 --resample --saveimage=true </span><span class="se">\</span>
-<span class="s1">    --skyreject=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyreject</span> <span class="o">+</span> <span class="s1">&#39; --merge  sci_basic_object.sof&#39;</span>
+<span class="s1">    --skyreject=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyreject</span> <span class="o">+</span> <span class="s1">&#39; --skylines=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skylines</span> \
+    <span class="o">+</span> <span class="s1">&#39; --merge  sci_basic_object.sof&#39;</span>
     <span class="n">esorex_cmd_std</span> <span class="o">=</span> <span class="s1">&#39;--log-file=sci_basic_std.log --log-level=debug </span><span class="se">\</span>
 <span class="s1">    muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 </span><span class="se">\</span>
 <span class="s1">    --merge  sci_basic_std.sof&#39;</span>
@@ -1620,7 +1631,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-        <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd_std</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_std</span><span class="p">:</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd_std</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_std_flux"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._std_flux">[docs]</a><span class="k">def</span> <span class="nf">_std_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">):</span>

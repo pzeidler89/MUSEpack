@@ -16,4 +16,4 @@ We thanks N. Miles for his continuous support and patience to creat the document
 
 
 .. _Zeidler et al. 2018: https://ui.adsabs.harvard.edu/abs/2018AJ....156..211Z/abstract
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract

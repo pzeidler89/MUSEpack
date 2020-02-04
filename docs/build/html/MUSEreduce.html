@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. MUSEreduce &mdash; MUSEpack 1.0.0dev20190917 documentation</title>
+  <title>2. MUSEreduce &mdash; MUSEpack 1.0.2dev20200204 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.0.2
               </div>
             
           
@@ -272,8 +272,10 @@ set in the <a class="reference external" href="https://docs.python.org/3/library
   <span class="p">},</span>
   <span class="nt">&quot;sci_basic&quot;</span><span class="p">:{</span>
     <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;execute_std&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;skyreject&quot;</span><span class="p">:</span> <span class="s2">&quot;15.,15.,1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;skylines&quot;</span><span class="p">:</span> <span class="s2">&quot;5577.339,6300.304&quot;</span>
+    <span class="s2">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
   <span class="p">},</span>
   <span class="nt">&quot;std_flux&quot;</span><span class="p">:{</span>
     <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -385,9 +387,12 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 <dt class="field-odd">Object Properties</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
+<li><p><strong>execute_std</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the STD star should be reduced<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 <li><p><strong>sky_reject</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The sigma clipping parameters for the Gaussian fit to each sky emission line: <cite>high sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>),
 <cite>low sigma clipping limit</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>), <cite>number of iterations</cite> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>). For a more detailed description we refer to the
 <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> manual.<span> (</span><em>default=’15.</em><span>, </span><em>15.</em><span>, </span><em>1’</em><span>)</span></p></li>
+<li><p><strong>skylines</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The sky lines used to calibrate the wavelength offset in each IFU. the default are two lines but more strong skylines may be provided. For a
+more detailed description we refer to the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> manual.<span> (</span><em>default=’5577.339</em><span>, </span><em>6300.304’</em><span>)</span></p></li>
 <li><p><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
 than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 </ul>
@@ -898,6 +903,10 @@ by the user</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0: </span>The release version as originally published in <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.0.2: </span>It is possible to omit the data reduction of the standard star in <code class="docutils literal notranslate"><span class="pre">muse_scibasic</span></code> by setting the <em>execute_std</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.
+More skylines can be added in the <code class="docutils literal notranslate"><span class="pre">muse_scibasic</span></code> module but adding additional wavelengths in Angstrom to <em>skylines</em>.</p>
 </div>
 </div>
 </div>
