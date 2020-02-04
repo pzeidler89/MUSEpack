@@ -218,6 +218,10 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :proptype execute: bool
    :options execute: false, true, default=true
    
+   :property autocalib: This may execute the flux autocalibration between the different IFUs for empty fields. If ``user`` a AUTOCAL_FACTORS.fits table has to be provided by the user.
+   :proptype autocalib: string
+   :options autocalib: 'none', 'deepfield', 'user', default=none
+   
    :property subtract_sky: The user can decide to not run any sky subtraction. All telluric lines will be included in the final datacube. this may be useful if one
                             wants to do their own wavelength calibration.
    :proptype subtract_sky: bool
@@ -263,7 +267,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property weight: The method how the fluxes in each dither position sre weighted. For more details we refer to
                      the `MUSE data reduction pipeline`_ handbook.
    :proptype weight: string
-   :options weight: 'exptime', 'fwhm', 'none', default=exptime
+   :options weight: 'exptime', 'fwhm', 'none', 'header', default=exptime
    
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise

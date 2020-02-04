@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MUSEreduce &mdash; MUSEpack 1.0.2dev20200204 documentation</title>
+  <title>MUSEreduce &mdash; MUSEpack 1.1.0dev20200204 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.2
+                1.1.0
               </div>
             
           
@@ -277,6 +277,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">skymethod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sky&#39;</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_post&#39;</span><span class="p">][</span><span class="s1">&#39;subtract_sky&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_post&#39;</span><span class="p">][</span><span class="s1">&#39;autocalib&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raman</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sci_post&#39;</span><span class="p">][</span><span class="s1">&#39;raman&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">!=</span> <span class="s1">&#39;NFM-AO&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">raman</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2054,7 +2055,14 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_calibration_dir</span>\
                     <span class="o">+</span> <span class="s1">&#39;astrometry_wcs_wfm.fits ASTROMETRY_WCS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;NFM-AO&#39;</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CURRENTLY NO ASTRONOMY_WCS_NFM AVAILABLE !!!!&quot;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_calibration_dir</span>\
+                    <span class="o">+</span> <span class="s1">&#39;astrometry_wcs_nfm.fits ASTROMETRY_WCS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
+                    <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;SKY_MASK.fits SKY_MASK</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span> <span class="o">==</span> <span class="s1">&#39;user&#39;</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
+                    <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;AUTOCAL_FACTORS.fits AUTOCAL_FACTORS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">static_calibration_dir</span>\
                 <span class="o">+</span> <span class="s1">&#39;extinct_table.fits EXTINCT_TABLE</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -2066,24 +2074,22 @@
 
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">withrvcorr</span><span class="p">:</span>
+
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;without sky ...&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with sky subtraction...&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;without sky subtraction...&#39;</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                            <span class="s1">&#39;--log-file=scipost.log --log-level=debug</span><span class="se">\</span>
-<span class="s1">                            muse_scipost --save=cube,skymodel,individual,raman</span><span class="se">\</span>
-<span class="s1">                            --skymethod=&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">skymethod</span><span class="o">+</span><span class="s1">&#39; </span><span class="se">\</span>
-<span class="s1">                            --filter=white scipost.sof&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                    <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
+                    <span class="s1">&#39;--log-file=scipost.log --log-level=debug&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39; muse_scipost&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39; --save=cube,skymodel,individual,raman,autocal&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39; --skymethod=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skymethod</span>\
+                    <span class="o">+</span> <span class="s1">&#39; --filter=white scipost.sof&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39; --autocalib=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                            <span class="s1">&#39;--log-file=scipost.log --log-level=debug </span><span class="se">\</span>
-<span class="s1">                            muse_scipost --save=cube,skymodel,individual </span><span class="se">\</span>
-<span class="s1">                            --skymethod=&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">skymethod</span><span class="o">+</span><span class="s1">&#39; </span><span class="se">\</span>
-<span class="s1">                            --filter=white scipost.sof&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
 
                     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">])</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
@@ -2096,20 +2102,6 @@
                     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with sky ...&#39;</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                            <span class="s1">&#39;--log-file=scipost.log --log-level=debug </span><span class="se">\</span>
-<span class="s1">                            muse_scipost --save=cube,skymodel,individual,raman</span><span class="se">\</span>
-<span class="s1">                            --skymethod=none --filter=white scipost.sof&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                            <span class="s1">&#39;--log-file=scipost.log --log-level=debug </span><span class="se">\</span>
-<span class="s1">                            muse_scipost --save=cube,skymodel,individual </span><span class="se">\</span>
-<span class="s1">                            --skymethod=none --filter=white scipost.sof&#39;</span><span class="p">)</span>
 
                     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">])</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
@@ -2120,20 +2112,19 @@
                         <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;PIXTABLE_REDUCED_0001.fits&#39;</span><span class="p">,</span>\
                         <span class="s1">&#39;PIXTABLE_REDUCED_0001_wsky.fits&#39;</span><span class="p">)</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">)</span>
+
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                         <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                        <span class="s1">&#39;--log-file=scipost.log --log-level=debug muse_scipost</span><span class="se">\</span>
-<span class="s1">                        --save=cube,skymodel,individual,raman --skymethod=none</span><span class="se">\</span>
-<span class="s1">                        --rvcorr=none --filter=white scipost.sof&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                        <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">],</span>\
-                        <span class="s1">&#39;--log-file=scipost.log --log-level=debug muse_scipost</span><span class="se">\</span>
-<span class="s1">                        --save=cube,skymodel,individual --skymethod=none </span><span class="se">\</span>
-<span class="s1">                        --rvcorr=none --filter=white scipost.sof&#39;</span><span class="p">)</span>
+                        <span class="s1">&#39;--log-file=scipost.log --log-level=debug&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; muse_scipost&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; --save=cube,skymodel,individual,raman,autocal&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; --skymethod=none&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; --filter=white scipost.sof&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39; --autocalib=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span><span class="p">)</span>\
+                        <span class="o">+</span> <span class="s1">&#39; --rvcorr=none&#39;</span>
 
                 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">])</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>

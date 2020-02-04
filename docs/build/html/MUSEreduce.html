@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. MUSEreduce &mdash; MUSEpack 1.0.2dev20200204 documentation</title>
+  <title>2. MUSEreduce &mdash; MUSEpack 1.1.0dev20200204 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.2
+                1.1.0
               </div>
             
           
@@ -252,7 +252,7 @@ set in the <a class="reference external" href="https://docs.python.org/3/library
 <p>The <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configuration file is needed to run <a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a>. This file contains all of the data reduction setup. The <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json</span></code></a> configuration file can be found in the main directly of MUSEpack and can be downloaded <a class="reference download internal" download="" href="_downloads/f4516296c42fbeafc9f16a9432b2d40a/config.json"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
 <div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;global&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;pipeline_path&quot;</span><span class="p">:</span> <span class="s2">&quot;path_to_pipeline/muse/2.4.2/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pipeline_path&quot;</span><span class="p">:</span> <span class="s2">&quot;path_to_pipeline/muse/2.8.1/&quot;</span><span class="p">,</span>
     <span class="nt">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;WFM-NOAO&quot;</span><span class="p">,</span>
     <span class="nt">&quot;withrvcorr&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;auto_sort_data&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -292,6 +292,7 @@ set in the <a class="reference external" href="https://docs.python.org/3/library
   <span class="p">},</span>
   <span class="nt">&quot;sci_post&quot;</span><span class="p">:{</span>
     <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;autocalib&quot;</span><span class="p">:</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="nt">&quot;subtract_sky&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;raman&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
@@ -445,6 +446,7 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 <dt class="field-odd">Object Properties</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
+<li><p><strong>autocalib</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – This may execute the flux autocalibration between the different IFUs for empty fields. If <code class="docutils literal notranslate"><span class="pre">user</span></code> a AUTOCAL_FACTORS.fits table has to be provided by the user.<span> (</span><em>‘none’</em><span>, </span><em>‘deepfield’</em><span>, </span><em>‘user’</em><span>, </span><em>default=none</em><span>)</span></p></li>
 <li><p><strong>subtract_sky</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – The user can decide to not run any sky subtraction. All telluric lines will be included in the final datacube. this may be useful if one
 wants to do their own wavelength calibration.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 <li><p><strong>raman</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If laser guide stars are used raman scattering in the atmosphere may be visible in the final data cubes. If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the Raman lines
@@ -491,7 +493,7 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 <li><p><strong>weight</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – The method how the fluxes in each dither position sre weighted. For more details we refer to
-the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>‘exptime’</em><span>, </span><em>‘fwhm’</em><span>, </span><em>‘none’</em><span>, </span><em>default=exptime</em><span>)</span></p></li>
+the <a class="reference external" href="https://www.eso.org/sci/software/pipelines/muse/">MUSE data reduction pipeline</a> handbook.<span> (</span><em>‘exptime’</em><span>, </span><em>‘fwhm’</em><span>, </span><em>‘none’</em><span>, </span><em>‘header’</em><span>, </span><em>default=exptime</em><span>)</span></p></li>
 <li><p><strong>create_sof</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if one wants to create a new <cite>.sof</cite> file. In case the user wants to change or create the <cite>.sof</cite> file manually,
 than it must be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> since it will be overwritten otherwise<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
 </ul>
