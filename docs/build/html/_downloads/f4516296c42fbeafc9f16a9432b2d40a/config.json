@@ -20,7 +20,9 @@
   },
   "sci_basic":{
     "execute": true,
+    "execute_std": true,
     "skyreject": "15.,15.,1",
+    "skylines": "5577.339,6300.304"
     "create_sof": true
   },
   "std_flux":{

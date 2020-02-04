@@ -13,7 +13,7 @@ This modules contains a variety of functions to support *MUSEpack*. Many of thes
    :members:
 
 
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract
 
 .. _Cappellari and Emsellem 2004: https://ui.adsabs.harvard.edu/abs/2004PASP..116..138C/abstract
 
