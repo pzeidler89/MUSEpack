@@ -632,8 +632,11 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER BIAS')
 
-    esorex_cmd = '--log-file=bias.log --log-level=debug \
-    muse_bias --nifu=-1 --merge bias.sof'
+    esorex_cmd = '--log-file=bias.log --log-level=debug'\
+    + ' muse_bias'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' bias.sof'
 
     if create_sof:
 
@@ -764,8 +767,11 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
 
     print('... Creating the MASTER DARK')
 
-    esorex_cmd = '--log-file=dark.log --log-level=debug \
-    muse_dark --nifu=-1 --merge dark.sof'
+    esorex_cmd = '--log-file=dark.log --log-level=debug'\
+    + ' muse_dark'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' dark.sof'
 
     if create_sof:
 
@@ -834,8 +840,12 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER FLAT')
 
-    esorex_cmd = '--log-file=flat.log --log-level=debug muse_flat \
-    --samples=true --nifu=-1 --merge flat.sof'
+    esorex_cmd = '--log-file=flat.log --log-level=debug'
+    + ' muse_flat'\
+    + ' --samples=true'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' flat.sof'
 
     if create_sof:
 
@@ -936,8 +946,12 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the WAVELENGTH CALIBRATION')
 
-    esorex_cmd = '--log-file=wavecal.log --log-level=debug\
-    muse_wavecal --nifu=-1 --residuals --merge wavecal.sof'
+    esorex_cmd = '--log-file=wavecal.log --log-level=debug'\
+    + ' muse_wavecal'\
+    + ' --nifu=-1'\
+    + ' --residuals'\
+    + ' --merge'\
+    + ' wavecal.sof'
 
     if create_sof:
 
@@ -1048,8 +1062,12 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the LINE SPREAD FUNCTION')
 
-    esorex_cmd = '--log-file=lsf.log --log-level=debug muse_lsf \
-    --nifu=-1 --merge --save_subtracted lsf.sof'
+    esorex_cmd = '--log-file=lsf.log --log-level=debug'\
+    + ' muse_lsf'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' --save_subtracted'\
+    + ' lsf.sof'
 
     if create_sof:
 
@@ -1165,8 +1183,9 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the TWILIGHT FLAT')
 
-    esorex_cmd = '--log-file=twilight.log --log-level=debug \
-    muse_twilight twilight.sof'
+    esorex_cmd = '--log-file=twilight.log --log-level=debug'\
+    + ' muse_twilight'\
+    + ' twilight.sof'
 
     if create_sof:
 
@@ -1271,13 +1290,24 @@ def _science_pre(self, exp_list_SCI, create_sof):
 
     print('... Science PREPROCESSING')
 
-    esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug \
-    muse_scibasic --nifu=-1 --resample --saveimage=true \
-    --skyreject=' + self.skyreject + ' --skylines=' + self.skylines \
-    + ' --merge  sci_basic_object.sof'
-    esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug \
-    muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 \
-    --merge  sci_basic_std.sof'
+    esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug'\
+    + ' muse_scibasic'\
+    + ' --nifu=-1'\
+    + ' --resample'\
+    + ' --saveimage=true'\
+    + ' --skyreject=' + self.skyreject\
+    + ' --skylines=' + self.skylines \
+    + ' --merge'\
+    + ' sci_basic_object.sof'
+
+    esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug'\
+    + ' muse_scibasic'\
+    + ' --nifu=-1'\
+    + ' --resample'\
+    + ' --saveimage=true'\
+    + ' --skyreject=15.,15.,1'\
+    + ' --merge'\
+    + ' sci_basic_std.sof'
 
     if os.path.exists(self.working_dir + 'std/sci_basic_std.sof'):
         os.remove(self.working_dir + 'std/sci_basic_std.sof')
@@ -1459,8 +1489,11 @@ def _std_flux(self, exp_list_SCI, create_sof):
 
     print('... FLUX CALIBRATION')
 
-    esorex_cmd = ' --log-file=std_flux.log --log-level=debug \
-    muse_standard --filter=white std_flux.sof'
+    esorex_cmd = ' --log-file=std_flux.log --log-level=debug'\
+    + ' muse_standard'\
+    + ' --filter=white'\
+    + ' std_flux.sof'
+
     PIXTABLE_STD_list = _get_filelist(self, self.working_dir + 'std/',\
     'PIXTABLE_STD*.fits')
 
@@ -1562,17 +1595,23 @@ def _sky(self, exp_list_SCI, create_sof):
             + 'sky_lines.fits SKY_LINES\n')
 
             f.close()
-        esorex_cmd = "--log-file=sky.log --log-level=debug \
-        muse_create_sky --fraction=" + str(self.skyfraction)\
-        + " --ignore=" + str(self.skyignore) + " sky.sof"
+
+        esorex_cmd = '--log-file=sky.log --log-level=debug'\
+        + ' muse_create_sky'\
+        + ' --fraction=' + str(self.skyfraction)\
+        + ' --ignore=' + str(self.skyignore)\
+        + ' sky.sof'
+
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
                 _call_esorex(self, exposure_dir, esorex_cmd)
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log \
-                --log-level=debug muse_create_sky --fraction='
-                + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
     if self.skyfield == 'auto' and (sky == True).any():
@@ -1674,16 +1713,20 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='\
-                + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='\
-                + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
 
         os.chdir(exposure_dir)
         sky_cont_hdu = fits.open('SKY_CONTINUUM.fits', checksum=True)
@@ -1728,15 +1771,19 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky'\
-                + '--fraction=' + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='
-                + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
+                _call_esorex(self, exposure_dir,\
+                ' --log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
         os.chdir(exposure_dir)
@@ -2276,8 +2323,9 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
     print('... CUBE ALIGNMENT')
 
-    esorex_cmd = '--log-file=exp_align.log --log-level=debug \
-    muse_exp_align exp_align.sof'
+    esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
+    + ' muse_exp_align'\
+    + ' exp_align.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
@@ -2435,9 +2483,13 @@ def _exp_combine(self, exp_list_SCI, create_sof):
 
     print('... EXPOSURE COMBINATION')
 
-    esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
-    muse_exp_combine --filter=white --save=cube --crsigma=5. \
-    --weight='+str(self.weight)+' exp_combine.sof'
+    esorex_cmd = '--log-file=exp_combine.log --log-level=debug'\
+    + ' muse_exp_combine'\
+    + ' --filter=white'\
+    + ' --save=cube'\
+    + ' --crsigma=5.'\
+    + ' --weight=' + str(self.weight)\
+    + ' exp_combine.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
