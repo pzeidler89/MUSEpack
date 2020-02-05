@@ -1889,8 +1889,9 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     + ' muse_scipost'\
                     + ' --save=cube,skymodel,individual,raman,autocal'\
                     + ' --skymethod=' + self.skymethod\
-                    + ' --filter=white scipost.sof'\
-                    + ' --autocalib=' + self.autocalib)
+                    + ' --autocalib=' + self.autocalib
+                    + ' --filter=white'\
+                    + ' scipost.sof')
 
                 if self.skysub:
 
@@ -1925,9 +1926,10 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                         + ' muse_scipost'\
                         + ' --save=cube,skymodel,individual,raman,autocal'\
                         + ' --skymethod=none'\
-                        + ' --filter=white scipost.sof'\
+                        + ' --filter=white'\
                         + ' --autocalib=' + self.autocalib)\
-                        + ' --rvcorr=none'
+                        + ' --rvcorr=none'\
+                        + ' scipost.sof'
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:
