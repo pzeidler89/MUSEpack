@@ -2,7 +2,7 @@
 
 __version__ = '1.1.0'
 
-__revision__ = '20200204'
+__revision__ = '20200205'
 
 import sys
 import shutil
