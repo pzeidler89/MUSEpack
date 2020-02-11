@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. MUSEreduce &mdash; MUSEpack 1.1.0dev20200204 documentation</title>
+  <title>2. MUSEreduce &mdash; MUSEpack 1.1.0dev20200211 documentation</title>
   
 
   
@@ -256,7 +256,7 @@ set in the <a class="reference external" href="https://docs.python.org/3/library
     <span class="nt">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;WFM-NOAO&quot;</span><span class="p">,</span>
     <span class="nt">&quot;withrvcorr&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;auto_sort_data&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;using_specific_exposure_time&quot;</span><span class="p">:</span> <span class="p">,</span>
+    <span class="nt">&quot;using_specific_exposure_time&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;dither_multiple_OBs&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;n_CPU&quot;</span><span class="p">:</span> <span class="mi">-1</span><span class="p">,</span>
     <span class="nt">&quot;rootpath&quot;</span><span class="p">:</span> <span class="s2">&quot;path_to_data_folder&quot;</span><span class="p">,</span>
@@ -274,8 +274,8 @@ set in the <a class="reference external" href="https://docs.python.org/3/library
     <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;execute_std&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;skyreject&quot;</span><span class="p">:</span> <span class="s2">&quot;15.,15.,1&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;skylines&quot;</span><span class="p">:</span> <span class="s2">&quot;5577.339,6300.304&quot;</span>
-    <span class="s2">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="nt">&quot;skylines&quot;</span><span class="p">:</span> <span class="s2">&quot;5577.339,6300.304&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;create_sof&quot;</span><span class="p">:</span> <span class="kc">true</span>
   <span class="p">},</span>
   <span class="nt">&quot;std_flux&quot;</span><span class="p">:{</span>
     <span class="nt">&quot;execute&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -422,7 +422,7 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 <dt class="field-odd">Object Properties</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>execute</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – Must be set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if this step should be executed<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=true</em><span>)</span></p></li>
-<li><p><strong>modified</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both emitted from the Earth’s atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>. If <code class="docutils literal notranslate"><span class="pre">modified</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the <code class="docutils literal notranslate"><span class="pre">method</span></code> should be <cite>subtract_model</cite>. Other methods will <strong>not</strong> lead to an error but they may lead to wrong results.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></p></li>
+<li><p><strong>modified</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#boolean-values" title="Python Boolean"><em>bool</em></a>) – If set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both emitted from the Earth’s atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract">Zeidler et al. 2019</a>. If <code class="docutils literal notranslate"><span class="pre">modified</span></code> = <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the <code class="docutils literal notranslate"><span class="pre">method</span></code> should be <cite>subtract_model</cite>. Other methods will <strong>not</strong> lead to an error but they may lead to wrong results.<span> (</span><em>false</em><span>, </span><em>true</em><span>, </span><em>default=false</em><span>)</span></p></li>
 <li><p><strong>sky_field</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#str" title="Python String"><em>string</em></a>) – Determines if a sky observation (if available) or the science observation itself is used to determine the background
 contamination (tellurics). If set to <cite>auto</cite> the pipeline will check if there are sky observations available and use the closest one in time to
 the science exposures. If the <code class="docutils literal notranslate"><span class="pre">skyfield</span></code>  = <cite>object</cite>, the science exposure will be used.<span> (</span><em>‘auto’</em><span>, </span><em>‘object’</em><span>, </span><em>default=’auto’</em><span>)</span></p></li>
@@ -730,7 +730,7 @@ by the user</p>
 <dt id="MUSEreduce._modified_sky">
 <code class="sig-prename descclassname">MUSEreduce.</code><code class="sig-name descname">_modified_sky</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">exp_list_SCI</em>, <em class="sig-param">create_sof</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#_modified_sky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MUSEreduce._modified_sky" title="Permalink to this definition">¶</a></dt>
 <dd><p>This module calls <em>ESORex’</em> <code class="docutils literal notranslate"><span class="pre">muse_sky</span></code> with the modified continuum and
-line subtraction as described in <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
+line subtraction as described in <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract">Zeidler et al. 2019</a>.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
 <dt>exp_list_SCI<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></span></dt><dd><p>The list of all associated science files including their category
@@ -880,7 +880,7 @@ by the user</p>
 <p><span class="versionmodified added">New in version 0.3.1: </span>one can select if the sof file are created automatically or provided by the user</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 0.4.0: </span>supports now <em>pipeline 2.4.2</em> and the <em>NFM-AO</em> added: pipeline_path choosing if darks may be used only reduces <em>STD</em> once per OB general use of external <em>SKY</em> fields collecting the files for <code class="docutils literal notranslate"><span class="pre">muse_exp_combine</span></code> in an independent step <code class="docutils literal notranslate"><span class="pre">muse_exp_align</span></code> is an independent step now</p>
+<p><span class="versionmodified added">New in version 0.4.0: </span>supports now <em>pipeline v2.4.2</em> and the <em>NFM-AO</em> added: pipeline_path choosing if darks may be used only reduces <em>STD</em> once per OB general use of external <em>SKY</em> fields collecting the files for <code class="docutils literal notranslate"><span class="pre">muse_exp_combine</span></code> in an independent step <code class="docutils literal notranslate"><span class="pre">muse_exp_align</span></code> is an independent step now</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.4.1: </span>new file names to correct a problem where data gets replaced in the <code class="docutils literal notranslate"><span class="pre">muse_scipost</span></code> routine if you reduce the data with and without sky</p>
@@ -904,11 +904,15 @@ by the user</p>
 <p><span class="versionmodified added">New in version 0.5.2: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> can now handle if the exposures for one pointing are distributed via multiple OBs with multiple exposures in each OB.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0: </span>The release version as originally published in <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
+<p><span class="versionmodified added">New in version 1.0: </span>The release version as originally published in <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract">Zeidler et al. 2019</a>.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.2: </span>It is possible to omit the data reduction of the standard star in <code class="docutils literal notranslate"><span class="pre">muse_scibasic</span></code> by setting the <em>execute_std</em> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.
 More skylines can be added in the <code class="docutils literal notranslate"><span class="pre">muse_scibasic</span></code> module but adding additional wavelengths in Angstrom to <em>skylines</em>.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.1.0: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> supports now <em>pipeline v2.8.1</em>. A legacy version for <em>pipeline v2.4.2</em> was created in a separate release. The keywords <em>autocalib</em> and in <code class="docutils literal notranslate"><span class="pre">sci_oost</span></code> was added.
+The naming convention in <code class="docutils literal notranslate"><span class="pre">dither_collect</span></code> was changed so that it matches the convention  <strong>RADEC_EXPTIME_ROTANGLE_COUNTER</strong>.</p>
 </div>
 </div>
 </div>
@@ -933,7 +937,7 @@ More skylines can be added in the <code class="docutils literal notranslate"><sp
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Peter Zeidler
+        &copy; Copyright 2019 - 2020, Peter Zeidler
 
     </p>
   </div>

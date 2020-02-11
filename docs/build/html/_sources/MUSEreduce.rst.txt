@@ -287,7 +287,7 @@ The following methods are routines to support the :class:`MUSEreduce.musereduce`
    :exclude-members: musereduce
    :member-order: bysource
 
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract
 
 History
 -------
@@ -327,7 +327,7 @@ History
 .. versionadded:: 0.3.1
    one can select if the sof file are created automatically or provided by the user
 .. versionadded:: 0.4.0
-   supports now *pipeline 2.4.2* and the *NFM-AO* added: pipeline_path choosing if darks may be used only reduces *STD* once per OB general use of external *SKY* fields collecting the files for ``muse_exp_combine`` in an independent step ``muse_exp_align`` is an independent step now
+   supports now *pipeline v2.4.2* and the *NFM-AO* added: pipeline_path choosing if darks may be used only reduces *STD* once per OB general use of external *SKY* fields collecting the files for ``muse_exp_combine`` in an independent step ``muse_exp_align`` is an independent step now
 .. versionadded:: 0.4.1
    new file names to correct a problem where data gets replaced in the ``muse_scipost`` routine if you reduce the data with and without sky
 .. versionadded:: 0.4.2
@@ -347,3 +347,6 @@ History
 .. versionadded:: 1.0.2
    It is possible to omit the data reduction of the standard star in ``muse_scibasic`` by setting the *execute_std* to :obj:`False`.
    More skylines can be added in the ``muse_scibasic`` module but adding additional wavelengths in Angstrom to *skylines*.
+.. versionadded:: 1.1.0
+   :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.1*. A legacy version for *pipeline v2.4.2* was created in a separate release. The keywords *autocalib* and in ``sci_oost`` was added.
+   The naming convention in ``dither_collect`` was changed so that it matches the convention  **RADEC_EXPTIME_ROTANGLE_COUNTER**.

@@ -4,7 +4,7 @@
     "mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
-    "using_specific_exposure_time": ,
+    "using_specific_exposure_time": false,
     "dither_multiple_OBs": false,
     "n_CPU": -1,
     "rootpath": "path_to_data_folder",
@@ -22,7 +22,7 @@
     "execute": true,
     "execute_std": true,
     "skyreject": "15.,15.,1",
-    "skylines": "5577.339,6300.304"
+    "skylines": "5577.339,6300.304",
     "create_sof": true
   },
   "std_flux":{
