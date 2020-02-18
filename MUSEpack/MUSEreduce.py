@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 
-__revision__ = '20200129'
+__revision__ = '20200211'
 
 import sys
 import shutil
@@ -80,6 +80,7 @@ class musereduce:
         self.skymethod = self.config['sky']['method']
 
         self.skysub = self.config['sci_post']['subtract_sky']
+        self.autocalib = self.config['sci_post']['autocalib']
         self.raman = self.config['sci_post']['raman']
         if self.mode != 'NFM-AO':
             self.raman = False
@@ -114,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 29, 2020                    #####')
+        print('#####                    Feb 11, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -265,7 +266,7 @@ class musereduce:
                 shutil.rmtree(self.static_calibration_dir)
             os.mkdir(self.static_calibration_dir)
             for itername in glob.glob(self.config['global']['pipeline_path']\
-            + 'calib/muse*/cal/*.*'):
+            + 'calib/muse*/*.*'):
                 shutil.copy(itername, self.static_calibration_dir + '.')
 
             print('... Sorting the data')
@@ -631,8 +632,11 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER BIAS')
 
-    esorex_cmd = '--log-file=bias.log --log-level=debug \
-    muse_bias --nifu=-1 --merge bias.sof'
+    esorex_cmd = '--log-file=bias.log --log-level=debug'\
+    + ' muse_bias'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' bias.sof'
 
     if create_sof:
 
@@ -763,8 +767,11 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
 
     print('... Creating the MASTER DARK')
 
-    esorex_cmd = '--log-file=dark.log --log-level=debug \
-    muse_dark --nifu=-1 --merge dark.sof'
+    esorex_cmd = '--log-file=dark.log --log-level=debug'\
+    + ' muse_dark'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' dark.sof'
 
     if create_sof:
 
@@ -833,8 +840,12 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER FLAT')
 
-    esorex_cmd = '--log-file=flat.log --log-level=debug muse_flat \
-    --samples=true --nifu=-1 --merge flat.sof'
+    esorex_cmd = '--log-file=flat.log --log-level=debug'
+    + ' muse_flat'\
+    + ' --samples=true'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' flat.sof'
 
     if create_sof:
 
@@ -935,8 +946,12 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the WAVELENGTH CALIBRATION')
 
-    esorex_cmd = '--log-file=wavecal.log --log-level=debug\
-    muse_wavecal --nifu=-1 --residuals --merge wavecal.sof'
+    esorex_cmd = '--log-file=wavecal.log --log-level=debug'\
+    + ' muse_wavecal'\
+    + ' --nifu=-1'\
+    + ' --residuals'\
+    + ' --merge'\
+    + ' wavecal.sof'
 
     if create_sof:
 
@@ -1047,8 +1062,12 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the LINE SPREAD FUNCTION')
 
-    esorex_cmd = '--log-file=lsf.log --log-level=debug muse_lsf \
-    --nifu=-1 --merge --save_subtracted lsf.sof'
+    esorex_cmd = '--log-file=lsf.log --log-level=debug'\
+    + ' muse_lsf'\
+    + ' --nifu=-1'\
+    + ' --merge'\
+    + ' --save_subtracted'\
+    + ' lsf.sof'
 
     if create_sof:
 
@@ -1164,8 +1183,9 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the TWILIGHT FLAT')
 
-    esorex_cmd = '--log-file=twilight.log --log-level=debug \
-    muse_twilight twilight.sof'
+    esorex_cmd = '--log-file=twilight.log --log-level=debug'\
+    + ' muse_twilight'\
+    + ' twilight.sof'
 
     if create_sof:
 
@@ -1270,13 +1290,24 @@ def _science_pre(self, exp_list_SCI, create_sof):
 
     print('... Science PREPROCESSING')
 
-    esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug \
-    muse_scibasic --nifu=-1 --resample --saveimage=true \
-    --skyreject=' + self.skyreject + ' --skylines=' + self.skylines \
-    + ' --merge  sci_basic_object.sof'
-    esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug \
-    muse_scibasic --nifu=-1 --resample --saveimage=true --skyreject=15.,15.,1 \
-    --merge  sci_basic_std.sof'
+    esorex_cmd = '--log-file=sci_basic_object.log --log-level=debug'\
+    + ' muse_scibasic'\
+    + ' --nifu=-1'\
+    + ' --resample'\
+    + ' --saveimage=true'\
+    + ' --skyreject=' + self.skyreject\
+    + ' --skylines=' + self.skylines \
+    + ' --merge'\
+    + ' sci_basic_object.sof'
+
+    esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug'\
+    + ' muse_scibasic'\
+    + ' --nifu=-1'\
+    + ' --resample'\
+    + ' --saveimage=true'\
+    + ' --skyreject=15.,15.,1'\
+    + ' --merge'\
+    + ' sci_basic_std.sof'
 
     if os.path.exists(self.working_dir + 'std/sci_basic_std.sof'):
         os.remove(self.working_dir + 'std/sci_basic_std.sof')
@@ -1458,8 +1489,11 @@ def _std_flux(self, exp_list_SCI, create_sof):
 
     print('... FLUX CALIBRATION')
 
-    esorex_cmd = ' --log-file=std_flux.log --log-level=debug \
-    muse_standard --filter=white std_flux.sof'
+    esorex_cmd = ' --log-file=std_flux.log --log-level=debug'\
+    + ' muse_standard'\
+    + ' --filter=white'\
+    + ' std_flux.sof'
+
     PIXTABLE_STD_list = _get_filelist(self, self.working_dir + 'std/',\
     'PIXTABLE_STD*.fits')
 
@@ -1561,17 +1595,23 @@ def _sky(self, exp_list_SCI, create_sof):
             + 'sky_lines.fits SKY_LINES\n')
 
             f.close()
-        esorex_cmd = "--log-file=sky.log --log-level=debug \
-        muse_create_sky --fraction=" + str(self.skyfraction)\
-        + " --ignore=" + str(self.skyignore) + " sky.sof"
+
+        esorex_cmd = '--log-file=sky.log --log-level=debug'\
+        + ' muse_create_sky'\
+        + ' --fraction=' + str(self.skyfraction)\
+        + ' --ignore=' + str(self.skyignore)\
+        + ' sky.sof'
+
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
                 _call_esorex(self, exposure_dir, esorex_cmd)
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log \
-                --log-level=debug muse_create_sky --fraction='
-                + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
     if self.skyfield == 'auto' and (sky == True).any():
@@ -1673,16 +1713,20 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='\
-                + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='\
-                + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
 
         os.chdir(exposure_dir)
         sky_cont_hdu = fits.open('SKY_CONTINUUM.fits', checksum=True)
@@ -1727,15 +1771,19 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky'\
-                + '--fraction=' + str(self.skyfraction) + ' --ignore='\
-                + str(self.skyignore) + ' sky.sof')
+                _call_esorex(self, exposure_dir,\
+                '--log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
+                + ' sky.sof')
         else:
             if not self.debug:
-                _call_esorex(self, exposure_dir, '--log-file=sky.log'\
-                + '--log-level=debug muse_create_sky --fraction='
-                + str(self.skyfraction) + ' --ignore=' + str(self.skyignore)\
+                _call_esorex(self, exposure_dir,\
+                ' --log-file=sky.log --log-level=debug'\
+                + ' muse_create_sky'\
+                + ' --fraction=' + str(self.skyfraction)\
+                + ' --ignore=' + str(self.skyignore)\
                 + ' sky.sof')
 
         os.chdir(exposure_dir)
@@ -1857,7 +1905,14 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     f.write(self.static_calibration_dir\
                     + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
                 if self.mode == 'NFM-AO':
-                    print("CURRENTLY NO ASTRONOMY_WCS_NFM AVAILABLE !!!!")
+                    f.write(self.static_calibration_dir\
+                    + 'astrometry_wcs_nfm.fits ASTROMETRY_WCS\n')
+                if not self.autocalib == 'none':
+                    f.write(exp_list[exp_num][:-9]\
+                    + '/' + 'SKY_MASK.fits SKY_MASK\n')
+                if self.autocalib == 'user':
+                    f.write(exp_list[exp_num][:-9]\
+                    + '/' + 'AUTOCAL_FACTORS.fits AUTOCAL_FACTORS\n')
 
                 f.write(self.static_calibration_dir\
                 + 'extinct_table.fits EXTINCT_TABLE\n')
@@ -1869,24 +1924,23 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
 
                 f.close()
             if self.withrvcorr:
+
                 if self.skysub:
-                    print('without sky ...')
+                    print('with sky subtraction...')
+                if not self.skysub:
+                    print('without sky subtraction...')
 
-                    if self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug\
-                            muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod='+self.skymethod+' \
-                            --filter=white scipost.sof')
+                if not self.debug:
+                    _call_esorex(self, exp_list[exp_num][:-9],\
+                    '--log-file=scipost.log --log-level=debug'\
+                    + ' muse_scipost'\
+                    + ' --save=cube,skymodel,individual,raman,autocal'\
+                    + ' --skymethod=' + self.skymethod\
+                    + ' --autocalib=' + self.autocalib
+                    + ' --filter=white'\
+                    + ' scipost.sof')
 
-                    if not self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual \
-                            --skymethod='+self.skymethod+' \
-                            --filter=white scipost.sof')
+                if self.skysub:
 
                     os.chdir(exp_list[exp_num][:-9])
                     if not self.debug:
@@ -1899,20 +1953,6 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     os.chdir(self.rootpath)
 
                 if not self.skysub:
-                    print('with sky ...')
-
-                    if self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual,raman\
-                            --skymethod=none --filter=white scipost.sof')
-                    if not self.raman:
-                        if not self.debug:
-                            _call_esorex(self, exp_list[exp_num][:-9],\
-                            '--log-file=scipost.log --log-level=debug \
-                            muse_scipost --save=cube,skymodel,individual \
-                            --skymethod=none --filter=white scipost.sof')
 
                     os.chdir(exp_list[exp_num][:-9])
                     if not self.debug:
@@ -1923,20 +1963,20 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                         os.rename('PIXTABLE_REDUCED_0001.fits',\
                         'PIXTABLE_REDUCED_0001_wsky.fits')
                     os.chdir(self.rootpath)
+
             else:
 
                 if self.raman:
                     if not self.debug:
                         _call_esorex(self, exp_list[exp_num][:-9],\
-                        '--log-file=scipost.log --log-level=debug muse_scipost\
-                        --save=cube,skymodel,individual,raman --skymethod=none\
-                        --rvcorr=none --filter=white scipost.sof')
-                if not self.raman:
-                    if not self.debug:
-                        _call_esorex(self, exp_list[exp_num][:-9],\
-                        '--log-file=scipost.log --log-level=debug muse_scipost\
-                        --save=cube,skymodel,individual --skymethod=none \
-                        --rvcorr=none --filter=white scipost.sof')
+                        '--log-file=scipost.log --log-level=debug'\
+                        + ' muse_scipost'\
+                        + ' --save=cube,skymodel,individual,raman,autocal'\
+                        + ' --skymethod=none'\
+                        + ' --filter=white'\
+                        + ' --autocalib=' + self.autocalib)\
+                        + ' --rvcorr=none'\
+                        + ' scipost.sof'
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:
@@ -2082,182 +2122,206 @@ def _dither_collect(self, exp_list_SCI, OB):
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                     else:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/DATACUBE_FINAL_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits',\
                         combining_exposure_dir_withoutsky\
-                        + '/DATACUBE_FINAL_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/IMAGE_FOV_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
-                        + '/IMAGE_FOV_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
-                        + '/PIXTABLE_REDUCED_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky +\
-                        '/PIXTABLE_REDUCED_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
 
                 if not self.skysub:
                     if self.dithering_multiple_OBs:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/IMAGE_FOV_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits',\
-                        combining_exposure_dir_withsky + '/IMAGE_FOV_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        combining_exposure_dir_withsky\
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9] +\
                         ' /PIXTABLE_REDUCED_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_' + OB\
-                        + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
 
                     else:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/DATACUBE_FINAL_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/DATACUBE_FINAL_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/IMAGE_FOV_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/IMAGE_FOV_' + str(exp_num + 1).rjust(2, '0')\
-                        + '.fits')
+                        + '/IMAGE_FOV_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
+
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
-                        + '/PIXTABLE_REDUCED_'\
-                        + str(exp_num + 1).rjust(2, '0') + '.fits')
+                        + '/PIXTABLE_REDUCED_' + OB + '_'\
+                        + exp_list[exp_num][-20:-9] + '.fits')
             else:
 
                 if dithering_multiple_OBs:
                     print(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
-                    + combining_exposure_dir + '/DATACUBE_FINAL_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + combining_exposure_dir + '/DATACUBE_FINAL_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits',\
-                    combining_exposure_dir + '/DATACUBE_FINAL_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    combining_exposure_dir + '/DATACUBE_FINAL_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
+
                     print(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits ==> '\
-                    + combining_exposure_dir + '/IMAGE_FOV_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + combining_exposure_dir + '/IMAGE_FOV_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits',\
-                    combining_exposure_dir + '/IMAGE_FOV_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    combining_exposure_dir + '/IMAGE_FOV_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
+
                     print(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '\
-                    + combining_exposure_dir + '/PIXTABLE_REDUCED_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + combining_exposure_dir + '/PIXTABLE_REDUCED_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',\
-                    combining_exposure_dir + '/PIXTABLE_REDUCED_' + OB\
-                    + '_'+ str(exp_num + 1).rjust(2, '0') + '.fits')
+                    combining_exposure_dir + '/PIXTABLE_REDUCED_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                 else:
                     print(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
-                    + '/DATACUBE_FINAL_' + str(exp_num + 1).rjust(2, '0')\
-                    + '.fits')
+                    + '/DATACUBE_FINAL_' + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits',\
                     combining_exposure_dir + '/DATACUBE_FINAL_'\
-                    + str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
+
                     print(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
-                    + '/IMAGE_FOV_' + str(exp_num + 1).rjust(2, '0')\
-                    + '.fits')
+                    + '/IMAGE_FOV_'+ OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/IMAGE_FOV_'\
-                    + str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
+
                     print(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
-                    + '/PIXTABLE_REDUCED_' + str(exp_num + 1).rjust(2, '0')\
-                    + '.fits')
+                    + '/PIXTABLE_REDUCED_'\
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/PIXTABLE_REDUCED_'\
-                    + str(exp_num + 1).rjust(2, '0') + '.fits')
+                    + OB + '_'\
+                    + exp_list[exp_num][-20:-9] + '.fits')
 
 
 def _exp_align(self, exp_list_SCI, create_sof, OB):
@@ -2283,8 +2347,9 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
     print('... CUBE ALIGNMENT')
 
-    esorex_cmd = '--log-file=exp_align.log --log-level=debug \
-    muse_exp_align exp_align.sof'
+    esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
+    + ' muse_exp_align'\
+    + ' exp_align.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
@@ -2442,9 +2507,13 @@ def _exp_combine(self, exp_list_SCI, create_sof):
 
     print('... EXPOSURE COMBINATION')
 
-    esorex_cmd = '--log-file=exp_combine.log --log-level=debug \
-    muse_exp_combine --filter=white --save=cube --crsigma=5. \
-    --weight='+str(self.weight)+' exp_combine.sof'
+    esorex_cmd = '--log-file=exp_combine.log --log-level=debug'\
+    + ' muse_exp_combine'\
+    + ' --filter=white'\
+    + ' --save=cube'\
+    + ' --crsigma=5.'\
+    + ' --weight=' + str(self.weight)\
+    + ' exp_combine.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '

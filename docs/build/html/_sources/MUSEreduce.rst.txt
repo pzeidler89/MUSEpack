@@ -3,7 +3,7 @@
 MUSEreduce
 **********
 
-:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly we recommend to install the latest pipeline version found under: https://www.eso.org/sci/software/pipelines/muse/.
+:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.1 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has not been tested with other version of the data reduction pipeline.
 
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 
@@ -218,6 +218,10 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :proptype execute: bool
    :options execute: false, true, default=true
    
+   :property autocalib: This may execute the flux autocalibration between the different IFUs for empty fields. If ``user`` a AUTOCAL_FACTORS.fits table has to be provided by the user.
+   :proptype autocalib: string
+   :options autocalib: 'none', 'deepfield', 'user', default=none
+   
    :property subtract_sky: The user can decide to not run any sky subtraction. All telluric lines will be included in the final datacube. this may be useful if one
                             wants to do their own wavelength calibration.
    :proptype subtract_sky: bool
@@ -263,7 +267,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property weight: The method how the fluxes in each dither position sre weighted. For more details we refer to
                      the `MUSE data reduction pipeline`_ handbook.
    :proptype weight: string
-   :options weight: 'exptime', 'fwhm', 'none', default=exptime
+   :options weight: 'exptime', 'fwhm', 'none', 'header', default=exptime
    
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
@@ -283,7 +287,7 @@ The following methods are routines to support the :class:`MUSEreduce.musereduce`
    :exclude-members: musereduce
    :member-order: bysource
 
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://ui.adsabs.harvard.edu/abs/2019AJ....158..201Z/abstract
 
 History
 -------
@@ -323,7 +327,7 @@ History
 .. versionadded:: 0.3.1
    one can select if the sof file are created automatically or provided by the user
 .. versionadded:: 0.4.0
-   supports now *pipeline 2.4.2* and the *NFM-AO* added: pipeline_path choosing if darks may be used only reduces *STD* once per OB general use of external *SKY* fields collecting the files for ``muse_exp_combine`` in an independent step ``muse_exp_align`` is an independent step now
+   supports now *pipeline v2.4.2* and the *NFM-AO* added: pipeline_path choosing if darks may be used only reduces *STD* once per OB general use of external *SKY* fields collecting the files for ``muse_exp_combine`` in an independent step ``muse_exp_align`` is an independent step now
 .. versionadded:: 0.4.1
    new file names to correct a problem where data gets replaced in the ``muse_scipost`` routine if you reduce the data with and without sky
 .. versionadded:: 0.4.2
@@ -343,3 +347,6 @@ History
 .. versionadded:: 1.0.2
    It is possible to omit the data reduction of the standard star in ``muse_scibasic`` by setting the *execute_std* to :obj:`False`.
    More skylines can be added in the ``muse_scibasic`` module but adding additional wavelengths in Angstrom to *skylines*.
+.. versionadded:: 1.1.0
+   :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.1*. A legacy version for *pipeline v2.4.2* was created in a separate release. The keywords *autocalib* and in ``sci_oost`` was added.
+   The naming convention in ``dither_collect`` was changed so that it matches the convention  **RADEC_EXPTIME_ROTANGLE_COUNTER**.
