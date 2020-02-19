@@ -150,12 +150,12 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             print('Output WCS frame: ', out_frame)
         print('')
 
-        A = np.nanmedian(prm[4].data[0][1])
-        B = np.nanmedian(prm[4].data[1][1])
-        C = np.nanmedian(prm[4].data[2][1])
-        D = np.nanmedian(prm[4].data[3][1])
-        x0 = np.nanmedian(prm[4].data[4][1])
-        y0 = np.nanmedian(prm[4].data[5][1])
+        A = np.nanmedian(offset[4].data[0][1])
+        B = np.nanmedian(offset[4].data[1][1])
+        C = np.nanmedian(offset[4].data[2][1])
+        D = np.nanmedian(offset[4].data[3][1])
+        x0 = np.nanmedian(offset[4].data[4][1])
+        y0 = np.nanmedian(offset[4].data[5][1])
 
         CD = np.array([[A, C], [B, D]])
         r = np.array([[x0, 0.], [0., y0]])
@@ -220,12 +220,12 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             cube['STAT'].data *= fmultipl ** 2
 
             if output_file == None:
-                prm[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input + '_cor'
-                prm.writeto(offset_path + '/' + offset_input + '_cor.prm.fits', overwrite=True)
+                offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
+                offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
 
             else:
-                shutil.copyfile(offset_path + '/' + offset_input + '.prm.fits',\
-                offset_path + '/' + output_file + '.prm.fits')
+                shutil.copyfile(offset_path + '/' + offset_input,\
+                offset_path + '/' + output_file)
 
     if offset_type == 'eso':
 
