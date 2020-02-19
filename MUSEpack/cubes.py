@@ -245,7 +245,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         cube[1].header['CRVAL1'] -= dRA[0]
         cube[1].header['CRVAL2'] -= dDEC[0]
 
-        if correct_flux:
+        if correct_flux and not np.isnan(fscale[0]):
             cube[1].data *= fscale[0]
 
     if output_file == None:
