@@ -101,10 +101,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
     print('processing observation: ' + path + '/' + input_fits + '.fits')
 
-    if len(offset) == 2:
+    if len(offset) == 6:
         print('using prm file: ' + offset_path + '/' + offset_input)
         offset_type = 'prm'
-    if len(offset) == 6:
+    if len(offset) == 2:
         print('using OFFSET file: ' + offset_path + '/' + offset_input)
         offset_type = 'eso'
         spec_folder = None
