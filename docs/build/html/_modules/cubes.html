@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>cubes &mdash; MUSEpack 1.1.0dev20200211 documentation</title>
+  <title>cubes &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.1.0
+                1.1.1
               </div>
             
           
@@ -197,6 +197,10 @@
   <h1>Source code for cubes</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.1&#39;</span>
+
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20200219&#39;</span>
+
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
@@ -216,7 +220,7 @@
 <span class="sd">&#39;&#39;&#39; internal modules&#39;&#39;&#39;</span>
 <span class="kn">from</span> <span class="nn">MUSEpack.utils</span> <span class="kn">import</span> <span class="n">ABtoVega</span>
 
-<div class="viewcode-block" id="wcs_cor"><a class="viewcode-back" href="../cubes.html#cubes.wcs_cor">[docs]</a><span class="k">def</span> <span class="nf">wcs_cor</span><span class="p">(</span><span class="n">input_fits</span><span class="p">,</span> <span class="n">input_prm</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prm_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="wcs_cor"><a class="viewcode-back" href="../cubes.html#cubes.wcs_cor">[docs]</a><span class="k">def</span> <span class="nf">wcs_cor</span><span class="p">(</span><span class="n">input_fits</span><span class="p">,</span> <span class="n">offset_input</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">in_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">correct_flux</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spec_folder</span><span class="o">=</span><span class="s1">&#39;stars&#39;</span><span class="p">,</span> <span class="n">spec_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">correctiontype</span><span class="o">=</span><span class="s1">&#39;shift&#39;</span><span class="p">):</span>
@@ -226,14 +230,15 @@
 <span class="sd">        inputfits : :obj:`str`</span>
 <span class="sd">            The fully reduced datacube, whose WCS has to be corrected</span>
 
-<span class="sd">        input_prm : :obj:`str`</span>
+<span class="sd">        offset_input : :obj:`str`</span>
 <span class="sd">            The prm file produced by Pampelmuse</span>
+<span class="sd">            or the OFFSET_LIST.fits file from the ``exp_align`` routine </span>
 
 <span class="sd">    Kwargs:</span>
 <span class="sd">        path : :obj:`str` (optional, Default: current directory)</span>
 <span class="sd">            I/O path</span>
 
-<span class="sd">        prm_path : :obj:`str` (optional, default: current directory)</span>
+<span class="sd">        offset_path : :obj:`str` (optional, default: current directory)</span>
 <span class="sd">            I/O path of prm file</span>
 
 <span class="sd">        output_file : :obj:`str` (optional, default: input file name +_cor)</span>
@@ -241,7 +246,8 @@
 
 <span class="sd">        output_frame : :obj:`str` (optional, default : input frame)</span>
 <span class="sd">            coordinate frame of the output cube in case one want to</span>
-<span class="sd">            change</span>
+<span class="sd">            change. Is always set to default : input frame if corrections</span>
+<span class="sd">            are not based on a .prm file </span>
 
 <span class="sd">        in_frame : :obj:`str` (optional, default: input frame)</span>
 <span class="sd">            coordinate frame of the output cube in case it cannot be</span>
@@ -251,22 +257,28 @@
 <span class="sd">        correct_flux : :obj:`bool` (optional, default: :obj:`False`)</span>
 <span class="sd">            If set :obj:`True` the fluxes of the data cube will be corrected</span>
 <span class="sd">            to match the input catalog to correct for calibration offsets.</span>
+<span class="sd">            If the input file is a prm-file:</span>
 <span class="sd">            This step is only recommended if the input fluxes can be trusted.</span>
 <span class="sd">            CUBEFIT and GETSPECTRA have to executed again using the corrected</span>
 <span class="sd">            data cube to correct the prm file and to extract the corrected</span>
 <span class="sd">            spectra.</span>
+<span class="sd">            If the input file is a ESO OFFSET-LIST.fits file:</span>
+<span class="sd">            The fluxes will be scaled based on the &#39;FLUX_SCALE&#39; entries.</span>
 
 <span class="sd">        spec_folder : :obj:`str` (optional, default: ``spectra``)</span>
 <span class="sd">            The folder name, in which the the extracted stellar spectra are</span>
-<span class="sd">            stored. This is only needed if correct_flux=:obj:`True`</span>
+<span class="sd">            stored. This is only needed if correct_flux=:obj:`True` and the</span>
+<span class="sd">            corrections are based on a .prm file</span>
 
 <span class="sd">        spec_path : :obj:`str` (optional, default: current directory)</span>
-<span class="sd">            I/O path of the ``spec_folder``</span>
+<span class="sd">            I/O path of the ``spec_folder``. This keyword is only need if</span>
+<span class="sd">            the corrections are based on a .prm file</span>
 
 <span class="sd">        correctiontype : :obj:`str` (optional, default: ``shift``)</span>
 <span class="sd">            the type of distortion correction</span>
 
-<span class="sd">            ``full``: the full 2D CD matrix,</span>
+<span class="sd">            ``full``: the full 2D CD matrix, only possible if based on a </span>
+<span class="sd">            .prm file</span>
 
 <span class="sd">            ``shift``: shift in XY only.</span>
 
@@ -275,126 +287,163 @@
     <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">prm_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">prm_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">offset_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">offset_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">spec_path</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">spec_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
     <span class="n">cube</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_fits</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
-    <span class="n">prm</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">prm_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_prm</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">)</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">offset_input</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;processing observation: &#39;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_fits</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;using prm file: &#39;</span> <span class="o">+</span> <span class="n">prm_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_prm</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;using prm file: &#39;</span> <span class="o">+</span> <span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">offset_input</span><span class="p">)</span>
+        <span class="n">offset_type</span> <span class="o">=</span> <span class="s1">&#39;prm&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;using OFFSET file: &#39;</span> <span class="o">+</span> <span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">offset_input</span><span class="p">)</span>
+        <span class="n">offset_type</span> <span class="o">=</span> <span class="s1">&#39;eso&#39;</span>
+        <span class="n">spec_folder</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spec_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">correctiontype</span> <span class="o">=</span> <span class="s1">&#39;shift&#39;</span>
+        <span class="n">output_frame</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">in_frame</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">,</span>\
+    <span class="s1">&#39;This offset file is currently not supported: Please check&#39;</span>
 
     <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">),</span>\
     <span class="s1">&#39;fits file has currently unsupported extensions: Please check&#39;</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">prihdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-        <span class="n">sechdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-        <span class="k">assert</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;INSTRUME&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;MUSE    &#39;</span><span class="p">,</span>\
-        <span class="s1">&#39; This is not a MUSE cube. Please check&#39;</span>
+    <span class="k">if</span> <span class="n">offset_type</span> <span class="o">==</span> <span class="s1">&#39;prm&#39;</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_frame</span><span class="p">:</span>
-            <span class="n">in_frame</span> <span class="o">=</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;RADECSYS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MUSE cube detected&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">prihdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            <span class="n">sechdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            <span class="k">assert</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;INSTRUME&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;MUSE    &#39;</span><span class="p">,</span>\
+            <span class="s1">&#39; This is not a MUSE cube. Please check&#39;</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No MUSE cube all info in one extension&#39;</span><span class="p">)</span>
-        <span class="n">prihdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-        <span class="n">sechdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-        <span class="k">if</span> <span class="s1">&#39;RADECSYS&#39;</span> <span class="ow">in</span> <span class="n">prihdr</span><span class="p">:</span>
-            <span class="n">in_frame</span> <span class="o">=</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;RADECSYS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">correct_flux</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flux correction currently only supported&#39;</span>\
-            <span class="o">+</span> <span class="s1">&#39; for MUSE cubes&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_frame</span><span class="p">:</span>
+                <span class="n">in_frame</span> <span class="o">=</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;RADECSYS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MUSE cube detected&#39;</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">in_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;No WCS frame provided&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No MUSE cube all info in one extension&#39;</span><span class="p">)</span>
+            <span class="n">prihdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            <span class="n">sechdr</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            <span class="k">if</span> <span class="s1">&#39;RADECSYS&#39;</span> <span class="ow">in</span> <span class="n">prihdr</span><span class="p">:</span>
+                <span class="n">in_frame</span> <span class="o">=</span> <span class="n">prihdr</span><span class="p">[</span><span class="s1">&#39;RADECSYS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">correct_flux</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flux correction currently only supported&#39;</span>\
+                <span class="o">+</span> <span class="s1">&#39; for MUSE cubes&#39;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; Input WCS frame: &#39;</span><span class="p">,</span> <span class="n">in_frame</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">out_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output WCS frame: &#39;</span><span class="p">,</span> <span class="n">in_frame</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output WCS frame: &#39;</span><span class="p">,</span> <span class="n">out_frame</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">in_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;No WCS frame provided&#39;</span>
 
-    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-
-    <span class="n">CD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">,</span> <span class="n">D</span><span class="p">]])</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="n">y0</span><span class="p">]])</span>
-
-    <span class="c1">#### coord sys change</span>
-    <span class="k">if</span> <span class="n">out_frame</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ref_ra</span> <span class="o">=</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span>
-        <span class="n">ref_dec</span> <span class="o">=</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span>
-        <span class="n">ref_coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ref_ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>\
-        <span class="n">dec</span><span class="o">=</span><span class="n">ref_dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">in_frame</span><span class="p">)</span>
-        <span class="n">trans_ref_coord</span> <span class="o">=</span> <span class="n">ref_coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">out_frame</span><span class="p">)</span>
-
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_ref_coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span>
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_ref_coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span>
-        <span class="n">sechdr</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;RADESYS&#39;</span><span class="p">,</span> <span class="n">out_frame</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-
-    <span class="n">ref_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">],</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]])</span>
-    <span class="n">ref_xy_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ref_xy</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>\
-    <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">CD</span><span class="p">,</span> <span class="n">ref_xy</span><span class="o">.</span><span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="n">ref_shift_x</span> <span class="o">=</span> <span class="n">ref_xy_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
-    <span class="n">ref_shift_y</span> <span class="o">=</span> <span class="n">ref_xy_new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
-
-    <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_shift_x</span>
-    <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_shift_y</span>
-
-    <span class="k">if</span> <span class="n">correctiontype</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD1_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD1_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD2_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
-        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD2_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
-
-    <span class="c1">#### flux correction</span>
-    <span class="k">if</span> <span class="n">correct_flux</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">aboffset</span> <span class="o">=</span> <span class="n">ABtoVega</span><span class="p">(</span><span class="s1">&#39;ACS&#39;</span><span class="p">,</span><span class="s1">&#39;F814W&#39;</span><span class="p">)</span>
-
-        <span class="n">speclist</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">spec_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">spec_folder</span> <span class="o">+</span> <span class="s1">&#39;/specid*&#39;</span><span class="p">)</span>
-
-        <span class="n">cat_mag</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">muse_mag</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">temp_sp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">speclist</span><span class="p">):</span>
-
-            <span class="n">spec_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_sp</span><span class="p">)</span>
-            <span class="n">spec_head</span> <span class="o">=</span> <span class="n">spec_hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-
-            <span class="k">if</span> <span class="s1">&#39;SPECTRUM MAG F814W&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec_head</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="n">muse_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">muse_mag</span><span class="p">,</span>\
-                <span class="n">spec_head</span><span class="p">[</span><span class="s1">&#39;HIERARCH SPECTRUM MAG F814W&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">50.</span> <span class="o">+</span> <span class="n">aboffset</span><span class="p">)</span>
-                <span class="n">cat_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cat_mag</span><span class="p">,</span> <span class="n">spec_head</span><span class="p">[</span><span class="s1">&#39;HIERARCH STAR MAG&#39;</span><span class="p">])</span>
-
-        <span class="n">del_mag</span> <span class="o">=</span> <span class="n">cat_mag</span> <span class="o">-</span> <span class="n">muse_mag</span>
-        <span class="n">clippend_del_mag</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">del_mag</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cenfunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">)</span>
-        <span class="n">fmultipl</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">clippend_del_mag</span><span class="p">))</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The magnitude difference catalog - MUSE [mag]: &#39;</span><span class="p">,</span>\
-        <span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">clippend_del_mag</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The flux multiplicator f_catalog / f_MUSE: &#39;</span><span class="p">,</span>\
-        <span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmultipl</span><span class="p">))</span>
-
-        <span class="n">cube</span><span class="p">[</span><span class="s1">&#39;DATA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">fmultipl</span>
-        <span class="n">cube</span><span class="p">[</span><span class="s1">&#39;STAT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">fmultipl</span> <span class="o">**</span> <span class="mi">2</span>
-
-        <span class="k">if</span> <span class="n">output_file</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;HIERARCH PAMPELMUSE global prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_prm</span> <span class="o">+</span> <span class="s1">&#39;_cor&#39;</span>
-            <span class="n">prm</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">prm_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_prm</span> <span class="o">+</span> <span class="s1">&#39;_cor.prm.fits&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; Input WCS frame: &#39;</span><span class="p">,</span> <span class="n">in_frame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out_frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output WCS frame: &#39;</span><span class="p">,</span> <span class="n">in_frame</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">prm_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_prm</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">,</span>\
-            <span class="n">prm_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output WCS frame: &#39;</span><span class="p">,</span> <span class="n">out_frame</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">prm</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">CD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">,</span> <span class="n">D</span><span class="p">]])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">x0</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="n">y0</span><span class="p">]])</span>
+
+        <span class="c1">#### coord sys change</span>
+        <span class="k">if</span> <span class="n">out_frame</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ref_ra</span> <span class="o">=</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span>
+            <span class="n">ref_dec</span> <span class="o">=</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span>
+            <span class="n">ref_coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ref_ra</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>\
+            <span class="n">dec</span><span class="o">=</span><span class="n">ref_dec</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">in_frame</span><span class="p">)</span>
+            <span class="n">trans_ref_coord</span> <span class="o">=</span> <span class="n">ref_coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">out_frame</span><span class="p">)</span>
+
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_ref_coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans_ref_coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">sechdr</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;RADESYS&#39;</span><span class="p">,</span> <span class="n">out_frame</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+
+        <span class="n">ref_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">],</span> <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]])</span>
+        <span class="n">ref_xy_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ref_xy</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>\
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">CD</span><span class="p">,</span> <span class="n">ref_xy</span><span class="o">.</span><span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">ref_shift_x</span> <span class="o">=</span> <span class="n">ref_xy_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
+        <span class="n">ref_shift_y</span> <span class="o">=</span> <span class="n">ref_xy_new</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
+
+        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_shift_x</span>
+        <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_shift_y</span>
+
+        <span class="k">if</span> <span class="n">correctiontype</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD1_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD1_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD2_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
+            <span class="n">sechdr</span><span class="p">[</span><span class="s1">&#39;CD2_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">D</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="mf">3600.</span>
+
+        <span class="c1">#### flux correction</span>
+        <span class="k">if</span> <span class="n">correct_flux</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cube</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">aboffset</span> <span class="o">=</span> <span class="n">ABtoVega</span><span class="p">(</span><span class="s1">&#39;ACS&#39;</span><span class="p">,</span><span class="s1">&#39;F814W&#39;</span><span class="p">)</span>
+
+            <span class="n">speclist</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">spec_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">spec_folder</span> <span class="o">+</span> <span class="s1">&#39;/specid*&#39;</span><span class="p">)</span>
+
+            <span class="n">cat_mag</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">muse_mag</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">temp_sp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">speclist</span><span class="p">):</span>
+
+                <span class="n">spec_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">temp_sp</span><span class="p">)</span>
+                <span class="n">spec_head</span> <span class="o">=</span> <span class="n">spec_hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+
+                <span class="k">if</span> <span class="s1">&#39;SPECTRUM MAG F814W&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec_head</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">muse_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">muse_mag</span><span class="p">,</span>\
+                    <span class="n">spec_head</span><span class="p">[</span><span class="s1">&#39;HIERARCH SPECTRUM MAG F814W&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">50.</span> <span class="o">+</span> <span class="n">aboffset</span><span class="p">)</span>
+                    <span class="n">cat_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cat_mag</span><span class="p">,</span> <span class="n">spec_head</span><span class="p">[</span><span class="s1">&#39;HIERARCH STAR MAG&#39;</span><span class="p">])</span>
+
+            <span class="n">del_mag</span> <span class="o">=</span> <span class="n">cat_mag</span> <span class="o">-</span> <span class="n">muse_mag</span>
+            <span class="n">clippend_del_mag</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">del_mag</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cenfunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">)</span>
+            <span class="n">fmultipl</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">clippend_del_mag</span><span class="p">))</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The magnitude difference catalog - MUSE [mag]: &#39;</span><span class="p">,</span>\
+            <span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">clippend_del_mag</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The flux multiplicator f_catalog / f_MUSE: &#39;</span><span class="p">,</span>\
+            <span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmultipl</span><span class="p">))</span>
+
+            <span class="n">cube</span><span class="p">[</span><span class="s1">&#39;DATA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">fmultipl</span>
+            <span class="n">cube</span><span class="p">[</span><span class="s1">&#39;STAT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">fmultipl</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="k">if</span> <span class="n">output_file</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;HIERARCH PAMPELMUSE global prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset_input</span> <span class="o">+</span> <span class="s1">&#39;_cor&#39;</span>
+                <span class="n">prm</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">offset_input</span> <span class="o">+</span> <span class="s1">&#39;_cor.prm.fits&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">offset_input</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">,</span>\
+                <span class="n">offset_path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s1">&#39;.prm.fits&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">offset_type</span> <span class="o">==</span> <span class="s1">&#39;eso&#39;</span><span class="p">:</span>
+
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">cube</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">]</span>
+        <span class="n">indobs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">obs</span> <span class="o">==</span> <span class="n">offset</span><span class="p">[</span><span class="s1">&#39;MJD_OBS&#39;</span><span class="p">])</span>
+        <span class="n">dRA</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="s1">&#39;RA_OFFSET&#39;</span><span class="p">][</span><span class="n">indobs</span><span class="p">]</span>
+        <span class="n">dDEC</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="s1">&#39;DEC_OFFSET&#39;</span><span class="p">][</span><span class="n">indobs</span><span class="p">]</span>
+        <span class="n">fscale</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="s1">&#39;FLUX_SCALE&#39;</span><span class="p">][</span><span class="n">indobs</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The RA offset is [arcsec]: &#39;</span><span class="p">,</span>\
+        <span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dRA</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The Dec offset is [arcsec]: &#39;</span><span class="p">,</span>\
+        <span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dDec</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The flux scale is: &#39;</span><span class="p">,</span>\
+        <span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fscale</span><span class="p">))</span>
+
+        <span class="n">cube</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">dRA</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cube</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">dDEC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">correct_flux</span><span class="p">:</span>
+            <span class="n">cube</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">fscale</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">output_file</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cube</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">input_fits</span> <span class="o">+</span> <span class="s1">&#39;_cor.fits&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

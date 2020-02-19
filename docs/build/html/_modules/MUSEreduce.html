@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MUSEreduce &mdash; MUSEpack 1.1.0dev20200211 documentation</title>
+  <title>MUSEreduce &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.1.0
+                1.1.1
               </div>
             
           
@@ -312,7 +312,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####        MUSE data reduction pipeline wrapper        #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####   Must be used with ESORex and ESO MUSE pipeline   #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####      author: Peter Zeidler (zeidler@stsci.edu)     #####&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Feb 04, 2020                    #####&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                    Feb 11, 2020                    #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                   Version: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;   </span><span class="se">\</span>
 <span class="s1">                #####&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#####                                                    #####&#39;</span><span class="p">)</span>
@@ -2318,68 +2318,68 @@
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withoutsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wosky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withoutsky</span> <span class="o">+</span>\
-                        <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
@@ -2387,67 +2387,68 @@
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits&#39;</span><span class="p">,</span>\
-                        <span class="n">combining_exposure_dir_withsky</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="n">combining_exposure_dir_withsky</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span>\
                         <span class="s1">&#39; /PIXTABLE_REDUCED_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="k">else</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                         <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wsky.fits ==&gt; &#39;</span>\
                         <span class="o">+</span> <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                         <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wsky.fits&#39;</span><span class="p">,</span>\
                         <span class="n">combining_exposure_dir_withsky</span>\
-                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                        <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                         <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
 
@@ -2455,58 +2456,68 @@
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span>\
-                    <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                    <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span> <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/DATACUBE_FINAL_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span>\
-                    <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exp_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>\
-                    <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span><span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
+                    <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/IMAGE_FOV_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
 
                     <span class="nb">print</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==&gt; &#39;</span>\
                     <span class="o">+</span> <span class="n">combining_exposure_dir</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span>\
                     <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_0001_wskynorvcorr.fits&#39;</span><span class="p">,</span>\
                     <span class="n">combining_exposure_dir</span> <span class="o">+</span> <span class="s1">&#39;/PIXTABLE_REDUCED_&#39;</span>\
+                    <span class="o">+</span> <span class="n">OB</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>\
                     <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:</span><span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span></div>
 
 
