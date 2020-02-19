@@ -230,10 +230,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
     if offset_type == 'eso':
 
         obs = cube[0].header['MJD-OBS']
-        indobs = np.where(obs == offset['MJD_OBS'])
-        dRA = offset['RA_OFFSET'][indobs]
-        dDEC = offset['DEC_OFFSET'][indobs]
-        fscale = offset['FLUX_SCALE'][indobs]
+        indobs = np.where(obs == offset[1].data['MJD_OBS'])
+        dRA = offset[1].data['RA_OFFSET'][indobs]
+        dDEC = offset[1].data['DEC_OFFSET'][indobs]
+        fscale = offset[1].data['FLUX_SCALE'][indobs]
 
         print('The RA offset is [arcsec]: ',\
         '{:.4f}'.format(dRA * 3600))
