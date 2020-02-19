@@ -236,9 +236,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         fscale = offset[1].data['FLUX_SCALE'][indobs]
 
         print('The RA offset is [arcsec]: ',\
-        '{:.4f}'.format(dRA * 3600))
+        '{:.4f}'.format(dRA[0] * 3600.))
         print('The Dec offset is [arcsec]: ',\
-        '{:.4f}'.format(dDec * 3600))
+        '{:.4f}'.format(dDec[0] * 3600.))
         print('The flux scale is: ',\
         '{:.4f}'.format(fscale))
 
