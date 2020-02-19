@@ -240,7 +240,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         print('The Dec offset is [arcsec]: ',\
         '{:.4f}'.format(dDEC[0] * 3600.))
         print('The flux scale is: ',\
-        '{:.4f}'.format(fscale))
+        '{:.4f}'.format(fscale[0]))
 
         cube[1].header['CRVAL1'] -= dRA[0]
         cube[1].header['CRVAL2'] -= dDEC[0]
