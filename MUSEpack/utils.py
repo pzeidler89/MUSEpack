@@ -188,7 +188,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
 
     '''
 
-    lprime = self.cat.loc[line_idx, 'l_lab']
+    lprime = lambda_rv_shift(self,self.cat.loc[line_idx, 'l_lab'])
     primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
