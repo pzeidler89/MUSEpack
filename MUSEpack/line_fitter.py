@@ -362,7 +362,7 @@ autoadjust, fwhm_block):
             for lab_line_idx, lab_lines\
             in enumerate(np.array([self.cat.loc[line_idx, 'l_lab']])):
                 par_extract_idx = np.concatenate((par_extract_idx,\
-                np.where(lines_select == lab_lines)[0]))
+                np.where(lines_select == lambda_rv_shift(self,lab_lines))[0]))
 
             for i in range(len(lines_select)):
                 xcen = lines_select[i]
