@@ -209,6 +209,10 @@ class RV_spectrum:
             temp = ascii.read(initcat)
             self.logger.info('Adding lines: ' + str(temp['name'].data))
 
+            l_lab = temp['lambda']
+            l_start = temp['start']
+            l_end = temp['end']
+
             d = {'l_lab': l_lab,\
                  'l_start': l_start,\
                  'l_end': l_end,\
