@@ -99,15 +99,15 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
             lprime = blendlist[blendidx]['lprime']
             lsec = blendlist[blendidx]['lsec']
             
-            if self.rv_sys == 0.:
-                lprime = blendlist[blendidx]['lprime']
-                lsec = blendlist[blendidx]['lsec']
-            else:
-                
-                lprime = lambda_rv_shift(self,
-                blendlist[blendidx]['lprime'])
-                lsec = lambda_rv_shift(self,
-                blendlist[blendidx]['lsec'])
+            # if self.rv_sys == 0.:
+            #     lprime = blendlist[blendidx]['lprime']
+            #     lsec = blendlist[blendidx]['lsec']
+            # else:
+            #
+            #     lprime = lambda_rv_shift(self,
+            #     blendlist[blendidx]['lprime'])
+            #     lsec = lambda_rv_shift(self,
+            #     blendlist[blendidx]['lsec'])
 
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
@@ -183,8 +183,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
     '''
 
     lprime = self.cat.loc[line_idx, 'l_lab']
-    print(lprime)
-    print(guesses)
     primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:

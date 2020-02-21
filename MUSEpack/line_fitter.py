@@ -260,6 +260,13 @@ autoadjust, fwhm_block):
                 fit_plotted_area=False, exclusionlevel=float(exclusion_level))
 
                 if iterations == 0:
+
+                    if self.rv_sys != 0.:
+                        linefit_guess = lambda_rv_shift(self,
+                        linefit_guess)
+                        linefit_limits = lambda_rv_shift(self,
+                        linefit_limits)
+
                     sp.specfit.multifit(fittype='voigt', renormalize='auto',\
                     annotate=False, show_components=False, verbose=False,\
                     color=None, guesses=list(linefit_guess), parinfo=None,\
