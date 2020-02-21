@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+__version__ = '0.1.1'
+
+__revision__ = '20200219'
+
 import sys
 import os
 import glob
@@ -19,7 +23,7 @@ import montage_wrapper as montage
 ''' internal modules'''
 from MUSEpack.utils import ABtoVega
 
-def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
+def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             correctiontype='shift'):
@@ -29,14 +33,15 @@ def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
         inputfits : :obj:`str`
             The fully reduced datacube, whose WCS has to be corrected
 
-        input_prm : :obj:`str`
+        offset_input : :obj:`str`
             The prm file produced by Pampelmuse
+            or the OFFSET_LIST.fits file from the ``exp_align`` routine 
 
     Kwargs:
         path : :obj:`str` (optional, Default: current directory)
             I/O path
 
-        prm_path : :obj:`str` (optional, default: current directory)
+        offset_path : :obj:`str` (optional, default: current directory)
             I/O path of prm file
 
         output_file : :obj:`str` (optional, default: input file name +_cor)
@@ -44,7 +49,8 @@ def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
 
         output_frame : :obj:`str` (optional, default : input frame)
             coordinate frame of the output cube in case one want to
-            change
+            change. Is always set to default : input frame if corrections
+            are not based on a .prm file 
 
         in_frame : :obj:`str` (optional, default: input frame)
             coordinate frame of the output cube in case it cannot be
@@ -54,22 +60,28 @@ def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
         correct_flux : :obj:`bool` (optional, default: :obj:`False`)
             If set :obj:`True` the fluxes of the data cube will be corrected
             to match the input catalog to correct for calibration offsets.
+            If the input file is a prm-file:
             This step is only recommended if the input fluxes can be trusted.
             CUBEFIT and GETSPECTRA have to executed again using the corrected
             data cube to correct the prm file and to extract the corrected
             spectra.
+            If the input file is a ESO OFFSET-LIST.fits file:
+            The fluxes will be scaled based on the 'FLUX_SCALE' entries.
 
         spec_folder : :obj:`str` (optional, default: ``spectra``)
             The folder name, in which the the extracted stellar spectra are
-            stored. This is only needed if correct_flux=:obj:`True`
+            stored. This is only needed if correct_flux=:obj:`True` and the
+            corrections are based on a .prm file
 
         spec_path : :obj:`str` (optional, default: current directory)
-            I/O path of the ``spec_folder``
+            I/O path of the ``spec_folder``. This keyword is only need if
+            the corrections are based on a .prm file
 
         correctiontype : :obj:`str` (optional, default: ``shift``)
             the type of distortion correction
 
-            ``full``: the full 2D CD matrix,
+            ``full``: the full 2D CD matrix, only possible if based on a 
+            .prm file
 
             ``shift``: shift in XY only.
 
@@ -78,126 +90,163 @@ def wcs_cor(input_fits, input_prm, path=None, prm_path=None,
     if path == None:
         path = os.getcwd()
 
-    if prm_path == None:
-        prm_path = os.getcwd()
+    if offset_path == None:
+        offset_path = os.getcwd()
 
     if spec_path == None:
         spec_path = os.getcwd()
 
     cube = fits.open(path + '/' + input_fits + '.fits')
-    prm = fits.open(prm_path + '/' + input_prm + '.prm.fits')
+    offset = fits.open(offset_path + '/' + offset_input)
 
     print('processing observation: ' + path + '/' + input_fits + '.fits')
-    print('using prm file: ' + prm_path + '/' + input_prm + '.prm.fits')
+
+    if len(offset) == 6:
+        print('using prm file: ' + offset_path + '/' + offset_input)
+        offset_type = 'prm'
+    if len(offset) == 2:
+        print('using OFFSET file: ' + offset_path + '/' + offset_input)
+        offset_type = 'eso'
+        spec_folder = None
+        spec_path = None,
+        correctiontype = 'shift'
+        output_frame = None
+        in_frame = None
+
+    assert len(offset) != 6 or len(offset) != 2,\
+    'This offset file is currently not supported: Please check'
 
     assert (len(cube) != 3 or len(cube) != 1),\
     'fits file has currently unsupported extensions: Please check'
 
-    if len(cube) == 3:
-        prihdr = cube[0].header
-        sechdr = cube[1].header
-        assert prihdr['INSTRUME'] != 'MUSE    ',\
-        ' This is not a MUSE cube. Please check'
+    if offset_type == 'prm':
 
-        if not in_frame:
-            in_frame = prihdr['RADECSYS'].lower()
-        print('MUSE cube detected')
+        if len(cube) == 3:
+            prihdr = cube[0].header
+            sechdr = cube[1].header
+            assert prihdr['INSTRUME'] != 'MUSE    ',\
+            ' This is not a MUSE cube. Please check'
 
-    if len(cube) == 1:
-        print('No MUSE cube all info in one extension')
-        prihdr = cube[0].header
-        sechdr = cube[0].header
-        if 'RADECSYS' in prihdr:
-            in_frame = prihdr['RADECSYS'].lower()
-        if correct_flux:
-            print('Flux correction currently only supported'\
-            + ' for MUSE cubes')
+            if not in_frame:
+                in_frame = prihdr['RADECSYS'].lower()
+            print('MUSE cube detected')
 
-    assert in_frame is not None, 'No WCS frame provided'
+        if len(cube) == 1:
+            print('No MUSE cube all info in one extension')
+            prihdr = cube[0].header
+            sechdr = cube[0].header
+            if 'RADECSYS' in prihdr:
+                in_frame = prihdr['RADECSYS'].lower()
+            if correct_flux:
+                print('Flux correction currently only supported'\
+                + ' for MUSE cubes')
 
-    print(' Input WCS frame: ', in_frame)
-    if out_frame is None:
-        print('Output WCS frame: ', in_frame)
-    else:
-        print('Output WCS frame: ', out_frame)
-    print('')
+        assert in_frame is not None, 'No WCS frame provided'
 
-    A = np.nanmedian(prm[4].data[0][1])
-    B = np.nanmedian(prm[4].data[1][1])
-    C = np.nanmedian(prm[4].data[2][1])
-    D = np.nanmedian(prm[4].data[3][1])
-    x0 = np.nanmedian(prm[4].data[4][1])
-    y0 = np.nanmedian(prm[4].data[5][1])
-
-    CD = np.array([[A, C], [B, D]])
-    r = np.array([[x0, 0.], [0., y0]])
-
-    #### coord sys change
-    if out_frame != None:
-        ref_ra = sechdr['CRVAL1']
-        ref_dec = sechdr['CRVAL2']
-        ref_coord = SkyCoord(ra=ref_ra * u.degree,\
-        dec=ref_dec * u.degree, frame=in_frame)
-        trans_ref_coord = ref_coord.transform_to(out_frame)
-
-        sechdr['CRVAL1'] = trans_ref_coord.ra.value
-        sechdr['CRVAL2'] = trans_ref_coord.dec.value
-        sechdr.set('RADESYS', out_frame.upper())
-
-    ref_xy = np.array([sechdr['CRPIX1'], sechdr['CRPIX2']])
-    ref_xy_new = (np.dot(r, np.ones(ref_xy.T.shape))\
-    + np.dot(CD, ref_xy.T)).swapaxes(-1, -0)
-
-    ref_shift_x = ref_xy_new[0] + 1.
-    ref_shift_y = ref_xy_new[1] + 1.
-
-    sechdr['CRPIX1'] = ref_shift_x
-    sechdr['CRPIX2'] = ref_shift_y
-
-    if correctiontype == 'full':
-        sechdr['CD1_1'] = (-1) * A * 0.2 / 3600.
-        sechdr['CD1_2'] = C * 0.2 / 3600.
-        sechdr['CD2_1'] = (-1) * B * 0.2 / 3600.
-        sechdr['CD2_2'] = D * 0.2 / 3600.
-
-    #### flux correction
-    if correct_flux and len(cube) == 3:
-        aboffset = ABtoVega('ACS','F814W')
-
-        speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
-
-        cat_mag = []
-        muse_mag = []
-
-        for i, temp_sp in enumerate(speclist):
-
-            spec_hdu = fits.open(temp_sp)
-            spec_head = spec_hdu[0].header
-
-            if 'SPECTRUM MAG F814W' in list(spec_head.keys()):
-                muse_mag = np.append(muse_mag,\
-                spec_head['HIERARCH SPECTRUM MAG F814W'] + 50. + aboffset)
-                cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
-
-        del_mag = cat_mag - muse_mag
-        clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)
-        fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
-
-        print('The magnitude difference catalog - MUSE [mag]: ',\
-        '{:.2f}'.format(np.ma.median(clippend_del_mag)))
-        print('The flux multiplicator f_catalog / f_MUSE: ',\
-        '{:.2f}'.format(fmultipl))
-
-        cube['DATA'].data *= fmultipl
-        cube['STAT'].data *= fmultipl ** 2
-
-        if output_file == None:
-            prm[0].header['HIERARCH PAMPELMUSE global prefix'] = input_prm + '_cor'
-            prm.writeto(prm_path + '/' + input_prm + '_cor.prm.fits', overwrite=True)
-
+        print(' Input WCS frame: ', in_frame)
+        if out_frame is None:
+            print('Output WCS frame: ', in_frame)
         else:
-            shutil.copyfile(prm_path + '/' + input_prm + '.prm.fits',\
-            prm_path + '/' + output_file + '.prm.fits')
+            print('Output WCS frame: ', out_frame)
+        print('')
+
+        A = np.nanmedian(offset[4].data[0][1])
+        B = np.nanmedian(offset[4].data[1][1])
+        C = np.nanmedian(offset[4].data[2][1])
+        D = np.nanmedian(offset[4].data[3][1])
+        x0 = np.nanmedian(offset[4].data[4][1])
+        y0 = np.nanmedian(offset[4].data[5][1])
+
+        CD = np.array([[A, C], [B, D]])
+        r = np.array([[x0, 0.], [0., y0]])
+
+        #### coord sys change
+        if out_frame != None:
+            ref_ra = sechdr['CRVAL1']
+            ref_dec = sechdr['CRVAL2']
+            ref_coord = SkyCoord(ra=ref_ra * u.degree,\
+            dec=ref_dec * u.degree, frame=in_frame)
+            trans_ref_coord = ref_coord.transform_to(out_frame)
+
+            sechdr['CRVAL1'] = trans_ref_coord.ra.value
+            sechdr['CRVAL2'] = trans_ref_coord.dec.value
+            sechdr.set('RADESYS', out_frame.upper())
+
+        ref_xy = np.array([sechdr['CRPIX1'], sechdr['CRPIX2']])
+        ref_xy_new = (np.dot(r, np.ones(ref_xy.T.shape))\
+        + np.dot(CD, ref_xy.T)).swapaxes(-1, -0)
+
+        ref_shift_x = ref_xy_new[0] + 1.
+        ref_shift_y = ref_xy_new[1] + 1.
+
+        sechdr['CRPIX1'] = ref_shift_x
+        sechdr['CRPIX2'] = ref_shift_y
+
+        if correctiontype == 'full':
+            sechdr['CD1_1'] = (-1) * A * 0.2 / 3600.
+            sechdr['CD1_2'] = C * 0.2 / 3600.
+            sechdr['CD2_1'] = (-1) * B * 0.2 / 3600.
+            sechdr['CD2_2'] = D * 0.2 / 3600.
+
+        #### flux correction
+        if correct_flux and len(cube) == 3:
+            aboffset = ABtoVega('ACS','F814W')
+
+            speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
+
+            cat_mag = []
+            muse_mag = []
+
+            for i, temp_sp in enumerate(speclist):
+
+                spec_hdu = fits.open(temp_sp)
+                spec_head = spec_hdu[0].header
+
+                if 'SPECTRUM MAG F814W' in list(spec_head.keys()):
+                    muse_mag = np.append(muse_mag,\
+                    spec_head['HIERARCH SPECTRUM MAG F814W'] + 50. + aboffset)
+                    cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
+
+            del_mag = cat_mag - muse_mag
+            clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)
+            fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
+
+            print('The magnitude difference catalog - MUSE [mag]: ',\
+            '{:.2f}'.format(np.ma.median(clippend_del_mag)))
+            print('The flux multiplicator f_catalog / f_MUSE: ',\
+            '{:.2f}'.format(fmultipl))
+
+            cube['DATA'].data *= fmultipl
+            cube['STAT'].data *= fmultipl ** 2
+
+            if output_file == None:
+                offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
+                offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
+
+            else:
+                shutil.copyfile(offset_path + '/' + offset_input,\
+                offset_path + '/' + output_file)
+
+    if offset_type == 'eso':
+
+        obs = cube[0].header['MJD-OBS']
+        indobs = np.where(obs == offset[1].data['MJD_OBS'])
+        dRA = offset[1].data['RA_OFFSET'][indobs]
+        dDEC = offset[1].data['DEC_OFFSET'][indobs]
+        fscale = offset[1].data['FLUX_SCALE'][indobs]
+
+        print('The RA offset is [arcsec]: ',\
+        '{:.4f}'.format(dRA[0] * 3600.))
+        print('The Dec offset is [arcsec]: ',\
+        '{:.4f}'.format(dDEC[0] * 3600.))
+        print('The flux scale is: ',\
+        '{:.4f}'.format(fscale[0]))
+
+        cube[1].header['CRVAL1'] -= dRA[0]
+        cube[1].header['CRVAL2'] -= dDEC[0]
+
+        if correct_flux and not np.isnan(fscale[0]):
+            cube[1].data *= fscale[0]
 
     if output_file == None:
         cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>4. Cubes &mdash; MUSEpack 1.1.0dev20200211 documentation</title>
+  <title>4. Cubes &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
   
 
   
@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.1.0
+                1.1.1
               </div>
             
           
@@ -284,24 +284,26 @@ with pampelmuse</p>
 
 <dl class="function">
 <dt id="cubes.wcs_cor">
-<code class="sig-prename descclassname">cubes.</code><code class="sig-name descname">wcs_cor</code><span class="sig-paren">(</span><em class="sig-param">input_fits</em>, <em class="sig-param">input_prm</em>, <em class="sig-param">path=None</em>, <em class="sig-param">prm_path=None</em>, <em class="sig-param">output_file=None</em>, <em class="sig-param">out_frame=None</em>, <em class="sig-param">in_frame=None</em>, <em class="sig-param">correct_flux=False</em>, <em class="sig-param">spec_folder='stars'</em>, <em class="sig-param">spec_path=None</em>, <em class="sig-param">correctiontype='shift'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#wcs_cor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.wcs_cor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cubes.</code><code class="sig-name descname">wcs_cor</code><span class="sig-paren">(</span><em class="sig-param">input_fits</em>, <em class="sig-param">offset_input</em>, <em class="sig-param">path=None</em>, <em class="sig-param">offset_path=None</em>, <em class="sig-param">output_file=None</em>, <em class="sig-param">out_frame=None</em>, <em class="sig-param">in_frame=None</em>, <em class="sig-param">correct_flux=False</em>, <em class="sig-param">spec_folder='stars'</em>, <em class="sig-param">spec_path=None</em>, <em class="sig-param">correctiontype='shift'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cubes.html#wcs_cor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cubes.wcs_cor" title="Permalink to this definition">¶</a></dt>
 <dd><dl>
 <dt>Args:</dt><dd><dl>
 <dt>inputfits<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The fully reduced datacube, whose WCS has to be corrected</p>
 </dd>
-<dt>input_prm<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The prm file produced by Pampelmuse</p>
+<dt>offset_input<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The prm file produced by Pampelmuse
+or the OFFSET_LIST.fits file from the <code class="docutils literal notranslate"><span class="pre">exp_align</span></code> routine</p>
 </dd>
 </dl>
 </dd>
 <dt>Kwargs:</dt><dd><dl>
 <dt>path<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, Default: current directory)</span></dt><dd><p>I/O path</p>
 </dd>
-<dt>prm_path<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt><dd><p>I/O path of prm file</p>
+<dt>offset_path<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt><dd><p>I/O path of prm file</p>
 </dd>
 <dt>output_file<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: input file name +_cor)</span></dt><dd><p>outputfile name</p>
 </dd>
 <dt>output_frame<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default</span><span class="classifier">input frame)</span></dt><dd><p>coordinate frame of the output cube in case one want to
-change</p>
+change. Is always set to default : input frame if corrections
+are not based on a .prm file</p>
 </dd>
 <dt>in_frame<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: input frame)</span></dt><dd><p>coordinate frame of the output cube in case it cannot be
 determined from the header information or it has to be manually
@@ -309,18 +311,24 @@ changed</p>
 </dd>
 <dt>correct_flux<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> (optional, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</span></dt><dd><p>If set <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the fluxes of the data cube will be corrected
 to match the input catalog to correct for calibration offsets.
+If the input file is a prm-file:
 This step is only recommended if the input fluxes can be trusted.
 CUBEFIT and GETSPECTRA have to executed again using the corrected
 data cube to correct the prm file and to extract the corrected
-spectra.</p>
+spectra.
+If the input file is a ESO OFFSET-LIST.fits file:
+The fluxes will be scaled based on the ‘FLUX_SCALE’ entries.</p>
 </dd>
 <dt>spec_folder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">spectra</span></code>)</span></dt><dd><p>The folder name, in which the the extracted stellar spectra are
-stored. This is only needed if correct_flux=:obj:<cite>True</cite></p>
+stored. This is only needed if correct_flux=:obj:<cite>True</cite> and the
+corrections are based on a .prm file</p>
 </dd>
-<dt>spec_path<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt><dd><p>I/O path of the <code class="docutils literal notranslate"><span class="pre">spec_folder</span></code></p>
+<dt>spec_path<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: current directory)</span></dt><dd><p>I/O path of the <code class="docutils literal notranslate"><span class="pre">spec_folder</span></code>. This keyword is only need if
+the corrections are based on a .prm file</p>
 </dd>
 <dt>correctiontype<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: <code class="docutils literal notranslate"><span class="pre">shift</span></code>)</span></dt><dd><p>the type of distortion correction</p>
-<p><code class="docutils literal notranslate"><span class="pre">full</span></code>: the full 2D CD matrix,</p>
+<p><code class="docutils literal notranslate"><span class="pre">full</span></code>: the full 2D CD matrix, only possible if based on a 
+.prm file</p>
 <p><code class="docutils literal notranslate"><span class="pre">shift</span></code>: shift in XY only.</p>
 </dd>
 </dl>
@@ -332,6 +340,9 @@ stored. This is only needed if correct_flux=:obj:<cite>True</cite></p>
 <h2><span class="section-number">4.1. </span>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.1.0: </span>The functions <a class="reference internal" href="#cubes.wcs_cor" title="cubes.wcs_cor"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.wcs_cor()</span></code></a>, <a class="reference internal" href="#cubes.pampelmuse_cat" title="cubes.pampelmuse_cat"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.pampelmuse_cat()</span></code></a>, <a class="reference internal" href="#cubes.linemaps" title="cubes.linemaps"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.linemaps()</span></code></a>, and <a class="reference internal" href="#cubes.mosaics" title="cubes.mosaics"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.mosaics()</span></code></a> were added.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.1.0: </span><a class="reference internal" href="#cubes.wcs_cor" title="cubes.wcs_cor"><code class="xref py py-func docutils literal notranslate"><span class="pre">cubes.wcs_cor()</span></code></a> also can be used with <em>the OFFSET_LIST.fits</em> file produced by ESORex</p>
 </div>
 </div>
 </div>
