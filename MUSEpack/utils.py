@@ -82,7 +82,13 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
         if self.linetype == 'both':
             limited.append((False, False)) #Amplitude
 
-        limits.append((line + llimits[0], line + llimits[1]))
+        if self.rv_sys == 0.:
+            limits.append((line + llimits[0], line + llimits[1]))
+        else:
+
+            limits.append((lambda_rv_shift(self,line) + lambda_rv_shift(self,llimits[0]), lambda_rv_shift(self,line) + lambda_rv_shift(self,llimits[1])))
+
+
         limited.append((True, True)) #Center
 
         limits.append((0, 0)) #width (gausssigma)

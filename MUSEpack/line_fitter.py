@@ -261,14 +261,9 @@ autoadjust, fwhm_block):
 
                 if iterations == 0:
 
-                    print(linefit_guess)
-                    print(linefit_limits)
-
                     if self.rv_sys != 0.:
                         linefit_guess = lambda_rv_shift(self,
                         linefit_guess)
-                        linefit_limits = lambda_rv_shift(self,
-                        linefit_limits)
 
                     sp.specfit.multifit(fittype='voigt', renormalize='auto',\
                     annotate=False, show_components=False, verbose=False,\
