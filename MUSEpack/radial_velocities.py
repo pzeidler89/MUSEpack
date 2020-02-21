@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.0'
+__version__ = '1.1'
 
-__revision__ = '20190916'
+__revision__ = '20200221'
 
 import sys
 import os
@@ -85,11 +85,15 @@ class RV_spectrum:
             both : spectral lines can be absorption or emission lines. **This**
             **mode has not been tested yet !!!**
 
+        rv_sys : :obj:`float` (optional, default: 0)
+            systematic RV shift in km/s
+            Should be provided for large velocity offsets or redshifted objects
+
     """
 
     def __init__(self, spec_id, spec_f, spec_err, spec_lambda,\
     loglevel="INFO", templatebins=100000, specbinsize=1.25, dispersion=2.4,\
-    linetype='absorption'):
+    linetype='absorption', rv_sys=1):
 
         self.spec_id = spec_id          # ID of input spectrum
         self.spec_f = spec_f            #input spectrum
@@ -119,6 +123,8 @@ class RV_spectrum:
 
         self.specbinsize = specbinsize
         self.dispersion = dispersion
+
+        self.rv_sys = rv_sys
 
         self.cat = None # pandas dataframe for all the line fit parameters
         self.rv = None      #radial velocity of the star
@@ -201,9 +207,21 @@ class RV_spectrum:
             temp = ascii.read(initcat)
             self.logger.info('Adding lines: ' + str(temp['name'].data))
 
-            d = {'l_lab': temp['lambda'],\
-                 'l_start': temp['start'],\
-                 'l_end': temp['end'],\
+            if self.rv_sys == 0.:
+                l_lab = temp['lambda']
+                l_start = temp['start']
+                l_end = temp['end']
+            else:
+                self.logger.info('Systematic RV shift: '\
+                + str('{:.2f}'.format(self.rv_sys)) + ' km/s')
+
+                l_lab = _lambda_rv_shift(self, temp['lambda'])
+                l_start = _lambda_rv_shift(self, temp['start'])
+                l_end = _lambda_rv_shift(self, temp['end'])
+
+            d = {'l_lab': l_lab,\
+                 'l_start': l_start,\
+                 'l_end': l_end,\
                  'l_fit': np.empty_like(temp['lambda']),\
                  'a_fit': np.empty_like(temp['lambda']),\
                  'sg_fit': np.empty_like(temp['lambda']),\
@@ -734,3 +752,7 @@ class RV_spectrum:
 
             self.logger.info('Elapsed time: '\
             + time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
+
+    def _lambda_rv_shift(self, lam):
+        lambda_new = self.rv_sys * lam / const.c.to('km/s').value
+        return lambda_new
