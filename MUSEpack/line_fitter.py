@@ -187,9 +187,6 @@ autoadjust, fwhm_block):
         linefit_guess, linefit_limits, linefit_limited =\
         initial_guesses(self, lines_select, blends, llimits=llimits)
 
-        print(self.spec_f[spec_select_idx])
-        print(np.nanmedian(self.spec_f[spec_select_idx]))
-
         exponent\
         = int(np.log10(np.nanmedian(self.spec_f[spec_select_idx])) - 4.)
         factor = float(10 ** (exponent * (-1)))

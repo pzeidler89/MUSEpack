@@ -755,4 +755,5 @@ class RV_spectrum:
 
 def _lambda_rv_shift(self, lam):
     lambda_new = self.rv_sys * lam / const.c.to('km/s').value
+    print(lam,lambda_new)
     return lambda_new
