@@ -753,6 +753,6 @@ class RV_spectrum:
             self.logger.info('Elapsed time: '\
             + time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
 
-    def _lambda_rv_shift(self, lam):
-        lambda_new = self.rv_sys * lam / const.c.to('km/s').value
-        return lambda_new
+def _lambda_rv_shift(self, lam):
+    lambda_new = self.rv_sys * lam / const.c.to('km/s').value
+    return lambda_new
