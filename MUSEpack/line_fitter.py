@@ -261,6 +261,9 @@ autoadjust, fwhm_block):
 
                 if iterations == 0:
 
+                    print(linefit_guess)
+                    print(linefit_limits)
+
                     if self.rv_sys != 0.:
                         linefit_guess = lambda_rv_shift(self,
                         linefit_guess)
