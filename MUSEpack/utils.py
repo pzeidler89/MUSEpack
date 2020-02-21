@@ -82,13 +82,7 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
         if self.linetype == 'both':
             limited.append((False, False)) #Amplitude
 
-        if self.rv_sys == 0.:
-            limits.append((line + llimits[0], line + llimits[1]))
-        else:
-
-            limits.append((lambda_rv_shift(self,line) + lambda_rv_shift(self,llimits[0]), lambda_rv_shift(self,line) + lambda_rv_shift(self,llimits[1])))
-
-
+        limits.append((line + llimits[0], line + llimits[1]))
         limited.append((True, True)) #Center
 
         limits.append((0, 0)) #width (gausssigma)
@@ -104,19 +98,21 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
             lprime = blendlist[blendidx]['lprime']
             lsec = blendlist[blendidx]['lsec']
-            
-            # if self.rv_sys == 0.:
-            #     lprime = blendlist[blendidx]['lprime']
-            #     lsec = blendlist[blendidx]['lsec']
-            # else:
-            #
-            #     lprime = lambda_rv_shift(self,
-            #     blendlist[blendidx]['lprime'])
-            #     lsec = lambda_rv_shift(self,
-            #     blendlist[blendidx]['lsec'])
+
+            if self.rv_sys == 0.:
+                lprime = blendlist[blendidx]['lprime']
+                lsec = blendlist[blendidx]['lsec']
+            else:
+
+                lprime = lambda_rv_shift(self,
+                blendlist[blendidx]['lprime'])
+                lsec = lambda_rv_shift(self,
+                blendlist[blendidx]['lsec'])
 
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
+            print(lprime,guesses)
+            print(primeidx)
 
             if len(primeidx) == 1:
 
@@ -188,7 +184,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
 
     '''
 
-    lprime = lambda_rv_shift(self,self.cat.loc[line_idx, 'l_lab'])
+    lprime = self.cat.loc[line_idx, 'l_lab']
     primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
