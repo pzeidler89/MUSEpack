@@ -98,6 +98,17 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
             lprime = blendlist[blendidx]['lprime']
             lsec = blendlist[blendidx]['lsec']
+            
+            if self.rv_sys == 0.:
+                lprime = blendlist[blendidx]['lprime']
+                lsec = blendlist[blendidx]['lsec']
+            else:
+                
+                lprime = lambda_rv_shift(self,
+                blendlist[blendidx]['lprime'])
+                lsec = lambda_rv_shift(self,
+                blendlist[blendidx]['lsec'])
+
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
 
@@ -436,3 +447,7 @@ def ABtoVega(instrument, bandpass):
     difference = zp_vega - zp_ab
 
     return difference
+
+def lambda_rv_shift(self, lam):
+    lambda_new = lam + self.rv_sys * lam / const.c.to('km/s').value
+    return lambda_new

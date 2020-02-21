@@ -159,9 +159,22 @@ autoadjust, fwhm_block):
     resid_level = 5.
     std_resid = resid_level + 1.
     continuum_dev = input_continuum_deviation[line_idx] + 1.
+    #
+    # lstart = float(self.cat.loc[line_idx, 'l_start'])
+    # lend = float(self.cat.loc[line_idx, 'l_end'])
+    
 
-    lstart = float(self.cat.loc[line_idx, 'l_start'])
-    lend = float(self.cat.loc[line_idx, 'l_end'])
+    if self.rv_sys == 0.:
+        lstart = float(self.cat.loc[line_idx, 'l_start'])
+        lend = float(self.cat.loc[line_idx, 'l_end'])
+    else:
+        lstart = lambda_rv_shift(self,\
+        float(self.cat.loc[line_idx, 'l_start']))
+        lend = lambda_rv_shift(self,\
+        float(self.cat.loc[line_idx, 'l_end']))
+
+        linecat = lambda_rv_shift(self, linecat)
+
     contorder = self.cat.loc[line_idx, 'cont_order']
 
     n_ladjust = 0

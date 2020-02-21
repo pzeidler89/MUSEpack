@@ -157,6 +157,8 @@ class RV_spectrum:
         self.logger.info('Initiate instance of RV_spectrum for: '\
         + str(self.spec_id))
         self.logger.debug('DEBUG mode => all modules run on one core')
+        self.logger.info('Systematic RV shift: '\
+        + str('{:.2f}'.format(self.rv_sys)) + ' km/s')
 
     def clean(self):
         """
@@ -206,18 +208,6 @@ class RV_spectrum:
             self.logger.info('Initiating the catalog')
             temp = ascii.read(initcat)
             self.logger.info('Adding lines: ' + str(temp['name'].data))
-
-            if self.rv_sys == 0.:
-                l_lab = temp['lambda']
-                l_start = temp['start']
-                l_end = temp['end']
-            else:
-                self.logger.info('Systematic RV shift: '\
-                + str('{:.2f}'.format(self.rv_sys)) + ' km/s')
-
-                l_lab = _lambda_rv_shift(self, temp['lambda'])
-                l_start = _lambda_rv_shift(self, temp['start'])
-                l_end = _lambda_rv_shift(self, temp['end'])
 
             d = {'l_lab': l_lab,\
                  'l_start': l_start,\
@@ -752,8 +742,3 @@ class RV_spectrum:
 
             self.logger.info('Elapsed time: '\
             + time.strftime("%H:%M:%S", time.gmtime(elapsed_time)))
-
-def _lambda_rv_shift(self, lam):
-    lambda_new = self.rv_sys * lam / const.c.to('km/s').value
-    print(lam,lambda_new)
-    return lambda_new
