@@ -111,8 +111,6 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
-            print(lprime,guesses)
-            print(primeidx)
 
             if len(primeidx) == 1:
 
@@ -185,7 +183,8 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
     '''
 
     lprime = self.cat.loc[line_idx, 'l_lab']
-    primeidx = np.where(lprime == guesses)[0]
+    print(lambda_rv_shift(self,lprime),guesses)
+    primeidx = np.where(lambda_rv_shift(self,lprime) == guesses)[0]
 
     if autoadjust:
 
