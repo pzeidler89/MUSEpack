@@ -454,4 +454,6 @@ def ABtoVega(instrument, bandpass):
 
 def lambda_rv_shift(self, lam):
     lambda_new = lam + self.rv_sys * lam / const.c.to('km/s').value
+    if self.rv_sys ==0:
+        lambda_new = lam
     return lambda_new
