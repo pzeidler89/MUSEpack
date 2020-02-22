@@ -163,6 +163,7 @@ autoadjust, fwhm_block):
     # lstart = float(self.cat.loc[line_idx, 'l_start'])
     # lend = float(self.cat.loc[line_idx, 'l_end'])
     
+    linecat_zero = linecat.copy()
 
     if self.rv_sys == 0.:
         lstart = float(self.cat.loc[line_idx, 'l_start'])
@@ -172,8 +173,8 @@ autoadjust, fwhm_block):
         float(self.cat.loc[line_idx, 'l_start']))
         lend = lambda_rv_shift(self,\
         float(self.cat.loc[line_idx, 'l_end']))
-
         linecat = lambda_rv_shift(self, linecat)
+        
 
     contorder = self.cat.loc[line_idx, 'cont_order']
 
@@ -189,14 +190,15 @@ autoadjust, fwhm_block):
 
         lines_select = linecat[np.where((linecat >= lstart)\
         & (linecat < lend))]
+        lines_select_zero = linecat_zero[np.where((linecat >= lstart)\
+        & (linecat < lend))]
 
         spec_select_idx\
-        = np.where((lambda_rv_shift(self, self.spec_lambda) >= lstart) &\
-        (lambda_rv_shift(self, self.spec_lambda) < lend))
+        = np.where((self.spec_lambda >= lstart) & (self.spec_lambda < lend))
 
         spec_select_idx_highres\
-        = np.where((lambda_rv_shift(self, self.spec_lambda_highres)\
-        >= lstart) & (lambda_rv_shift(self, self.spec_lambda_highres) < lend))
+        = np.where((self.spec_lambda_highres >= lstart) &\
+        (self.spec_lambda_highres < lend))
 
         linefit_guess, linefit_limits, linefit_limited =\
         initial_guesses(self, lines_select, blends, llimits=llimits)
@@ -366,7 +368,7 @@ autoadjust, fwhm_block):
                 np.where(lines_select == lambda_rv_shift(self, lab_lines))[0]))
 
             for i in range(len(lines_select)):
-                xcen = lines_select[i]
+                xcen = lines_select_zero[i]
                 gamma = sp.specfit.parinfo[int(4 * i + 3)]['value']
                 sigma = sp.specfit.parinfo[int(4 * i + 2)]['value']
                 amp = sp.specfit.parinfo[int(4 * i + 0)]['value']
