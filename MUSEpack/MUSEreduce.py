@@ -840,7 +840,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER FLAT')
 
-    esorex_cmd = '--log-file=flat.log --log-level=debug'
+    esorex_cmd = '--log-file=flat.log --log-level=debug'\
     + ' muse_flat'\
     + ' --samples=true'\
     + ' --nifu=-1'\
