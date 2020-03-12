@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
-__revision__ = '20200211'
+__revision__ = '20200312'
 
 import sys
 import shutil
@@ -115,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Feb 11, 2020                    #####')
+        print('#####                    Mar 12, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -207,8 +207,9 @@ class musereduce:
             print('>>> CREATE_SKY')
         if self.config['sci_post']['execute']:
             print('>>> SCI_POST')
-        if self.config['exp_combine']['execute']:
+        if self.config['exp_align']['execute']:
             print('>>> EXP_ALIGN')
+        if self.config['exp_combine']['execute']:
             print('>>> EXP_COMBINE')
             print(' ')
 
@@ -2349,6 +2350,8 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
     esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
     + ' muse_exp_align'\
+    + ' --srcmin='+str(self.config['exp_align']['srcmin'])\
+    + ' --srcmax='+str(self.config['exp_align']['srcmax'])\
     + ' exp_align.sof'
 
     unique_pointings = np.array([])
