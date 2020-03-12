@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
-__revision__ = '20200211'
+__revision__ = '20200312'
 
 import sys
 import shutil
@@ -2349,6 +2349,8 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
     esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
     + ' muse_exp_align'\
+    + ' srcmin='+str(self.config['exp_align']['srcmin'])\
+    + ' srcmax='+str(self.config['exp_align']['srcmax'])\
     + ' exp_align.sof'
 
     unique_pointings = np.array([])

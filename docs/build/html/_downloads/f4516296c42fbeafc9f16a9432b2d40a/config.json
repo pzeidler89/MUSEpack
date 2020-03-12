@@ -51,6 +51,8 @@
   },
   "exp_align":{
     "execute": true,
+    "srcmin": 5,
+    "srcmax": 80,
     "create_sof": true
   },
   "exp_combine":{

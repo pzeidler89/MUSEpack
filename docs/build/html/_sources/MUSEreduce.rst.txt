@@ -350,3 +350,5 @@ History
 .. versionadded:: 1.1.0
    :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.1*. A legacy version for *pipeline v2.4.2* was created in a separate release. The keywords *autocalib* and in ``sci_oost`` was added.
    The naming convention in ``dither_collect`` was changed so that it matches the convention  **RADEC_EXPTIME_ROTANGLE_COUNTER**.
+.. versionadded:: 1.1.1
+   The key words *srcmin* and *srcmax* were added to *config.json* to be used in ``exp_align``.
