@@ -115,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Feb 11, 2020                    #####')
+        print('#####                    Mar 12, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -207,8 +207,9 @@ class musereduce:
             print('>>> CREATE_SKY')
         if self.config['sci_post']['execute']:
             print('>>> SCI_POST')
-        if self.config['exp_combine']['execute']:
+        if self.config['exp_align']['execute']:
             print('>>> EXP_ALIGN')
+        if self.config['exp_combine']['execute']:
             print('>>> EXP_COMBINE')
             print(' ')
 
