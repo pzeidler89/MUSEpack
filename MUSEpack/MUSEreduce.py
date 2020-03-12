@@ -2350,8 +2350,8 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
     esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
     + ' muse_exp_align'\
-    + ' srcmin='+str(self.config['exp_align']['srcmin'])\
-    + ' srcmax='+str(self.config['exp_align']['srcmax'])\
+    + ' --srcmin='+str(self.config['exp_align']['srcmin'])\
+    + ' --srcmax='+str(self.config['exp_align']['srcmax'])\
     + ' exp_align.sof'
 
     unique_pointings = np.array([])
