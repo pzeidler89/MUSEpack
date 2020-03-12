@@ -2114,76 +2114,97 @@ def _dither_collect(self, exp_list_SCI, OB):
             else:
                 combining_exposure_dir = sec + '/withsky_withoutrvcorr'
 
+        ident_pos = np.zeros(len(exp_list))
+        for idx in range(len(exp_list)):
+            ident = 0
+            for idx2 in range(len(exp_list)):
+                if exp_list[idx][-20:-12] == exp_list[idx2][-20:-12]:
+                    ident_pos[idx2] = ident
+                    ident += 1
+
         for exp_num in range(len(exp_list)):
             if self.withrvcorr:
                 if self.skysub:
                     if self.dithering_multiple_OBs:
+
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     else:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits ==> '\
                         + combining_exposure_dir_withoutsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wosky.fits',\
                         combining_exposure_dir_withoutsky +\
                         '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12] + '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                 if not self.skysub:
                     if self.dithering_multiple_OBs:
@@ -2191,68 +2212,80 @@ def _dither_collect(self, exp_list_SCI, OB):
                         + '/DATACUBE_FINAL_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9] +\
                         ' /PIXTABLE_REDUCED_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     else:
                         print(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/DATACUBE_FINAL_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/DATACUBE_FINAL_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/IMAGE_FOV_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/IMAGE_FOV_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                         print(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits ==> '\
                         + combining_exposure_dir_withsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                         shutil.copy(exp_list[exp_num][:-9]\
                         + '/PIXTABLE_REDUCED_0001_wsky.fits',\
                         combining_exposure_dir_withsky\
                         + '/PIXTABLE_REDUCED_' + OB + '_'\
-                        + exp_list[exp_num][-20:-9] + '.fits')
+                        + exp_list[exp_num][-20:-12]+ '_'\
+                        + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
             else:
 
                 if dithering_multiple_OBs:
@@ -2260,68 +2293,80 @@ def _dither_collect(self, exp_list_SCI, OB):
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/DATACUBE_FINAL_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits',\
                     combining_exposure_dir + '/DATACUBE_FINAL_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     print(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/IMAGE_FOV_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/IMAGE_FOV_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     print(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir + '/PIXTABLE_REDUCED_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/PIXTABLE_REDUCED_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                 else:
                     print(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
                     + '/DATACUBE_FINAL_' + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/DATACUBE_FINAL_wskynorvcorr.fits',\
                     combining_exposure_dir + '/DATACUBE_FINAL_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     print(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
                     + '/IMAGE_FOV_'+ OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/IMAGE_FOV_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/IMAGE_FOV_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
                     print(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits ==> '\
                     + combining_exposure_dir\
                     + '/PIXTABLE_REDUCED_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                     shutil.copy(exp_list[exp_num][:-9]\
                     + '/PIXTABLE_REDUCED_0001_wskynorvcorr.fits',\
                     combining_exposure_dir + '/PIXTABLE_REDUCED_'\
                     + OB + '_'\
-                    + exp_list[exp_num][-20:-9] + '.fits')
+                    + exp_list[exp_num][-20:-12]+ '_'\
+                    + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
 
 def _exp_align(self, exp_list_SCI, create_sof, OB):
