@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>5. Utility module &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
+  <title>5. Utility module &mdash; MUSEpack 1.1.1dev20200323 documentation</title>
   
 
   
@@ -218,7 +218,7 @@
 <dt>Kwargs:</dt><dd><dl>
 <dt>linestrength<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (default: 100)</span></dt><dd><p>initial guess for the line strength</p>
 </dd>
-<dt>blends<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional)</span></dt><dd><p>A file containing the a list of blended lines in the 
+<dt>blends<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional)</span></dt><dd><p>A file containing the a list of blended lines in the
 format: ** List is coming soon**</p>
 </dd>
 </dl>
@@ -294,6 +294,9 @@ lines is zero</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.1.3: </span>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">util.Line_clipping</span></code> was adjusted in how the two outliers are clipped before the MAD is calculated. It now keeps the <span class="math notranslate nohighlight">\(N-2\)</span>-lines
 that have the smaller deviation from each other.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.1.4: </span>adding <cite>rv_sys</cite>, to compensate for larger systematic RV shifts or redshifts for the line and RV fitter. The <code class="xref py py-mod docutils literal notranslate"><span class="pre">util.lambda_rv_shift</span></code> was introduced</p>
 </div>
 </div>
 </div>

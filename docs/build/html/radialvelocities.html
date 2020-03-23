@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. Spectral line fitting and radial velocity measurements &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
+  <title>3. Spectral line fitting and radial velocity measurements &mdash; MUSEpack 1.1.1dev20200323 documentation</title>
   
 
   
@@ -208,6 +208,7 @@
 <p><a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> uses an iterative method to fit the spectral lines and the continuum simultaneously. <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> automatically adjusts the input parameters to <a class="reference external" href="https://pyspeckit.readthedocs.io/en/latest/index.html">pyspeckit</a> in the manner to optimize the fitting (<em>continuum order</em> and <em>wavelegth limits</em>)</p>
 <p>The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> determines whether the fit fullfils the set parameters and was succesfull. The <a class="reference internal" href="#module-line_fitter" title="line_fitter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">line_fitter</span></code></a> also allows to fit blends by fixing a maximum ratio between the primary line (the one the user is interested in) and the secondary line (blend). This ensures that the blend does not become the dominant line.</p>
 <p>In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration <span class="math notranslate nohighlight">\(n\)</span> based on the solution <span class="math notranslate nohighlight">\(n-1\)</span> of the primary line taking into account <span class="math notranslate nohighlight">\(\Delta \lambda / \lambda\)</span>.</p>
+<p>If the spectra with high radial velocities, or if the object is red shifted an initial guess of the radial velocity needs to be provided. This may be done by the <em>Kwargs</em> <cite>rv_sys</cite> of the <a class="reference internal" href="#radial_velocities.RV_spectrum" title="radial_velocities.RV_spectrum"><code class="xref py py-class docutils literal notranslate"><span class="pre">radial_velocities.RV_spectrum</span></code></a>. This is important if the shift is much larger than the wavelength limits, where the automatic adjustment fails. Additionally, the more accurate this <cite>rv_sys</cite> is provided the faster the fit converges.</p>
 <span class="target" id="module-line_fitter"></span><dl class="function">
 <dt id="line_fitter.line_fitter">
 <code class="sig-prename descclassname">line_fitter.</code><code class="sig-name descname">line_fitter</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">linecat</em>, <em class="sig-param">line_idx</em>, <em class="sig-param">niter</em>, <em class="sig-param">input_resid_level</em>, <em class="sig-param">max_contorder</em>, <em class="sig-param">max_ladjust</em>, <em class="sig-param">adjust_preference</em>, <em class="sig-param">input_continuum_deviation</em>, <em class="sig-param">llimits</em>, <em class="sig-param">max_exclusion_level</em>, <em class="sig-param">blends</em>, <em class="sig-param">autoadjust</em>, <em class="sig-param">fwhm_block</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/line_fitter.html#line_fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#line_fitter.line_fitter" title="Permalink to this definition">¶</a></dt>
@@ -323,7 +324,7 @@ excluded from further analyses</p>
 <h3><span class="section-number">3.2.1. </span>The radial velocity fitter<a class="headerlink" href="#the-radial-velocity-fitter" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="radial_velocities.RV_spectrum">
-<em class="property">class </em><code class="sig-prename descclassname">radial_velocities.</code><code class="sig-name descname">RV_spectrum</code><span class="sig-paren">(</span><em class="sig-param">spec_id</em>, <em class="sig-param">spec_f</em>, <em class="sig-param">spec_err</em>, <em class="sig-param">spec_lambda</em>, <em class="sig-param">loglevel='INFO'</em>, <em class="sig-param">templatebins=100000</em>, <em class="sig-param">specbinsize=1.25</em>, <em class="sig-param">dispersion=2.4</em>, <em class="sig-param">linetype='absorption'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">radial_velocities.</code><code class="sig-name descname">RV_spectrum</code><span class="sig-paren">(</span><em class="sig-param">spec_id</em>, <em class="sig-param">spec_f</em>, <em class="sig-param">spec_err</em>, <em class="sig-param">spec_lambda</em>, <em class="sig-param">loglevel='INFO'</em>, <em class="sig-param">templatebins=100000</em>, <em class="sig-param">specbinsize=1.25</em>, <em class="sig-param">dispersion=2.4</em>, <em class="sig-param">linetype='absorption'</em>, <em class="sig-param">rv_sys=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class contains the 1D spectrum, as well as all fitting parameters
 and output values including the radial velocity catalog.</p>
 <dl>
@@ -354,6 +355,9 @@ nominal MUSE instrument dispersion</p>
 <p>emission: All spectral lines are emission lines</p>
 <p>both : spectral lines can be absorption or emission lines. <strong>This</strong>
 <strong>mode has not been tested yet !!!</strong></p>
+</dd>
+<dt>rv_sys<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>systematic RV shift in km/s
+Should be provided for large velocity offsets or redshifted objects</p>
 </dd>
 </dl>
 </dd>
@@ -404,15 +408,16 @@ init_cat</p>
 <dt>niter<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</span></dt><dd><p>The maximum number of iteration if convergence is not reached</p>
 </dd>
 <dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set
-to -1 all available system resources are used. Maximum number of
-CPUs is the number of spectral lines the fit is performed on.</p>
+to -1 all available system resources are used. Maximum number
+of CPUs is the number of spectral lines the fit is performed
+on.</p>
 </dd>
 <dt>resid_level: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (optional, default: None)</dt><dd><p>The maximum MAD for the fit residuals for a succesfull fit</p>
 </dd>
 <dt>max_contorder<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 2)</span></dt><dd><p>The maximum polynominal order of the continuum</p>
 </dd>
-<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>Ahe maximum number of wavelength range adjustments in steps of 5
-Angstrom</p>
+<dt>max_ladjust<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 4)</span></dt><dd><p>Ahe maximum number of wavelength range adjustments in
+steps of 5 Angstrom</p>
 </dd>
 <dt>adjust_preference: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> (optional, default: contorder)</dt><dd><p><code class="docutils literal notranslate"><span class="pre">contorder</span></code>: continuum order is adjusted first</p>
 <p><code class="docutils literal notranslate"><span class="pre">wavelength</span></code>: wavelength range is adjusted first</p>
@@ -465,7 +470,7 @@ used in the plot.</p>
 <dl class="method">
 <dt id="radial_velocities.RV_spectrum.rv_fit">
 <code class="sig-name descname">rv_fit</code><span class="sig-paren">(</span><em class="sig-param">guesses</em>, <em class="sig-param">niter=10000</em>, <em class="sig-param">line_sigma=3</em>, <em class="sig-param">n_CPU=-1</em>, <em class="sig-param">line_significants=5</em>, <em class="sig-param">RV_guess_var=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/radial_velocities.html#RV_spectrum.rv_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#radial_velocities.RV_spectrum.rv_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>The module runs the radial velocity fit using <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a> and the 
+<dd><p>The module runs the radial velocity fit using <a class="reference external" href="http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf">ppxf</a> and the
 <a class="reference internal" href="#monte-carlo"><span class="std std-ref">Monte Carlo radial velocity determination</span></a>.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
@@ -479,14 +484,15 @@ the form [RV,sepctral_dispersion]</p>
 </dd>
 <dt>line_sigma: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 3):</dt><dd><p>sigma for the RV clipping for the individual lines</p>
 </dd>
-<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set 
-to -1 all available system resources are used. Maximum number of
-CPUs is the number of spectral lines the fit is performed to.</p>
+<dt>n_CPU<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: -1)</span></dt><dd><p>Setting the number of CPUs used for the parallelization. If set
+to -1 all available system resources are used. Maximum number
+of CPUs is the number of spectral lines the fit is performed
+to.</p>
 </dd>
 <dt>line_significants: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> (optional, default: 5)</dt><dd><p>The sigma-level for the spectral line to be above the continuum
 in order to be considered <em>valid</em></p>
 </dd>
-<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a 
+<dt>RV_guess_var<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a> (optional, default: 0)</span></dt><dd><p>The maximum variation the RV guess will be varied using a
 uniform distribution.</p>
 </dd>
 </dl>
@@ -599,6 +605,9 @@ It describes the min/max variation of the initial RV guess for each fit.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0: </span>The release version as originally published in <a class="reference external" href="www.xyz.com">Zeidler et al. 2019</a>.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.1: </span>Introducing the <em>Kwargs</em> <cite>rv_sys</cite>, which should be used for large initial RV offsets from rest frame or for redshifted spectra. <cite>rv_sys</cite> should provide an estimate of that shift.</p>
 </div>
 </div>
 </div>

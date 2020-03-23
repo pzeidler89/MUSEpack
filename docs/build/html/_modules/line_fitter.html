@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>line_fitter &mdash; MUSEpack 1.1.1dev20200219 documentation</title>
+  <title>line_fitter &mdash; MUSEpack 1.1.1dev20200323 documentation</title>
   
 
   
@@ -356,9 +356,23 @@
     <span class="n">resid_level</span> <span class="o">=</span> <span class="mf">5.</span>
     <span class="n">std_resid</span> <span class="o">=</span> <span class="n">resid_level</span> <span class="o">+</span> <span class="mf">1.</span>
     <span class="n">continuum_dev</span> <span class="o">=</span> <span class="n">input_continuum_deviation</span><span class="p">[</span><span class="n">line_idx</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span>
+    <span class="c1">#</span>
+    <span class="c1"># lstart = float(self.cat.loc[line_idx, &#39;l_start&#39;])</span>
+    <span class="c1"># lend = float(self.cat.loc[line_idx, &#39;l_end&#39;])</span>
+    
+    <span class="n">linecat_zero</span> <span class="o">=</span> <span class="n">linecat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="n">lstart</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_start&#39;</span><span class="p">])</span>
-    <span class="n">lend</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_end&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="n">lstart</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_start&#39;</span><span class="p">])</span>
+        <span class="n">lend</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_end&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lstart</span> <span class="o">=</span> <span class="n">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
+        <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_start&#39;</span><span class="p">]))</span>
+        <span class="n">lend</span> <span class="o">=</span> <span class="n">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
+        <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_end&#39;</span><span class="p">]))</span>
+        <span class="n">linecat</span> <span class="o">=</span> <span class="n">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">linecat</span><span class="p">)</span>
+        
+
     <span class="n">contorder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;cont_order&#39;</span><span class="p">]</span>
 
     <span class="n">n_ladjust</span> <span class="o">=</span> <span class="mi">0</span>
@@ -372,6 +386,8 @@
     <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">continuum_dev</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fit_failed</span><span class="p">:</span>
 
         <span class="n">lines_select</span> <span class="o">=</span> <span class="n">linecat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">linecat</span> <span class="o">&gt;=</span> <span class="n">lstart</span><span class="p">)</span>\
+        <span class="o">&amp;</span> <span class="p">(</span><span class="n">linecat</span> <span class="o">&lt;</span> <span class="n">lend</span><span class="p">))]</span>
+        <span class="n">lines_select_zero</span> <span class="o">=</span> <span class="n">linecat_zero</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">linecat</span> <span class="o">&gt;=</span> <span class="n">lstart</span><span class="p">)</span>\
         <span class="o">&amp;</span> <span class="p">(</span><span class="n">linecat</span> <span class="o">&lt;</span> <span class="n">lend</span><span class="p">))]</span>
 
         <span class="n">spec_select_idx</span>\
@@ -444,6 +460,7 @@
                 <span class="n">fit_plotted_area</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclusionlevel</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">exclusion_level</span><span class="p">))</span>
 
                 <span class="k">if</span> <span class="n">iterations</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
                     <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">multifit</span><span class="p">(</span><span class="n">fittype</span><span class="o">=</span><span class="s1">&#39;voigt&#39;</span><span class="p">,</span> <span class="n">renormalize</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>\
                     <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_components</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
                     <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">guesses</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">linefit_guess</span><span class="p">),</span> <span class="n">parinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
@@ -545,10 +562,10 @@
             <span class="k">for</span> <span class="n">lab_line_idx</span><span class="p">,</span> <span class="n">lab_lines</span>\
             <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]])):</span>
                 <span class="n">par_extract_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">par_extract_idx</span><span class="p">,</span>\
-                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lines_select</span> <span class="o">==</span> <span class="n">lab_lines</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lines_select</span> <span class="o">==</span> <span class="n">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lab_lines</span><span class="p">))[</span><span class="mi">0</span><span class="p">]))</span>
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines_select</span><span class="p">)):</span>
-                <span class="n">xcen</span> <span class="o">=</span> <span class="n">lines_select</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">xcen</span> <span class="o">=</span> <span class="n">lines_select_zero</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">gamma</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
                 <span class="n">sigma</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
                 <span class="n">amp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">specfit</span><span class="o">.</span><span class="n">parinfo</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
