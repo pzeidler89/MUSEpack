@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.3'
 
-__revision__ = '20190731'
+__version__ = '0.1.4'
+
+__revision__ = '20200323'
 
 import sys
 import os
@@ -46,7 +47,7 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
             initial guess for the line strength
 
         blends : :obj:`str` (optional)
-            A file containing the a list of blended lines in the 
+            A file containing the a list of blended lines in the
             format: ** List is coming soon**
 
     return:
@@ -98,6 +99,17 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
             lprime = blendlist[blendidx]['lprime']
             lsec = blendlist[blendidx]['lsec']
+
+            if self.rv_sys == 0.:
+                lprime = blendlist[blendidx]['lprime']
+                lsec = blendlist[blendidx]['lsec']
+            else:
+
+                lprime = lambda_rv_shift(self,
+                blendlist[blendidx]['lprime'])
+                lsec = lambda_rv_shift(self,
+                blendlist[blendidx]['lsec'])
+
             primeidx = np.where(lprime == guesses)[0]
             secidx = np.where(lsec == guesses)[0]
 
@@ -171,8 +183,12 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
 
     '''
 
-    lprime = self.cat.loc[line_idx, 'l_lab']
-    primeidx = np.where(lprime == guesses)[0]
+    if self.rv_sys == 0.:
+        lprime = self.cat.loc[line_idx, 'l_lab']
+        primeidx = np.where(lprime == guesses)[0]
+    else:
+        lprime = lambda_rv_shift(self, self.cat.loc[line_idx, 'l_lab'])
+        primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
 
@@ -363,20 +379,16 @@ def line_clipping(self, x, line_significants, sigma=3):
             ind = np.where((x < median - sigma * mad) | (x > median\
             + sigma * mad))[0]
         if len(x) > 3:
-            # x_red = np.delete(x_red1, [np.argmin(x_red1), np.argmax(x_red1)])
             gr = np.array(list(inter_comb(x_red1, len(x_red1) - 2)))
-            
+
             std_gr = [np.std(it) for it in gr]
             x_red = gr[np.argmin(std_gr)]
-            
+
             median = np.median(x_red)
             mad = MAD(x_red)
-            # if len(x_red) >= 3:
             ind = np.where((x < median - sigma * mad) | (x > median\
             + sigma * mad))[0]
-            # else:
-            #     ind = np.where((x < median - 0.5 * sigma * mad) | (x > median\
-            #     + 0.5 * sigma * mad))[0]
+
         mask[ind] = 1
     x_masked = np.ma.masked_array(x, mask=[mask])
     return x_masked
@@ -436,3 +448,10 @@ def ABtoVega(instrument, bandpass):
     difference = zp_vega - zp_ab
 
     return difference
+
+
+def lambda_rv_shift(self, lam):
+    lambda_new = lam + self.rv_sys * lam / const.c.to('km/s').value
+    if self.rv_sys == 0:
+        lambda_new = lam
+    return lambda_new

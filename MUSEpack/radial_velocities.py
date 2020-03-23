@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-__version__ = '1.0'
 
-__revision__ = '20190916'
+__version__ = '1.1'
+
+__revision__ = '20200323'
 
 import sys
 import os
@@ -85,11 +86,15 @@ class RV_spectrum:
             both : spectral lines can be absorption or emission lines. **This**
             **mode has not been tested yet !!!**
 
+        rv_sys : :obj:`float` (optional, default: 0)
+            systematic RV shift in km/s
+            Should be provided for large velocity offsets or redshifted objects
+
     """
 
     def __init__(self, spec_id, spec_f, spec_err, spec_lambda,\
     loglevel="INFO", templatebins=100000, specbinsize=1.25, dispersion=2.4,\
-    linetype='absorption'):
+    linetype='absorption', rv_sys=0.):
 
         self.spec_id = spec_id          # ID of input spectrum
         self.spec_f = spec_f            #input spectrum
@@ -119,6 +124,8 @@ class RV_spectrum:
 
         self.specbinsize = specbinsize
         self.dispersion = dispersion
+
+        self.rv_sys = rv_sys
 
         self.cat = None # pandas dataframe for all the line fit parameters
         self.rv = None      #radial velocity of the star
@@ -151,6 +158,8 @@ class RV_spectrum:
         self.logger.info('Initiate instance of RV_spectrum for: '\
         + str(self.spec_id))
         self.logger.debug('DEBUG mode => all modules run on one core')
+        self.logger.info('Systematic RV shift: '\
+        + str('{:.2f}'.format(self.rv_sys)) + ' km/s')
 
     def clean(self):
         """
@@ -201,9 +210,13 @@ class RV_spectrum:
             temp = ascii.read(initcat)
             self.logger.info('Adding lines: ' + str(temp['name'].data))
 
-            d = {'l_lab': temp['lambda'],\
-                 'l_start': temp['start'],\
-                 'l_end': temp['end'],\
+            l_lab = temp['lambda']
+            l_start = temp['start']
+            l_end = temp['end']
+
+            d = {'l_lab': l_lab,\
+                 'l_start': l_start,\
+                 'l_end': l_end,\
                  'l_fit': np.empty_like(temp['lambda']),\
                  'a_fit': np.empty_like(temp['lambda']),\
                  'sg_fit': np.empty_like(temp['lambda']),\
@@ -241,7 +254,7 @@ class RV_spectrum:
 
         spec_plot = plt.figure(self.spec_id, figsize=(8, plthight))
         plotgrid = gridspec.GridSpec(nrows, 3)
-        ax_spec = plt.subplot(plotgrid[0, :])
+        ax_spec = plt.subplot(plotgrid[0,:])
 
         non_inf_cont = ~np.isinf(self.template_f / self.continuum)
         non_inf_cont_highres\
@@ -362,8 +375,9 @@ class RV_spectrum:
 
             n_CPU : :obj:`float` (optional, default: -1)
                 Setting the number of CPUs used for the parallelization. If set
-                to -1 all available system resources are used. Maximum number of
-                CPUs is the number of spectral lines the fit is performed on.
+                to -1 all available system resources are used. Maximum number
+                of CPUs is the number of spectral lines the fit is performed
+                on.
 
             resid_level: :obj:`float` or :obj:`None` (optional, default: None)
                 The maximum MAD for the fit residuals for a succesfull fit
@@ -372,8 +386,8 @@ class RV_spectrum:
                 The maximum polynominal order of the continuum
 
             max_ladjust : :obj:`int` (optional, default: 4)
-                Ahe maximum number of wavelength range adjustments in steps of 5
-                Angstrom
+                Ahe maximum number of wavelength range adjustments in
+                steps of 5 Angstrom
 
             adjust_preference: :obj:`str` (optional, default: contorder)
                 ``contorder``: continuum order is adjusted first
@@ -514,8 +528,8 @@ class RV_spectrum:
         self.logger.info('Calculating RVs based on peaks only')
         v = np.array((self.cat.loc[:, 'l_fit'].values\
         / self.cat.loc[:, 'l_lab'] - 1.) * const.c.to('km/s').value)
-        
-        for i,vi in enumerate(v):
+
+        for i, vi in enumerate(v):
             self.logger.info('Line ' + self.cat.index[i]\
             + ': RV=' + str('{:4.2f}'.format(vi)) + ' km/s')
 
@@ -528,7 +542,7 @@ class RV_spectrum:
         else:
             self.rv_peak = np.median(v[~remaining_lines.mask])
             self.erv_peak = MAD(v[~remaining_lines.mask])
-            
+
             self.logger.info('Finished Calculating RVs based on peaks only: '\
             + 'RV=(' + str('{:4.2f}'.format(self.rv_peak)) + '+-'\
             + str('{:4.3f}'.format(self.erv_peak)) + ')km/s based on '\
@@ -536,10 +550,10 @@ class RV_spectrum:
             + '/' + str(len(v)) + ' lines')
 
     def rv_fit(self, guesses, niter=10000, line_sigma=3,\
-    n_CPU=-1, line_significants=5, RV_guess_var = 0.):
+    n_CPU=-1, line_significants=5, RV_guess_var=0.):
 
         """
-        The module runs the radial velocity fit using `ppxf`_ and the 
+        The module runs the radial velocity fit using `ppxf`_ and the
         :ref:`Monte Carlo`.
 
         Args:
@@ -555,16 +569,17 @@ class RV_spectrum:
                 sigma for the RV clipping for the individual lines
 
             n_CPU : :obj:`float` (optional, default: -1)
-                Setting the number of CPUs used for the parallelization. If set 
-                to -1 all available system resources are used. Maximum number of
-                CPUs is the number of spectral lines the fit is performed to.
+                Setting the number of CPUs used for the parallelization. If set
+                to -1 all available system resources are used. Maximum number
+                of CPUs is the number of spectral lines the fit is performed
+                to.
 
             line_significants: :obj:`int` (optional, default: 5)
                 The sigma-level for the spectral line to be above the continuum
                 in order to be considered *valid*
 
             RV_guess_var : :obj:`float` (optional, default: 0)
-                The maximum variation the RV guess will be varied using a 
+                The maximum variation the RV guess will be varied using a
                 uniform distribution.
 
         """
@@ -647,7 +662,7 @@ class RV_spectrum:
                 log_spec_err, velscale_spec, guesses,\
                 mask=mask, degree=-1, clean=False, quiet=True,\
                 plot=False, fixed=[0, 1])
-                
+
                 self.logger.info('RV guess variation line ' + line_name[i]\
                 + ': ' + str('{:4.2f}'.format(RV_guess_var)) + 'km/s')
 

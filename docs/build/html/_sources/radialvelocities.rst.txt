@@ -22,6 +22,8 @@ The :mod:`line_fitter` determines whether the fit fullfils the set parameters an
 
 In order to accomodate hyper-velocity stars an option is given that the wavelength limits are automatically adjust for each iteration :math:`n` based on the solution :math:`n-1` of the primary line taking into account :math:`\Delta \lambda / \lambda`.
 
+If the spectra with high radial velocities, or if the object is red shifted an initial guess of the radial velocity needs to be provided. This may be done by the *Kwargs* `rv_sys` of the :class:`radial_velocities.RV_spectrum`. This is important if the shift is much larger than the wavelength limits, where the automatic adjustment fails. Additionally, the more accurate this `rv_sys` is provided the faster the fit converges.
+
 .. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
 
 .. automodule:: line_fitter
@@ -80,3 +82,5 @@ History
    It describes the min/max variation of the initial RV guess for each fit.
 .. versionadded:: 1.0
    The release version as originally published in `Zeidler et al. 2019`_.
+.. versionadded:: 1.1
+   Introducing the *Kwargs* `rv_sys`, which should be used for large initial RV offsets from rest frame or for redshifted spectra. `rv_sys` should provide an estimate of that shift.

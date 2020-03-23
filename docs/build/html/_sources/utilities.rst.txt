@@ -33,3 +33,6 @@ History
 .. versionadded:: 0.1.3
    The :mod:`util.Line_clipping` was adjusted in how the two outliers are clipped before the MAD is calculated. It now keeps the :math:`N-2`-lines
    that have the smaller deviation from each other.
+
+.. versionadded:: 0.1.4
+   adding `rv_sys`, to compensate for larger systematic RV shifts or redshifts for the line and RV fitter. The :mod:`util.lambda_rv_shift` was introduced
