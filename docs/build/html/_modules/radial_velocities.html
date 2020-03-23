@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>radial_velocities &mdash; MUSEpack 1.1.1dev20200312 documentation</title>
+  <title>radial_velocities &mdash; MUSEpack 1.1.1dev20200323 documentation</title>
   
 
   
@@ -197,9 +197,10 @@
   <h1>Source code for radial_velocities</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20190916&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.1&#39;</span>
+
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20200323&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -282,11 +283,15 @@
 <span class="sd">            both : spectral lines can be absorption or emission lines. **This**</span>
 <span class="sd">            **mode has not been tested yet !!!**</span>
 
+<span class="sd">        rv_sys : :obj:`float` (optional, default: 0)</span>
+<span class="sd">            systematic RV shift in km/s</span>
+<span class="sd">            Should be provided for large velocity offsets or redshifted objects</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec_id</span><span class="p">,</span> <span class="n">spec_f</span><span class="p">,</span> <span class="n">spec_err</span><span class="p">,</span> <span class="n">spec_lambda</span><span class="p">,</span>\
     <span class="n">loglevel</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">templatebins</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">specbinsize</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span> <span class="n">dispersion</span><span class="o">=</span><span class="mf">2.4</span><span class="p">,</span>\
-    <span class="n">linetype</span><span class="o">=</span><span class="s1">&#39;absorption&#39;</span><span class="p">):</span>
+    <span class="n">linetype</span><span class="o">=</span><span class="s1">&#39;absorption&#39;</span><span class="p">,</span> <span class="n">rv_sys</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spec_id</span> <span class="o">=</span> <span class="n">spec_id</span>          <span class="c1"># ID of input spectrum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spec_f</span> <span class="o">=</span> <span class="n">spec_f</span>            <span class="c1">#input spectrum</span>
@@ -316,6 +321,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">specbinsize</span> <span class="o">=</span> <span class="n">specbinsize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span> <span class="o">=</span> <span class="n">rv_sys</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cat</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># pandas dataframe for all the line fit parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rv</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1">#radial velocity of the star</span>
@@ -348,6 +355,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Initiate instance of RV_spectrum for: &#39;</span>\
         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;DEBUG mode =&gt; all modules run on one core&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Systematic RV shift: &#39;</span>\
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; km/s&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RV_spectrum.clean"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -398,9 +407,13 @@
             <span class="n">temp</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">initcat</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Adding lines: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
 
-            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;l_lab&#39;</span><span class="p">:</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">],</span>\
-                 <span class="s1">&#39;l_start&#39;</span><span class="p">:</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span>\
-                 <span class="s1">&#39;l_end&#39;</span><span class="p">:</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>\
+            <span class="n">l_lab</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span>
+            <span class="n">l_start</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+            <span class="n">l_end</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span>
+
+            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;l_lab&#39;</span><span class="p">:</span> <span class="n">l_lab</span><span class="p">,</span>\
+                 <span class="s1">&#39;l_start&#39;</span><span class="p">:</span> <span class="n">l_start</span><span class="p">,</span>\
+                 <span class="s1">&#39;l_end&#39;</span><span class="p">:</span> <span class="n">l_end</span><span class="p">,</span>\
                  <span class="s1">&#39;l_fit&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]),</span>\
                  <span class="s1">&#39;a_fit&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]),</span>\
                  <span class="s1">&#39;sg_fit&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]),</span>\
@@ -438,7 +451,7 @@
 
         <span class="n">spec_plot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_id</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">plthight</span><span class="p">))</span>
         <span class="n">plotgrid</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">ax_spec</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">plotgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">ax_spec</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">plotgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
 
         <span class="n">non_inf_cont</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_f</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuum</span><span class="p">)</span>
         <span class="n">non_inf_cont_highres</span>\
@@ -559,8 +572,9 @@
 
 <span class="sd">            n_CPU : :obj:`float` (optional, default: -1)</span>
 <span class="sd">                Setting the number of CPUs used for the parallelization. If set</span>
-<span class="sd">                to -1 all available system resources are used. Maximum number of</span>
-<span class="sd">                CPUs is the number of spectral lines the fit is performed on.</span>
+<span class="sd">                to -1 all available system resources are used. Maximum number</span>
+<span class="sd">                of CPUs is the number of spectral lines the fit is performed</span>
+<span class="sd">                on.</span>
 
 <span class="sd">            resid_level: :obj:`float` or :obj:`None` (optional, default: None)</span>
 <span class="sd">                The maximum MAD for the fit residuals for a succesfull fit</span>
@@ -569,8 +583,8 @@
 <span class="sd">                The maximum polynominal order of the continuum</span>
 
 <span class="sd">            max_ladjust : :obj:`int` (optional, default: 4)</span>
-<span class="sd">                Ahe maximum number of wavelength range adjustments in steps of 5</span>
-<span class="sd">                Angstrom</span>
+<span class="sd">                Ahe maximum number of wavelength range adjustments in</span>
+<span class="sd">                steps of 5 Angstrom</span>
 
 <span class="sd">            adjust_preference: :obj:`str` (optional, default: contorder)</span>
 <span class="sd">                ``contorder``: continuum order is adjusted first</span>
@@ -711,8 +725,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Calculating RVs based on peaks only&#39;</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;l_fit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>\
         <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;km/s&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">vi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">vi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Line &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>\
             <span class="o">+</span> <span class="s1">&#39;: RV=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:4.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vi</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; km/s&#39;</span><span class="p">)</span>
 
@@ -725,7 +739,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rv_peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="o">~</span><span class="n">remaining_lines</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">erv_peak</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="o">~</span><span class="n">remaining_lines</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
-            
+
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Finished Calculating RVs based on peaks only: &#39;</span>\
             <span class="o">+</span> <span class="s1">&#39;RV=(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:4.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rv_peak</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;+-&#39;</span>\
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:4.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">erv_peak</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;)km/s based on &#39;</span>\
@@ -733,10 +747,10 @@
             <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; lines&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RV_spectrum.rv_fit"><a class="viewcode-back" href="../radialvelocities.html#radial_velocities.RV_spectrum.rv_fit">[docs]</a>    <span class="k">def</span> <span class="nf">rv_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">line_sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>\
-    <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">line_significants</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">RV_guess_var</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">):</span>
+    <span class="n">n_CPU</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">line_significants</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">RV_guess_var</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The module runs the radial velocity fit using `ppxf`_ and the </span>
+<span class="sd">        The module runs the radial velocity fit using `ppxf`_ and the</span>
 <span class="sd">        :ref:`Monte Carlo`.</span>
 
 <span class="sd">        Args:</span>
@@ -752,16 +766,17 @@
 <span class="sd">                sigma for the RV clipping for the individual lines</span>
 
 <span class="sd">            n_CPU : :obj:`float` (optional, default: -1)</span>
-<span class="sd">                Setting the number of CPUs used for the parallelization. If set </span>
-<span class="sd">                to -1 all available system resources are used. Maximum number of</span>
-<span class="sd">                CPUs is the number of spectral lines the fit is performed to.</span>
+<span class="sd">                Setting the number of CPUs used for the parallelization. If set</span>
+<span class="sd">                to -1 all available system resources are used. Maximum number</span>
+<span class="sd">                of CPUs is the number of spectral lines the fit is performed</span>
+<span class="sd">                to.</span>
 
 <span class="sd">            line_significants: :obj:`int` (optional, default: 5)</span>
 <span class="sd">                The sigma-level for the spectral line to be above the continuum</span>
 <span class="sd">                in order to be considered *valid*</span>
 
 <span class="sd">            RV_guess_var : :obj:`float` (optional, default: 0)</span>
-<span class="sd">                The maximum variation the RV guess will be varied using a </span>
+<span class="sd">                The maximum variation the RV guess will be varied using a</span>
 <span class="sd">                uniform distribution.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -844,7 +859,7 @@
                 <span class="n">log_spec_err</span><span class="p">,</span> <span class="n">velscale_spec</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span>\
                 <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">degree</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>\
                 <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-                
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;RV guess variation line &#39;</span> <span class="o">+</span> <span class="n">line_name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>\
                 <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:4.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">RV_guess_var</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;km/s&#39;</span><span class="p">)</span>
 
