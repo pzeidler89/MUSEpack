@@ -2,7 +2,7 @@
 
 __version__ = '1.1.1'
 
-__revision__ = '20200312'
+__revision__ = '20200330'
 
 import sys
 import shutil
@@ -115,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 12, 2020                    #####')
+        print('#####                    Mar 30, 2020                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -841,7 +841,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
 
     print('... Creating the MASTER FLAT')
 
-    esorex_cmd = '--log-file=flat.log --log-level=debug'
+    esorex_cmd = '--log-file=flat.log --log-level=debug'\
     + ' muse_flat'\
     + ' --samples=true'\
     + ' --nifu=-1'\
