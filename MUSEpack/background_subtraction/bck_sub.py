@@ -2,13 +2,15 @@
 
 __version__ = '0.1'
 
-__revision__ = '20210111'
+__revision__ = '20210115'
 
 import string
+import glob
 from astropy.io import fits
 import logging
 from astropy.coordinates import SkyCoord
 from astropy import units as u
+from astropy.wcs import WCS
 
 
 class bck_sub:
@@ -29,14 +31,17 @@ class bck_sub:
     '''
 
 
-    def __init__(self, input_fits, loglevel="INFO", file_id=None):
+    def __init__(self, input_fits, loglevel="INFO", file_id=None, r_aper=15, snr_threshold = 5.):
 
         self.debug = False
         self.loglevel = loglevel
         self.file_id = file_id
+        self.r_aper = r_aper
+        self.snr_threshold
 
         hdu_cube = fits.open(input_fits)
         header_data = hdu_cube[1].header
+        wfc_data = WCS(header_data)
 
         if not file_id:
             RA = hdu_cube[0].header['RA']
@@ -78,18 +83,17 @@ class bck_sub:
         self.data = hdu_cube[1].data
         self.noise = hdu_cube[2].data
 
+        self.starcoord = []
+        self.starSNR = []
 
-    def set_debug(self, dbg_mode):
-        '''
-        Args:
-            dbg_mode : :obj:`bool`,
-            to deactivate the debug mode set to :obj:`False`
-            to activate the debug mode set to :obj:`True`
 
-        '''
+    def mask_stars(self, spec_path):
+        for file in glob.glob(spec_path + 'specid*'):
+            with fits.open(file)[0].header as head:
+                temp_snr = head['HIERARCH SPECTRUM SNRATIO']
+                if temp_snr >= self.snr_threshold:
+                    self.starSNR.append(head['HIERARCH SPECTRUM SNRATIO'])
+                    self.starcoord = SkyCoord(ra=head['RA'] * u.degree, dec=head['DEC'] * u.degree, frame='icrs')
 
-        self.debug = dbg_mode
-        if self.loglevel == "INFO":
-            self.logger.setLevel(logging.INFO)
-        if self.loglevel == "DEBUG":
-            self.logger.setLevel(logging.DEBUG)
+    def add_manual_mask(self):
+
