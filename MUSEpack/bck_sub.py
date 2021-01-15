@@ -79,10 +79,6 @@ class bck_sub:
         self.noise = hdu_cube[2].data
 
 
-
-
-
-
     def set_debug(self, dbg_mode):
         '''
         Args:
