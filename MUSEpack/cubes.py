@@ -332,6 +332,18 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     format='ascii.basic', delimiter=',', overwrite=True)
 
 
+    #write ds9 regions file
+    regf = open(path + '/' + str(filter).upper() + '.reg', 'w')
+
+    regf.write('global color=green dashlist=8 3 width=2 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=0 delete=1 include=1 source=1\n')
+    regf.write("fk5\n")
+
+    for rai, deci in zip(tab['ra'], tab['dec']):
+        regf.write("circle(" + str(int(rai)) + ", " + str(int(deci)) + ",2) \n")
+
+    regf.close()
+
+
 def linemaps(input_fits, path=None, elements=None, wavelengths=None):
     '''
     This module is intended to create linemaps of specified lines/elements
