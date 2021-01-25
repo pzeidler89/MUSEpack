@@ -339,7 +339,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     regf.write("fk5\n")
 
     for rai, deci in zip(tab['ra'], tab['dec']):
-        regf.write("circle(" + str(rai)) + ", " + str(deci)) + ",2) \n")
+        regf.write("circle(" + str(rai)) + ", " + str(deci)) + ",2)\n")
 
     regf.close()
 
