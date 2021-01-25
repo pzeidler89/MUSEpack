@@ -255,7 +255,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
 
 def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
-                   sat=0., mag_sat=None, ifs_sat=None, mag_limit=None):
+                   sat=0., mag_sat=None, ifs_sat=None, mag_limit=None,
+                   regsize=0.5):
 
     '''
 
@@ -292,6 +293,9 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
 
     mag_limit : :obj:`float` (optional, default: :obj:`None`)
         the magnitude at which the output catalog should be truncated
+
+    regsize : :obj:`float` (optional, default: :float:0.5)
+        the size of the regions in arcsec
     '''
 
     if not path:
@@ -339,7 +343,8 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     regf.write("fk5\n")
 
     for rai, deci in zip(tab['ra'], tab['dec']):
-        regf.write("circle(" + str(rai) + ", " + str(deci) + ', 0.5")\n')
+        regf.write("circle(" + str(rai) + ", " + str(deci) + ', '
+                   + '{:.1f}'.format(regsize) +  '")\n')
 
     regf.close()
 
