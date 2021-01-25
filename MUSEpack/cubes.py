@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
-__revision__ = '20200219'
+__revision__ = '20210125'
 
 import sys
 import os
@@ -339,7 +339,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     regf.write("fk5\n")
 
     for rai, deci in zip(tab['ra'], tab['dec']):
-        regf.write("circle(" + str(int(rai)) + ", " + str(int(deci)) + ",2) \n")
+        regf.write("circle(" + str(rai)) + ", " + str(deci)) + ",2) \n")
 
     regf.close()
 
