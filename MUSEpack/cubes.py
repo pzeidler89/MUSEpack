@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
-__revision__ = '20200219'
+__revision__ = '20210125'
 
 import sys
 import os
@@ -255,7 +255,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
 
 def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
-                   sat=0., mag_sat=None, ifs_sat=None, mag_limit=None):
+                   sat=0., mag_sat=None, ifs_sat=None, mag_limit=None,
+                   regsize=0.5):
 
     '''
 
@@ -292,6 +293,9 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
 
     mag_limit : :obj:`float` (optional, default: :obj:`None`)
         the magnitude at which the output catalog should be truncated
+
+    regsize : :obj:`float` (optional, default: :float:0.5)
+        the size of the regions in arcsec
     '''
 
     if not path:
@@ -330,6 +334,19 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
 
     tab.write(path + '/' + str(filter).upper(),\
     format='ascii.basic', delimiter=',', overwrite=True)
+
+
+    #write ds9 regions file
+    regf = open(path + '/' + str(filter).upper() + '.reg', 'w')
+
+    regf.write('global color=green dashlist=8 3 width=2 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=0 delete=1 include=1 source=1\n')
+    regf.write("fk5\n")
+
+    for rai, deci in zip(tab['ra'], tab['dec']):
+        regf.write("circle(" + str(rai) + ", " + str(deci) + ', '
+                   + '{:.1f}'.format(regsize) +  '")\n')
+
+    regf.close()
 
 
 def linemaps(input_fits, path=None, elements=None, wavelengths=None):
