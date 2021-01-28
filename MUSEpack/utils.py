@@ -3,7 +3,7 @@
 
 __version__ = '0.1.4'
 
-__revision__ = '20200323'
+__revision__ = '20210128'
 
 import sys
 import os
@@ -198,7 +198,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
 
         for adj_idx in range(int(len(guesses) / 4.)):
 
-            lshift = lambda_shift(lshift_in, guesses[int(primeidx[0])],\
+            lshift = _lambda_shift(lshift_in, guesses[int(primeidx[0])],\
             guesses[int(4 * adj_idx + 1)])
 
             parinfo[int(4 * adj_idx + 1)]['limits']\
@@ -276,11 +276,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
     return parinfo
 
 
-def lambda_shift(dlin, lin, lout):
-    dlout = dlin * lout / lin
-    return dlout
-
-
 def plotcolor(n):
     colarray = np.array(['Lime', 'Blue', 'Magenta', 'Olive', 'Maroon',
     'indigo', 'orange', 'Cyan', 'Yellow', 'Silver'])
@@ -313,18 +308,6 @@ def voigt_FWHM(sigma_g, gamma_l):
             + 2. * c_1 * phi[i] + (c_0 * c_1) ** 2))
 
     return fwhm_g, fwhm_l, fwhm_v
-
-
-def _gaussian(x, mu, A, sigma):
-    prefact = 1. / np.sqrt(2. * np.pi * sigma ** 2)
-    exponetial = np.exp((-1.) * ((x - mu) ** 2) / (2. * sigma ** 2))
-    returnfunction = A * exponetial
-    return returnfunction
-
-
-def _lorentzian(x, mu, A, gamma):
-    returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
-    return returnfunction
 
 
 def voigt_funct(x_array, x_cen, amplitude, sigma, gamma):
@@ -443,3 +426,26 @@ def lambda_rv_shift(self, lam):
     if self.rv_sys == 0:
         lambda_new = lam
     return lambda_new
+
+
+def _lambda_shift(dlin, lin, lout):
+    '''
+       This functions shifts the wavelength limits if the central wavelength
+       is shifted. This assures that lambda never runs out of bounds
+
+    '''
+
+    dlout = dlin * lout / lin
+    return dlout
+
+
+def _gaussian(x, mu, A, sigma):
+    prefact = 1. / np.sqrt(2. * np.pi * sigma ** 2)
+    exponetial = np.exp((-1.) * ((x - mu) ** 2) / (2. * sigma ** 2))
+    returnfunction = A * exponetial
+    return returnfunction
+
+
+def _lorentzian(x, mu, A, gamma):
+    returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
+    return returnfunction
