@@ -1,6 +1,6 @@
-__version__ = '1.0'
+__version__ = '1.0.1'
 
-__revision__ = '20190916'
+__revision__ = '20210128'
 
 import sys
 import os
@@ -169,6 +169,8 @@ autoadjust, fwhm_block):
     max_n_ladjust_reached = False
     significant = True
     fit_failed = False
+
+    niter += 1 # Iteration 1 are setting the intial guesses
 
     while (std_resid > resid_level or np.isnan(std_resid)\
     or continuum_dev > input_continuum_deviation[line_idx]\

@@ -3,7 +3,7 @@
 
 __version__ = '1.1'
 
-__revision__ = '20200323'
+__revision__ = '20210128'
 
 import sys
 import os
@@ -348,7 +348,7 @@ class RV_spectrum:
             fontsize=12, fontweight='bold')
 
         plt.tight_layout(w_pad=-0.25, h_pad=-1.8)
-        plt.savefig(self.spec_id + '_plot.png', dpi=600, overwrite=True)
+        plt.savefig(self.spec_id + '_plot.png', dpi=600)
         plt.close()
 
     def line_fitting(self, input_cat, line_idxs, niter=5, n_CPU=-1,\
@@ -727,8 +727,7 @@ class RV_spectrum:
                 pp_final_init = pp_outliers_init
             # pp_final_init.plot()
             # # plt.tight_layout()
-            # plt.savefig(self.spec_id + '_ppxf_fit_final.png',\
-            # dpi=600, overwrite=True)
+            # plt.savefig(self.spec_id + '_ppxf_fit_final.png', dpi=600)
             # plt.close()
 
             self.logger.info('Started final RV fit')

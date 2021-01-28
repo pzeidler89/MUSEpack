@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 
 
 __version__ = '0.1.4'
@@ -70,6 +70,9 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
     for idx, line in enumerate(lines):
 
+        if self.rv_sys != 0.:
+            line = lambda_rv_shift(self, line)
+
         guesses[4 * idx + 0] = linestrength
         guesses[4 * idx + 1] = line
         guesses[4 * idx + 2] = self.dispersion
@@ -97,14 +100,13 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
         for blendidx in range(len(blendlist)):
 
-            lprime = blendlist[blendidx]['lprime']
-            lsec = blendlist[blendidx]['lsec']
+            # lprime = blendlist[blendidx]['lprime']
+            # lsec = blendlist[blendidx]['lsec']
 
             if self.rv_sys == 0.:
                 lprime = blendlist[blendidx]['lprime']
                 lsec = blendlist[blendidx]['lsec']
             else:
-
                 lprime = lambda_rv_shift(self,
                 blendlist[blendidx]['lprime'])
                 lsec = lambda_rv_shift(self,
@@ -191,7 +193,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
         primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
-
         lshift_in = parinfo[int(primeidx[0])]['value']\
         - guesses[int(primeidx[0])]
 
@@ -199,18 +200,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
 
             lshift = lambda_shift(lshift_in, guesses[int(primeidx[0])],\
             guesses[int(4 * adj_idx + 1)])
-
-        # if parinfo[int(primeidx[0])]['value'] > lprime\
-        # + 0.8\ * (parinfo[int(primeidx[0])]['limits'][1] - lprime) or\
-        #    parinfo[int(primeidx[0])]['value'] < lprime\
-        # - 0.8 * (lprime - parinfo[int(primeidx[0])]['limits'][0]):
-
-            # self.logger.info(line_idx+\
-            # ': Automatic adjustments of wavelength limits')
-            # for adj_idx in range(int(len(guesses)/4.)):
-
-            # lshift = lambda_shift(lshift_in,guesses[int(primeidx[0])],\
-            # guesses[int(4*adj_idx+1)])
 
             parinfo[int(4 * adj_idx + 1)]['limits']\
             = (guesses[int(4 * adj_idx + 1)] + llimits[0]\
@@ -244,7 +233,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
             blendration = blendlist[blendidx]['ratio']
             lsec = blendlist[blendidx]['lsec']
             secidx = np.where(lsec == guesses)[0]
-
             if len(secidx) == 1:
                 prime_profile = voigt_funct(self.spec_lambda_highres,\
                                     parinfo[int(primeidx[0])]['value'],\
