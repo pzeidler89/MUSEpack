@@ -59,7 +59,7 @@ This is the module that performs the Monte Carlo boot strapping to measure radia
    :members:
 
 
-.. _Zeidler et al. 2019: www.xyz.com
+.. _Zeidler et al. 2019: https://iopscience.iop.org/article/10.3847/1538-3881/ab44bb/pdf
 
 .. _Cappellari and Emsellem 2004: https://ui.adsabs.harvard.edu/abs/2004PASP..116..138C/abstract
 

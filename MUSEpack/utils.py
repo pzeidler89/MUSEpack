@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 
 
 __version__ = '0.1.4'
 
-__revision__ = '20200323'
+__revision__ = '20210128'
 
 import sys
 import os
@@ -70,6 +70,9 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
     for idx, line in enumerate(lines):
 
+        if self.rv_sys != 0.:
+            line = lambda_rv_shift(self, line)
+
         guesses[4 * idx + 0] = linestrength
         guesses[4 * idx + 1] = line
         guesses[4 * idx + 2] = self.dispersion
@@ -97,14 +100,13 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 
         for blendidx in range(len(blendlist)):
 
-            lprime = blendlist[blendidx]['lprime']
-            lsec = blendlist[blendidx]['lsec']
+            # lprime = blendlist[blendidx]['lprime']
+            # lsec = blendlist[blendidx]['lsec']
 
             if self.rv_sys == 0.:
                 lprime = blendlist[blendidx]['lprime']
                 lsec = blendlist[blendidx]['lsec']
             else:
-
                 lprime = lambda_rv_shift(self,
                 blendlist[blendidx]['lprime'])
                 lsec = lambda_rv_shift(self,
@@ -191,26 +193,13 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
         primeidx = np.where(lprime == guesses)[0]
 
     if autoadjust:
-
         lshift_in = parinfo[int(primeidx[0])]['value']\
         - guesses[int(primeidx[0])]
 
         for adj_idx in range(int(len(guesses) / 4.)):
 
-            lshift = lambda_shift(lshift_in, guesses[int(primeidx[0])],\
+            lshift = _lambda_shift(lshift_in, guesses[int(primeidx[0])],\
             guesses[int(4 * adj_idx + 1)])
-
-        # if parinfo[int(primeidx[0])]['value'] > lprime\
-        # + 0.8\ * (parinfo[int(primeidx[0])]['limits'][1] - lprime) or\
-        #    parinfo[int(primeidx[0])]['value'] < lprime\
-        # - 0.8 * (lprime - parinfo[int(primeidx[0])]['limits'][0]):
-
-            # self.logger.info(line_idx+\
-            # ': Automatic adjustments of wavelength limits')
-            # for adj_idx in range(int(len(guesses)/4.)):
-
-            # lshift = lambda_shift(lshift_in,guesses[int(primeidx[0])],\
-            # guesses[int(4*adj_idx+1)])
 
             parinfo[int(4 * adj_idx + 1)]['limits']\
             = (guesses[int(4 * adj_idx + 1)] + llimits[0]\
@@ -244,7 +233,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
             blendration = blendlist[blendidx]['ratio']
             lsec = blendlist[blendidx]['lsec']
             secidx = np.where(lsec == guesses)[0]
-
             if len(secidx) == 1:
                 prime_profile = voigt_funct(self.spec_lambda_highres,\
                                     parinfo[int(primeidx[0])]['value'],\
@@ -288,11 +276,6 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
     return parinfo
 
 
-def lambda_shift(dlin, lin, lout):
-    dlout = dlin * lout / lin
-    return dlout
-
-
 def plotcolor(n):
     colarray = np.array(['Lime', 'Blue', 'Magenta', 'Olive', 'Maroon',
     'indigo', 'orange', 'Cyan', 'Yellow', 'Silver'])
@@ -325,18 +308,6 @@ def voigt_FWHM(sigma_g, gamma_l):
             + 2. * c_1 * phi[i] + (c_0 * c_1) ** 2))
 
     return fwhm_g, fwhm_l, fwhm_v
-
-
-def _gaussian(x, mu, A, sigma):
-    prefact = 1. / np.sqrt(2. * np.pi * sigma ** 2)
-    exponetial = np.exp((-1.) * ((x - mu) ** 2) / (2. * sigma ** 2))
-    returnfunction = A * exponetial
-    return returnfunction
-
-
-def _lorentzian(x, mu, A, gamma):
-    returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
-    return returnfunction
 
 
 def voigt_funct(x_array, x_cen, amplitude, sigma, gamma):
@@ -455,3 +426,26 @@ def lambda_rv_shift(self, lam):
     if self.rv_sys == 0:
         lambda_new = lam
     return lambda_new
+
+
+def _lambda_shift(dlin, lin, lout):
+    '''
+       This functions shifts the wavelength limits if the central wavelength
+       is shifted. This assures that lambda never runs out of bounds
+
+    '''
+
+    dlout = dlin * lout / lin
+    return dlout
+
+
+def _gaussian(x, mu, A, sigma):
+    prefact = 1. / np.sqrt(2. * np.pi * sigma ** 2)
+    exponetial = np.exp((-1.) * ((x - mu) ** 2) / (2. * sigma ** 2))
+    returnfunction = A * exponetial
+    return returnfunction
+
+
+def _lorentzian(x, mu, A, gamma):
+    returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
+    return returnfunction
