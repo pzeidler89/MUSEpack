@@ -2,7 +2,7 @@
 
 __version__ = '1.1.1'
 
-__revision__ = '20200330'
+__revision__ = '20210203'
 
 import sys
 import shutil
@@ -115,7 +115,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 30, 2020                    #####')
+        print('#####                    Feb 03, 2021                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -266,8 +266,10 @@ class musereduce:
             if os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
             os.mkdir(self.static_calibration_dir)
-            for itername in glob.glob(self.config['global']['pipeline_path']\
-            + 'calib/muse*/*.*'):
+            for itername in glob.glob(os.path.join(\
+                    self.config['global']['pipeline_path'], 'calib/muse*/*.*')):
+            #         self.config['global']['pipeline_path']\
+            # + 'calib/muse*/*.*'):
                 shutil.copy(itername, self.static_calibration_dir + '.')
 
             print('... Sorting the data')
