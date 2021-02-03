@@ -266,10 +266,8 @@ class musereduce:
             if os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
             os.mkdir(self.static_calibration_dir)
-            for itername in glob.glob(os.path.join(\
+            for itername in glob.glob(os.path.join(
                     self.config['global']['pipeline_path'], 'calib/muse*/*.*')):
-            #         self.config['global']['pipeline_path']\
-            # + 'calib/muse*/*.*'):
                 shutil.copy(itername, self.static_calibration_dir + '.')
 
             print('... Sorting the data')
