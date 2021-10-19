@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
-__revision__ = '20210125'
+__revision__ = '20211019'
 
 import sys
 import os
@@ -131,8 +131,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                 in_frame = prihdr['RADECSYS'].lower()
             print('MUSE cube detected')
 
-        if len(cube) == 1:
-            print('No MUSE cube all info in one extension')
+        if len(cube) != 3:
+            print('No MUSE cube header info assumed to be in one extension')
             prihdr = cube[0].header
             sechdr = cube[0].header
             if 'RADECSYS' in prihdr:
