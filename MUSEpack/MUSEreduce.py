@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
-__revision__ = '20210203'
+__revision__ = '20211102'
 
 import sys
 import shutil
 import os
-import subprocess
 import glob
 import string
 import filecmp
@@ -53,7 +52,7 @@ class musereduce:
             self.OB_list = np.array([self.dithername])
         self.rootpath = self.config['global']['rootpath']
         self.mode = self.config['global']['mode']
-        self.auto__sort_data = self.config['global']['auto_sort_data']
+        self.auto_sort_data = self.config['global']['auto_sort_data']
         self.using_specific_exposure_time =\
         self.config['global']['using_specific_exposure_time']
 
@@ -115,7 +114,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Feb 03, 2021                    #####')
+        print('#####                    Nov 02, 2021                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -243,7 +242,8 @@ class musereduce:
             if self.renew_statics and\
             os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
-            if self.renew_statics and os.path.exists(self.ESO_calibration_dir):
+            if self.renew_statics and self.auto_sort_data and\
+                    os.path.exists(self.ESO_calibration_dir):
                 shutil.rmtree(self.ESO_calibration_dir)
             if not os.path.exists(self.rootpath + 'reduced/'):
                 os.mkdir(self.rootpath + 'reduced/')
@@ -272,7 +272,7 @@ class musereduce:
 
             print('... Sorting the data')
 
-            if self.auto__sort_data:
+            if self.auto_sort_data:
                 print('>>> Sorting the raw data')
                 _sort_data(self)
             else:
