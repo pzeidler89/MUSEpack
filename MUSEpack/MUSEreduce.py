@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 
 __revision__ = '20211102'
 
@@ -220,6 +220,9 @@ class musereduce:
             print('>>> for OB: ' + OB)
             print(' ')
 
+            if not os.path.exists(self.rootpath + 'reduced/'):
+                os.mkdir(self.rootpath + 'reduced/')
+
             if self.dithering_multiple_OBs:
                 self.raw_data_dir = self.rootpath + 'raw/' +\
                 self.dithername + '/' + OB + '/'
@@ -245,8 +248,6 @@ class musereduce:
             if self.renew_statics and self.auto_sort_data and\
                     os.path.exists(self.ESO_calibration_dir):
                 shutil.rmtree(self.ESO_calibration_dir)
-            if not os.path.exists(self.rootpath + 'reduced/'):
-                os.mkdir(self.rootpath + 'reduced/')
             if not os.path.exists(self.working_dir):
                 os.mkdir(self.working_dir)
             if not os.path.exists(self.working_dir + 'std/'):
