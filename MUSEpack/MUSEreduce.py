@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.1.3'
+__version__ = '1.2.0'
 
-__revision__ = '20211102'
+__revision__ = '20220822'
 
 import sys
 import shutil
@@ -114,7 +114,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Nov 02, 2021                    #####')
+        print('#####                    Aug 22, 2022                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
