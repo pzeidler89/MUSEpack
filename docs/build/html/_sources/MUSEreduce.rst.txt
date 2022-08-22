@@ -43,8 +43,6 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
 
 .. json:object:: config
 
-    :jsonprop: test
-
    :property global: global parameters affecting the data reduction process
    :proptype global: :json:object:`global`
    
