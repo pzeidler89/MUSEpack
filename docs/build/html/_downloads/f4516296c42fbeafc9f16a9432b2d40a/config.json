@@ -1,6 +1,6 @@
 {
   "global": {
-    "pipeline_path": "path_to_pipeline/muse/2.8.1/",
+    "pipeline_path": "path_to_pipeline/muse/2.8.7/",
     "mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
@@ -16,6 +16,12 @@
     "using_ESO_calibration": true,
     "renew_statics": false,
     "dark": false,
+    "esorex_kwargs_bias": "none",
+    "esorex_kwargs_dark": "none",
+    "esorex_kwargs_flat": "none",
+    "esorex_kwargs_wavecal": "none",
+    "esorex_kwargs_lsf": "none",
+    "esorex_kwargs_twilight": "none",
     "create_sof": true
   },
   "sci_basic":{
@@ -23,10 +29,12 @@
     "execute_std": true,
     "skyreject": "15.,15.,1",
     "skylines": "5577.339,6300.304",
+    "esorex_kwargs": "none",
     "create_sof": true
   },
   "std_flux":{
     "execute": true,
+    "esorex_kwargs": "none",
     "create_sof": true
   },
   "sky":{
@@ -36,6 +44,7 @@
     "fraction": 0.05,
     "ignore": 0.05,
     "method": "model",
+    "esorex_kwargs": "none",
     "create_sof": true
   },
   "sci_post":{
@@ -43,6 +52,7 @@
     "autocalib": "none",
     "subtract_sky": true,
     "raman": false,
+    "esorex_kwargs": "none",
     "create_sof": true
   },
   "dither_collect":{
@@ -53,11 +63,13 @@
     "execute": true,
     "srcmin": 5,
     "srcmax": 80,
+    "esorex_kwargs": "none",
     "create_sof": true
   },
   "exp_combine":{
     "execute": true,
     "weight": "exptime",
+    "esorex_kwargs": "none",
     "create_sof": true
   }
 

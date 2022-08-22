@@ -3,7 +3,7 @@
 MUSEreduce
 **********
 
-:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.1 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has not been tested with other version of the data reduction pipeline.
+:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.7 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has been tested with version v2.8.1 of the data reduction pipeline.
 
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 
@@ -42,7 +42,9 @@ The :obj:`json` configuration file is needed to run :class:`MUSEreduce.musereduc
 The file :download:`config file <../../MUSEpack/config.json>` is structured the following. If keywords are directly controlling toggles of the `MUSE data reduction pipeline`_ their naming is identical.
 
 .. json:object:: config
-   
+
+    :jsonprop: test
+
    :property global: global parameters affecting the data reduction process
    :proptype global: :json:object:`global`
    
@@ -79,8 +81,8 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :proptype mode: string
    :options mode: WFM-NOAO, WFM-AO, NFM-AO
    
-   :property withrvcorr: bariocentric correction. Needs to be turned off, if one wants run an own wavelength calibration 
-   :proptype withrvcorr: bool
+   :property withrvcorr: bariocentric correction. Needs to be turned off, if one wants run an own wavelength calibration
+    :proptype withrvcorr: bool
    :options withrvcorr: true, false, default='true'
    
    :property auto_sort_data: The raw data is sorted and the calibration files are assigned based on their header information. If :obj:`True`, 
@@ -133,6 +135,30 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property dark: Set to :obj:`True` if one wants to also use the DARK files from the calibration.
    :proptype dark: bool
    :options dark: false, true, default=false
+
+   :property esorex_kwargs_bias: A string of additional parameters for the `BIAS` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_bias: string
+   :options esorex_kwargs_bias: default='none'
+
+   :property esorex_kwargs_dark: A string of additional parameters for the `DARK` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_dark: string
+   :options esorex_kwargs_dark: default='none'
+
+   :property esorex_kwargs_flat: A string of additional parameters for the `FLAT` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_flat: string
+   :options esorex_kwargs_flat: default='none'
+
+   :property esorex_kwargs_wavecal: A string of additional parameters for the `WAVECAL` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_wavecal: string
+   :options esorex_kwargs_wavecal: default='none'
+
+   :property esorex_kwargs_lsf: A string of additional parameters for the `LSF` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_lsf: string
+   :options esorex_kwargs_lsf: default='none'
+
+   :property esorex_kwargs_twilight: A string of additional parameters for the `TWILIGHT` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs_twilight: string
+   :options esorex_kwargs_twilight: default='none'
    
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
@@ -159,7 +185,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
                        more detailed description we refer to the `MUSE data reduction pipeline`_ manual.
    :proptype skylines: string
    :options skylines: default='5577.339,6300.304'
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `SCIBASIC` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -170,7 +200,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `STANDARD` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -206,7 +240,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
                      of ``modified`` = :obj:`True`. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
    :proptype method: string
    :options method: 'model', 'subtract-model', 'simple', 'none', default='model'
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `SKY` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -231,7 +269,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
                      are removed. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
    :proptype raman: bool
    :options raman: false, true, default=false
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `SCIPOST` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
    :options create_sof: false, true, default=true
@@ -252,7 +294,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `EXP_ALIGN` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -268,7 +314,11 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
                      the `MUSE data reduction pipeline`_ handbook.
    :proptype weight: string
    :options weight: 'exptime', 'fwhm', 'none', 'header', default=exptime
-   
+
+   :property esorex_kwargs: A string of additional parameters for the `EXP_COMBINE` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
+   :proptype esorex_kwargs: string
+   :options esorex_kwargs: default='none'
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -352,3 +402,5 @@ History
    The naming convention in ``dither_collect`` was changed so that it matches the convention  **RADEC_EXPTIME_ROTANGLE_COUNTER**.
 .. versionadded:: 1.1.1
    The key words *srcmin* and *srcmax* were added to *config.json* to be used in ``exp_align``.
+.. versionadded:: 1.2.0
+    :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.7*. Additonally, kwargs can be set in the `json` configuration file for the different routines to support any other ``esorex`` command that is not specifically listed.

@@ -160,6 +160,10 @@ class musereduce:
         if self.config['calibration']['execute'] == True:
             if self.using_ESO_calibration:
                 print('>>> Using ESO calibration files')
+                if self.config['calibration']['esorex_kwargs_bias'] or self.config['calibration']['esorex_kwargs_dark'] or\
+                        self.config['calibration']['esorex_kwargs_flat'] or self.config['calibration']['esorex_kwargs_wavecal'] or\
+                        self.config['calibration']['esorex_kwargs_lsf'] or self.config['calibration']['esorex_kwargs_twilight']:
+                    print('WARNING: KWARGS ARE SET BUT ESO CALIBRATIONS ARE USED')
             else:
                 print('>>> Using self-processed calibration files')
                 if self.dark:
@@ -326,48 +330,48 @@ class musereduce:
 
                 if not self.using_ESO_calibration:
                     _bias(self, exp_list_SCI, exp_list_DAR,\
-                    exp_list_TWI, create_sof)
+                    exp_list_TWI, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_bias'])
 
                     if self.dark:
-                        _dark(self, exp_list_SCI, exp_list_DAR, create_sof)
-                    _flat(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    _lsf(self, exp_list_SCI, exp_list_TWI, create_sof)
-                    _twilight(self, exp_list_SCI, exp_list_TWI, create_sof)
+                        _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_dark'])
+                    _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_flat'])
+                    _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_wavecal'])
+                    _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_lsf'])
+                    _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=self.config['calibration']['esorex_kwargs_twilight'])
 
             ### OBSERVATION PRE-PROCESSING ###
             if self.config['sci_basic']['execute']:
                 create_sof = self.config['sci_basic']['create_sof']
-                _science_pre(self, exp_list_SCI, create_sof)
+                _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['sci_basic']['esorex_kwargs'])
 
             ### OBSERVATION POST-PROCESSING ###
             if self.config['std_flux']['execute']:
                 create_sof = self.config['std_flux']['create_sof']
-                _std_flux(self, exp_list_SCI, create_sof)
+                _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['std_flux']['esorex_kwargs'])
 
             if self.config['sky']['execute']:
                 create_sof = self.config['sky']['create_sof']
 
                 if not self.config['sky']['modified']:
-                    _sky(self, exp_list_SCI, create_sof)
+                    _sky(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['sky']['esorex_kwargs'])
                 if self.config['sky']['modified']:
-                    _modified_sky(self, exp_list_SCI, create_sof)
+                    _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['sky']['esorex_kwargs'])
 
             ###s SCIENCE POST-PROCESSING ###
             if self.config['sci_post']['execute']:
                 create_sof = self.config['sci_post']['create_sof']
-                _scipost(self, exp_list_SCI, create_sof, OB)
+                _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
                 _dither_collect(self, exp_list_SCI, OB)
 
         if self.config['exp_align']['execute']:
             create_sof = self.config['exp_align']['create_sof']
-            _exp_align(self, exp_list_SCI, create_sof, OB)
+            _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
 
         if self.config['exp_combine']['execute']:
             create_sof = self.config['exp_combine']['create_sof']
-            _exp_combine(self, exp_list_SCI, create_sof)
+            _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
 
         endtime = time.time()
         print('>>> Total execution time: ',\
@@ -393,7 +397,7 @@ def _get_filelist(self, data_dir, filename_wildcard):
     return raw_data_list
 
 
-def _call_esorex(self, exec_dir, esorex_cmd):
+def _call_esorex(self, exec_dir, esorex_cmd, esorex_kwargs=None):
 
     '''
     This module calls the various ESOrex commands and gives it to the
@@ -405,12 +409,21 @@ def _call_esorex(self, exec_dir, esorex_cmd):
 
         esorex_cmd : :obj:`str`
             The ESOrex command that needs to be executed
+
+    Kwargs:
+        esorex_kwargs : :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
     '''
 
     os.chdir(exec_dir)
     os.system('export OMP_NUM_THREADS=' + str(self.n_CPU))
-    print('esorex ' + esorex_cmd)
-    os.system('esorex ' + esorex_cmd)
+    if esorex_kwargs:
+        print('esorex ' + esorex_cmd + ' ' + esorex_kwargs)
+        os.system('esorex ' + esorex_cmd + ' ' + esorex_kwargs)
+    else:
+        print('esorex ' + esorex_cmd)
+        os.system('esorex ' + esorex_cmd)
     os.chdir(self.rootpath)
 
 
@@ -606,7 +619,7 @@ def _sort_data(self):
         f_twilight.close()
 
 
-def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
+def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_bias``
@@ -630,6 +643,10 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
 
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
     '''
 
     print('... Creating the MASTER BIAS')
@@ -703,7 +720,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             if os.path.isfile(self.calibration_dir + 'TWILIGHT/bias.sof'):
                 assert filecmp.cmp(self.calibration_dir + 'TWILIGHT/bias.sof',\
@@ -718,7 +735,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             if self.dark:
                 if os.path.isfile(self.calibration_dir + 'DARK/bias.sof'):
@@ -734,18 +751,18 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof):
 
                     if not self.debug:
                         _call_esorex(self, self.calibration_dir + 'DARK/',
-                        esorex_cmd)
+                        esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
         if self.dark:
             if not self.debug:
-                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd)
+                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
+def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_dark``
@@ -765,6 +782,10 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
 
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
     '''
 
     print('... Creating the MASTER DARK')
@@ -811,14 +832,14 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof):
                 self.calibration_dir + 'DARK/dark.sof')
 
                 if not self.debug:
-                    _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
+                    _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd)
+            _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_flat``
@@ -837,6 +858,11 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -891,7 +917,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'SCIENCE/flat.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/flat_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -916,15 +942,15 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'TWILIGHT/flat.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_wavecal``
@@ -943,6 +969,11 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1001,7 +1032,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'SCIENCE/wavecal.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/wavecal_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -1032,15 +1063,15 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'TWILIGHT/wavecal.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_lsf``
@@ -1059,6 +1090,11 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1120,7 +1156,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'SCIENCE/lsf.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/lsf_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -1153,15 +1189,15 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'TWILIGHT/lsf.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
+def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_twilight``
@@ -1180,6 +1216,11 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1265,14 +1306,14 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof):
                 self.calibration_dir + 'TWILIGHT/twilight.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT',\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _science_pre(self, exp_list_SCI, create_sof):
+def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_scibasic``
@@ -1287,6 +1328,11 @@ def _science_pre(self, exp_list_SCI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1455,7 +1501,7 @@ def _science_pre(self, exp_list_SCI, create_sof):
             f_object.close()
 
         if not self.debug:
-            _call_esorex(self, exposure_dir, esorex_cmd)
+            _call_esorex(self, exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
         if os.path.isfile(self.working_dir + 'std/sci_basic_std.sof'):
             assert filecmp.cmp(self.working_dir + 'std/sci_basic_std.sof',\
             self.working_dir + 'std/sci_basic_std_temp.sof'),\
@@ -1468,10 +1514,10 @@ def _science_pre(self, exp_list_SCI, create_sof):
 
     if not self.debug:
         if self.reduce_std:
-            _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std)
+            _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std, esorex_kwargs=esorex_kwargs)
 
 
-def _std_flux(self, exp_list_SCI, create_sof):
+def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_standard``
@@ -1486,6 +1532,11 @@ def _std_flux(self, exp_list_SCI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1517,10 +1568,10 @@ def _std_flux(self, exp_list_SCI, create_sof):
         f.close()
 
     if not self.debug:
-        _call_esorex(self, self.working_dir + 'std/', esorex_cmd)
+        _call_esorex(self, self.working_dir + 'std/', esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _sky(self, exp_list_SCI, create_sof):
+def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_sky``
@@ -1535,6 +1586,11 @@ def _sky(self, exp_list_SCI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1606,7 +1662,7 @@ def _sky(self, exp_list_SCI, create_sof):
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, esorex_cmd)
+                _call_esorex(self, exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
@@ -1614,7 +1670,7 @@ def _sky(self, exp_list_SCI, create_sof):
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
                 + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof')
+                + ' sky.sof', esorex_kwargs=esorex_kwargs)
 
     if self.skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exp_list_SCI_sky, dtype=float)
@@ -1632,7 +1688,7 @@ def _sky(self, exp_list_SCI, create_sof):
                 shutil.copy(f, exps[:-9] + '/.')
 
 
-def _modified_sky(self, exp_list_SCI, create_sof):
+def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_sky`` with the modified continuum and
@@ -1648,6 +1704,11 @@ def _modified_sky(self, exp_list_SCI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1720,7 +1781,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
                 + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof')
+                + ' sky.sof', esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
@@ -1728,7 +1789,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
                 + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof')
+                + ' sky.sof', esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
         sky_cont_hdu = fits.open('SKY_CONTINUUM.fits', checksum=True)
@@ -1778,7 +1839,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
                 + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof')
+                + ' sky.sof', esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
@@ -1786,7 +1847,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
                 + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof')
+                + ' sky.sof', esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
         print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
@@ -1818,7 +1879,7 @@ def _modified_sky(self, exp_list_SCI, create_sof):
                 shutil.copy(f, exps[:-9] + '/.')
 
 
-def _scipost(self, exp_list_SCI, create_sof, OB):
+def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_scipost``
@@ -1836,6 +1897,11 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
 
         OB : :obj:`str`:
             The specific ``OB`` to be reduced. 
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -1940,7 +2006,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                     + ' --skymethod=' + self.skymethod\
                     + ' --autocalib=' + self.autocalib
                     + ' --filter=white'\
-                    + ' scipost.sof')
+                    + ' scipost.sof', esorex_kwargs=esorex_kwargs)
 
                 if self.skysub:
 
@@ -1976,9 +2042,9 @@ def _scipost(self, exp_list_SCI, create_sof, OB):
                         + ' --save=cube,skymodel,individual,raman,autocal'\
                         + ' --skymethod=none'\
                         + ' --filter=white'\
-                        + ' --autocalib=' + self.autocalib)\
+                        + ' --autocalib=' + self.autocalib\
                         + ' --rvcorr=none'\
-                        + ' scipost.sof'
+                        + ' scipost.sof', esorex_kwargs=esorex_kwargs)
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:
@@ -2011,6 +2077,11 @@ def _dither_collect(self, exp_list_SCI, OB):
 
         OB : :obj:`str`:
             The specific ``OB`` to be reduced.
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -2371,7 +2442,7 @@ def _dither_collect(self, exp_list_SCI, OB):
                     + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
 
 
-def _exp_align(self, exp_list_SCI, create_sof, OB):
+def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_exp_align``
@@ -2389,6 +2460,11 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
 
         OB : :obj:`str`:
             The specific ``OB`` to be reduced.
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -2501,7 +2577,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withoutsky,\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             if not self.skysub:
                 exp_list = _get_filelist(self,\
@@ -2519,7 +2595,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withsky,\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
         else:
             exp_list = _get_filelist(self,\
@@ -2533,10 +2609,10 @@ def _exp_align(self, exp_list_SCI, create_sof, OB):
                     + '/' + exp_list[i] + ' IMAGE_FOV\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
 
 
-def _exp_combine(self, exp_list_SCI, create_sof):
+def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     '''
     This module calls *ESORex'* ``muse_exp_combine``
@@ -2551,6 +2627,11 @@ def _exp_combine(self, exp_list_SCI, create_sof):
 
             :obj:`False`: ``bias.sof`` is not created and needs to be provided
             by the user
+
+    Kwargs:
+         esorex_kwargs: :obj:`str`
+            Additional keywords that should be passed for special processing. These should be passed
+            as one string
 
     '''
 
@@ -2639,7 +2720,7 @@ def _exp_combine(self, exp_list_SCI, create_sof):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withoutsky,\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
 
             if not self.skysub:
                 pixtable_list = _get_filelist(self,\
@@ -2662,7 +2743,7 @@ def _exp_combine(self, exp_list_SCI, create_sof):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withsky,\
-                    esorex_cmd)
+                    esorex_cmd, esorex_kwargs=esorex_kwargs)
         else:
             pixtable_list = _get_filelist(self,\
             combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
@@ -2679,4 +2760,4 @@ def _exp_combine(self, exp_list_SCI, create_sof):
                 + 'filter_list.fits FILTER_LIST\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)

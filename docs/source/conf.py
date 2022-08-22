@@ -21,13 +21,13 @@ sys.path.insert(0, os.path.abspath('../../MUSEpack'))
 # -- Project information -----------------------------------------------------
 
 project = 'MUSEpack'
-copyright = '2019 - 2021, Peter Zeidler'
+copyright = '2019 - 2022, Peter Zeidler'
 author = 'Peter Zeidler'
 
 # The short X.Y version
-version = '1.1.2'
+version = '1.2.0'
 # The full version, including alpha/beta/rc tags
-release = '1.1.1dev20210128'
+release = '1.2.0dev20220822'
 
 
 # -- General configuration ---------------------------------------------------
@@ -71,7 +71,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
