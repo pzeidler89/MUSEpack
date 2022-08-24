@@ -1,4 +1,4 @@
-MUSEpack v1.1.2dev20210128
+MUSEpack v1.2.1dev20220824
 ===========================
 
 Introduction
@@ -13,8 +13,6 @@ On this website we introduce the individual python classes and modules of *MUSEp
 
 .. image:: https://zenodo.org/badge/144210611.svg
    :target: https://zenodo.org/badge/latestdoi/144210611
-
-
 
 .. toctree::
    :maxdepth: 2

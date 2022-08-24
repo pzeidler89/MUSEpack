@@ -116,9 +116,9 @@
   <h1>Source code for MUSEreduce</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.2.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.2.1&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20220822&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20220824&#39;</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -513,7 +513,7 @@
     <span class="k">return</span> <span class="n">raw_data_list</span></div>
 
 
-<div class="viewcode-block" id="_call_esorex"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._call_esorex">[docs]</a><span class="k">def</span> <span class="nf">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exec_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="_call_esorex"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._call_esorex">[docs]</a><span class="k">def</span> <span class="nf">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exec_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span> <span class="p">,</span><span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This module calls the various ESOrex commands and gives it to the</span>
@@ -526,6 +526,9 @@
 <span class="sd">        esorex_cmd : :obj:`str`</span>
 <span class="sd">            The ESOrex command that needs to be executed</span>
 
+<span class="sd">        sof : :obj:`str`</span>
+<span class="sd">            The name of the sof file needed for executing ESOrex</span>
+
 <span class="sd">    Kwargs:</span>
 <span class="sd">        esorex_kwargs : :obj:`str`</span>
 <span class="sd">            Additional keywords that should be passed for special processing. These should be passed</span>
@@ -535,11 +538,11 @@
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exec_dir</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;export OMP_NUM_THREADS=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_CPU</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">esorex_kwargs</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">esorex_kwargs</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">esorex_kwargs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">esorex_kwargs</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">sof</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">esorex_kwargs</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">sof</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">sof</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;esorex &#39;</span> <span class="o">+</span> <span class="n">esorex_cmd</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">sof</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">)</span></div>
 
 
@@ -770,8 +773,8 @@
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=bias.log --log-level=debug&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; muse_bias&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --nifu=-1&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; bias.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39;bias.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -836,7 +839,7 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/bias.sof&#39;</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/bias.sof&#39;</span><span class="p">,</span>\
@@ -851,7 +854,7 @@
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/bias.sof&#39;</span><span class="p">):</span>
@@ -867,15 +870,15 @@
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                         <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span>
-                        <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                        <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_dark"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._dark">[docs]</a><span class="k">def</span> <span class="nf">_dark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">exp_list_DAR</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -909,8 +912,8 @@
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=dark.log --log-level=debug&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; muse_dark&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --nifu=-1&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; dark.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; dark.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -948,11 +951,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/dark.sof&#39;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                    <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;DARK/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_flat"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._flat">[docs]</a><span class="k">def</span> <span class="nf">_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">exp_list_TWI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -988,8 +991,8 @@
     <span class="o">+</span> <span class="s1">&#39; muse_flat&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --samples=true&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --nifu=-1&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; flat.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; flat.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -1033,7 +1036,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/flat.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat_temp.sof&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_data_list_TWILIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">][:])):</span>
@@ -1058,12 +1061,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/flat.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_wavecal"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._wavecal">[docs]</a><span class="k">def</span> <span class="nf">_wavecal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">exp_list_TWI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1099,8 +1102,8 @@
     <span class="o">+</span> <span class="s1">&#39; muse_wavecal&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --nifu=-1&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --residuals&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; wavecal.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; wavecal.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -1148,7 +1151,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/wavecal.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/wavecal_temp.sof&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_data_list_TWILIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">][:])):</span>
@@ -1179,12 +1182,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/wavecal.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_lsf"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._lsf">[docs]</a><span class="k">def</span> <span class="nf">_lsf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">exp_list_TWI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1220,8 +1223,8 @@
     <span class="o">+</span> <span class="s1">&#39; muse_lsf&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --nifu=-1&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --save_subtracted&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; lsf.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --save_subtracted&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; lsf.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -1272,7 +1275,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/lsf.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/lsf_temp.sof&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_data_list_TWILIGHT</span><span class="p">[</span><span class="mi">1</span><span class="p">][:])):</span>
@@ -1305,12 +1308,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/lsf.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;SCIENCE/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_twilight"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._twilight">[docs]</a><span class="k">def</span> <span class="nf">_twilight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">exp_list_TWI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1343,8 +1346,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;... Creating the TWILIGHT FLAT&#39;</span><span class="p">)</span>
 
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=twilight.log --log-level=debug&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; muse_twilight&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; twilight.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; muse_twilight&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; twilight.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">create_sof</span><span class="p">:</span>
 
@@ -1422,11 +1425,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT/twilight.sof&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT&#39;</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">create_sof</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_dir</span> <span class="o">+</span> <span class="s1">&#39;TWILIGHT&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_science_pre"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._science_pre">[docs]</a><span class="k">def</span> <span class="nf">_science_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1461,8 +1464,8 @@
     <span class="o">+</span> <span class="s1">&#39; --saveimage=true&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --skyreject=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyreject</span>\
     <span class="o">+</span> <span class="s1">&#39; --skylines=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skylines</span> \
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; sci_basic_object.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; sci_basic_object.sof&#39;</span>
 
     <span class="n">esorex_cmd_std</span> <span class="o">=</span> <span class="s1">&#39;--log-file=sci_basic_std.log --log-level=debug&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; muse_scibasic&#39;</span>\
@@ -1470,8 +1473,8 @@
     <span class="o">+</span> <span class="s1">&#39; --resample&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --saveimage=true&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --skyreject=15.,15.,1&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; sci_basic_std.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; sci_basic_std.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">)</span>
@@ -1617,7 +1620,7 @@
             <span class="n">f_object</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">,</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std_temp.sof&#39;</span><span class="p">),</span>\
@@ -1660,8 +1663,8 @@
 
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39; --log-file=std_flux.log --log-level=debug&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; muse_standard&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; std_flux.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; std_flux.sof&#39;</span>
 
     <span class="n">PIXTABLE_STD_list</span> <span class="o">=</span> <span class="n">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span>\
     <span class="s1">&#39;PIXTABLE_STD*.fits&#39;</span><span class="p">)</span>
@@ -1684,7 +1687,7 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-        <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+        <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_sky"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._sky">[docs]</a><span class="k">def</span> <span class="nf">_sky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1773,12 +1776,12 @@
         <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=sky.log --log-level=debug&#39;</span>\
         <span class="o">+</span> <span class="s1">&#39; muse_create_sky&#39;</span>\
         <span class="o">+</span> <span class="s1">&#39; --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span>\
-        <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
-        <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span>
+        <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>
+        <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; sky.sof&#39;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyfield</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span>\
@@ -2589,8 +2592,8 @@
     <span class="n">esorex_cmd</span> <span class="o">=</span> <span class="s1">&#39;--log-file=exp_align.log --log-level=debug&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; muse_exp_align&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --srcmin=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;exp_align&#39;</span><span class="p">][</span><span class="s1">&#39;srcmin&#39;</span><span class="p">])</span>\
-    <span class="o">+</span> <span class="s1">&#39; --srcmax=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;exp_align&#39;</span><span class="p">][</span><span class="s1">&#39;srcmax&#39;</span><span class="p">])</span>\
-    <span class="o">+</span> <span class="s1">&#39; exp_align.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --srcmax=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;exp_align&#39;</span><span class="p">][</span><span class="s1">&#39;srcmax&#39;</span><span class="p">])</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; exp_align.sof&#39;</span>
 
     <span class="n">unique_pointings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
     <span class="n">unique_tester</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
@@ -2693,7 +2696,7 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir_withoutsky</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
                 <span class="n">exp_list</span> <span class="o">=</span> <span class="n">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
@@ -2711,7 +2714,7 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir_withsky</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">exp_list</span> <span class="o">=</span> <span class="n">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
@@ -2725,7 +2728,7 @@
                     <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">exp_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; IMAGE_FOV</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_exp_combine"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._exp_combine">[docs]</a><span class="k">def</span> <span class="nf">_exp_combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2758,8 +2761,8 @@
     <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --save=cube&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --crsigma=5.&#39;</span>\
-    <span class="o">+</span> <span class="s1">&#39; --weight=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>\
-    <span class="o">+</span> <span class="s1">&#39; exp_combine.sof&#39;</span>
+    <span class="o">+</span> <span class="s1">&#39; --weight=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; exp_combine.sof&#39;</span>
 
     <span class="n">unique_pointings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
     <span class="n">unique_tester</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
@@ -2836,7 +2839,7 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir_withoutsky</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
                 <span class="n">pixtable_list</span> <span class="o">=</span> <span class="n">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
@@ -2859,7 +2862,7 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                     <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir_withsky</span><span class="p">,</span>\
-                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">pixtable_list</span> <span class="o">=</span> <span class="n">_get_filelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>\
             <span class="n">combining_exposure_dir</span><span class="p">,</span> <span class="s1">&#39;PIXTABLE_REDUCED_*.fits&#39;</span><span class="p">)</span>
@@ -2876,7 +2879,7 @@
                 <span class="o">+</span> <span class="s1">&#39;filter_list.fits FILTER_LIST</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+                <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">combining_exposure_dir</span><span class="p">,</span> <span class="n">esorex_cmd</span><span class="p">,</span> <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -467,7 +467,7 @@ than it must be set to <a class="reference external" href="https://docs.python.o
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MUSEreduce._call_esorex">
-<span class="sig-prename descclassname"><span class="pre">MUSEreduce.</span></span><span class="sig-name descname"><span class="pre">_call_esorex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exec_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esorex_cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esorex_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#_call_esorex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MUSEreduce._call_esorex" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">MUSEreduce.</span></span><span class="sig-name descname"><span class="pre">_call_esorex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exec_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esorex_cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sof</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esorex_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MUSEreduce.html#_call_esorex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MUSEreduce._call_esorex" title="Permalink to this definition"></a></dt>
 <dd><p>This module calls the various ESOrex commands and gives it to the
 terminal for execution.</p>
 <dl>
@@ -475,6 +475,8 @@ terminal for execution.</p>
 <dt>exec_dir<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The directory where ESOrex should be executed.</p>
 </dd>
 <dt>esorex_cmd<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The ESOrex command that needs to be executed</p>
+</dd>
+<dt>sof<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The name of the sof file needed for executing ESOrex</p>
 </dd>
 </dl>
 </dd>
@@ -954,6 +956,9 @@ The naming convention in <code class="docutils literal notranslate"><span class=
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.2.0: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> supports now <em>pipeline v2.8.7</em>. Additonally, kwargs can be set in the <cite>json</cite> configuration file for the different routines to support any other <code class="docutils literal notranslate"><span class="pre">esorex</span></code> command that is not specifically listed.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.2.1: </span><a class="reference internal" href="#MUSEreduce.musereduce" title="MUSEreduce.musereduce"><code class="xref py py-class docutils literal notranslate"><span class="pre">MUSEreduce.musereduce</span></code></a> changed that the sof file gets included individually when calling the sorex command. thats was needed that additional kwargs can be provided.</p>
 </div>
 </section>
 </section>
