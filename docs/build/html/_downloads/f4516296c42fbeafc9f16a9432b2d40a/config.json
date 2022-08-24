@@ -16,12 +16,12 @@
     "using_ESO_calibration": true,
     "renew_statics": false,
     "dark": false,
-    "esorex_kwargs_bias": "none",
-    "esorex_kwargs_dark": "none",
-    "esorex_kwargs_flat": "none",
-    "esorex_kwargs_wavecal": "none",
-    "esorex_kwargs_lsf": "none",
-    "esorex_kwargs_twilight": "none",
+    "esorex_kwargs_bias": null,
+    "esorex_kwargs_dark": null,
+    "esorex_kwargs_flat": null,
+    "esorex_kwargs_wavecal": null,
+    "esorex_kwargs_lsf": null,
+    "esorex_kwargs_twilight": null,
     "create_sof": true
   },
   "sci_basic":{
@@ -29,7 +29,7 @@
     "execute_std": true,
     "skyreject": "15.,15.,1",
     "skylines": "5577.339,6300.304",
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   },
   "std_flux":{
@@ -44,7 +44,7 @@
     "fraction": 0.05,
     "ignore": 0.05,
     "method": "model",
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   },
   "sci_post":{
@@ -52,7 +52,7 @@
     "autocalib": "none",
     "subtract_sky": true,
     "raman": false,
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   },
   "dither_collect":{
@@ -63,13 +63,13 @@
     "execute": true,
     "srcmin": 5,
     "srcmax": 80,
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   },
   "exp_combine":{
     "execute": true,
     "weight": "exptime",
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   }
 

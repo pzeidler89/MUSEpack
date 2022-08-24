@@ -1474,7 +1474,7 @@
     <span class="o">+</span> <span class="s1">&#39; --saveimage=true&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --skyreject=15.,15.,1&#39;</span>\
     <span class="o">+</span> <span class="s1">&#39; --merge&#39;</span>
-    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39; sci_basic_std.sof&#39;</span>
+    <span class="n">sof_std</span> <span class="o">=</span> <span class="s1">&#39; sci_basic_std.sof&#39;</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/sci_basic_std.sof&#39;</span><span class="p">)</span>
@@ -1633,7 +1633,7 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce_std</span><span class="p">:</span>
-            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd_std</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
+            <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">+</span> <span class="s1">&#39;std/&#39;</span><span class="p">,</span> <span class="n">esorex_cmd_std</span><span class="p">,</span> <span class="n">sof_std</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="_std_flux"><a class="viewcode-back" href="../MUSEreduce.html#MUSEreduce._std_flux">[docs]</a><span class="k">def</span> <span class="nf">_std_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">create_sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
