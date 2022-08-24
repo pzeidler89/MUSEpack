@@ -1783,16 +1783,16 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 '--log-file=sky.log --log-level=debug'\
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
-                + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof', esorex_kwargs=esorex_kwargs)
+                + ' --ignore=' + str(self.skyignore),\
+                sof , esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
                 '--log-file=sky.log --log-level=debug'\
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
-                + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof', esorex_kwargs=esorex_kwargs)
+                + ' --ignore=' + str(self.skyignore),\
+                sof, esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
         sky_cont_hdu = fits.open('SKY_CONTINUUM.fits', checksum=True)
@@ -1841,16 +1841,16 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 '--log-file=sky.log --log-level=debug'\
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
-                + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof', esorex_kwargs=esorex_kwargs)
+                + ' --ignore=' + str(self.skyignore),\
+                sof, esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
                 ' --log-file=sky.log --log-level=debug'\
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
-                + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof', esorex_kwargs=esorex_kwargs)
+                + ' --ignore=' + str(self.skyignore),\
+                sof, esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
         print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
