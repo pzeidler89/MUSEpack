@@ -1358,7 +1358,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --saveimage=true'\
     + ' --skyreject=15.,15.,1'\
     + ' --merge'
-    sof = ' sci_basic_std.sof'
+    sof_std = ' sci_basic_std.sof'
 
     if os.path.exists(self.working_dir + 'std/sci_basic_std.sof'):
         os.remove(self.working_dir + 'std/sci_basic_std.sof')
@@ -1517,7 +1517,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     if not self.debug:
         if self.reduce_std:
-            _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.working_dir + 'std/', esorex_cmd_std, sof_std, esorex_kwargs=esorex_kwargs)
 
 
 def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
