@@ -1717,6 +1717,8 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     print('... SKY CREATION MODIFIED')
 
+    sof = 'sky.sof'
+
     sky = np.zeros_like(exp_list_SCI, dtype=bool)
     sci = np.zeros_like(exp_list_SCI, dtype=bool)
 
