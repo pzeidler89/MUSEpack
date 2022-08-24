@@ -402,3 +402,5 @@ History
    The key words *srcmin* and *srcmax* were added to *config.json* to be used in ``exp_align``.
 .. versionadded:: 1.2.0
     :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.7*. Additonally, kwargs can be set in the `json` configuration file for the different routines to support any other ``esorex`` command that is not specifically listed.
+.. versionadded:: 1.2.1
+    :class:`MUSEreduce.musereduce` changed that the sof file gets included individually when calling the sorex command. thats was needed that additional kwargs can be provided.

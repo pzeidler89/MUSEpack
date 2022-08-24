@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
-__revision__ = '20220822'
+__revision__ = '20220824'
 
 import sys
 import shutil
@@ -397,7 +397,7 @@ def _get_filelist(self, data_dir, filename_wildcard):
     return raw_data_list
 
 
-def _call_esorex(self, exec_dir, esorex_cmd, esorex_kwargs=None):
+def _call_esorex(self, exec_dir, esorex_cmd, sof ,esorex_kwargs=None):
 
     '''
     This module calls the various ESOrex commands and gives it to the
@@ -410,6 +410,9 @@ def _call_esorex(self, exec_dir, esorex_cmd, esorex_kwargs=None):
         esorex_cmd : :obj:`str`
             The ESOrex command that needs to be executed
 
+        sof : :obj:`str`
+            The name of the sof file needed for executing ESOrex
+
     Kwargs:
         esorex_kwargs : :obj:`str`
             Additional keywords that should be passed for special processing. These should be passed
@@ -419,11 +422,11 @@ def _call_esorex(self, exec_dir, esorex_cmd, esorex_kwargs=None):
     os.chdir(exec_dir)
     os.system('export OMP_NUM_THREADS=' + str(self.n_CPU))
     if esorex_kwargs:
-        print('esorex ' + esorex_cmd + ' ' + esorex_kwargs)
-        os.system('esorex ' + esorex_cmd + ' ' + esorex_kwargs)
+        print('esorex ' + esorex_cmd + ' ' + esorex_kwargs + ' ' + sof)
+        os.system('esorex ' + esorex_cmd + ' ' + esorex_kwargs + ' ' + sof)
     else:
-        print('esorex ' + esorex_cmd)
-        os.system('esorex ' + esorex_cmd)
+        print('esorex ' + esorex_cmd + ' ' + sof)
+        os.system('esorex ' + esorex_cmd + ' ' + sof)
     os.chdir(self.rootpath)
 
 
@@ -654,8 +657,8 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
     esorex_cmd = '--log-file=bias.log --log-level=debug'\
     + ' muse_bias'\
     + ' --nifu=-1'\
-    + ' --merge'\
-    + ' bias.sof'
+    + ' --merge'
+    sof = 'bias.sof'
 
     if create_sof:
 
@@ -720,7 +723,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
 
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             if os.path.isfile(self.calibration_dir + 'TWILIGHT/bias.sof'):
                 assert filecmp.cmp(self.calibration_dir + 'TWILIGHT/bias.sof',\
@@ -735,7 +738,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
 
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             if self.dark:
                 if os.path.isfile(self.calibration_dir + 'DARK/bias.sof'):
@@ -751,15 +754,15 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
 
                     if not self.debug:
                         _call_esorex(self, self.calibration_dir + 'DARK/',
-                        esorex_cmd, esorex_kwargs=esorex_kwargs)
+                        esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         if self.dark:
             if not self.debug:
-                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
@@ -793,8 +796,8 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
     esorex_cmd = '--log-file=dark.log --log-level=debug'\
     + ' muse_dark'\
     + ' --nifu=-1'\
-    + ' --merge'\
-    + ' dark.sof'
+    + ' --merge'
+    sof = ' dark.sof'
 
     if create_sof:
 
@@ -832,11 +835,11 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'DARK/dark.sof')
 
                 if not self.debug:
-                    _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self.calibration_dir + 'DARK/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
@@ -872,8 +875,8 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     + ' muse_flat'\
     + ' --samples=true'\
     + ' --nifu=-1'\
-    + ' --merge'\
-    + ' flat.sof'
+    + ' --merge'
+    sof = ' flat.sof'
 
     if create_sof:
 
@@ -917,7 +920,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'SCIENCE/flat.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/flat_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -942,12 +945,12 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'TWILIGHT/flat.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
@@ -983,8 +986,8 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     + ' muse_wavecal'\
     + ' --nifu=-1'\
     + ' --residuals'\
-    + ' --merge'\
-    + ' wavecal.sof'
+    + ' --merge'
+    sof = ' wavecal.sof'
 
     if create_sof:
 
@@ -1032,7 +1035,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'SCIENCE/wavecal.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/wavecal_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -1063,12 +1066,12 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'TWILIGHT/wavecal.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
@@ -1104,8 +1107,8 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     + ' muse_lsf'\
     + ' --nifu=-1'\
     + ' --merge'\
-    + ' --save_subtracted'\
-    + ' lsf.sof'
+    + ' --save_subtracted'
+    sof = ' lsf.sof'
 
     if create_sof:
 
@@ -1156,7 +1159,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'SCIENCE/lsf.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(self.calibration_dir + 'TWILIGHT/lsf_temp.sof', 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
@@ -1189,12 +1192,12 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'TWILIGHT/lsf.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
@@ -1227,8 +1230,8 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     print('... Creating the TWILIGHT FLAT')
 
     esorex_cmd = '--log-file=twilight.log --log-level=debug'\
-    + ' muse_twilight'\
-    + ' twilight.sof'
+    + ' muse_twilight'
+    sof = ' twilight.sof'
 
     if create_sof:
 
@@ -1306,11 +1309,11 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                 self.calibration_dir + 'TWILIGHT/twilight.sof')
                 if not self.debug:
                     _call_esorex(self, self.calibration_dir + 'TWILIGHT',\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, self.calibration_dir + 'TWILIGHT', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
@@ -1345,8 +1348,8 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --saveimage=true'\
     + ' --skyreject=' + self.skyreject\
     + ' --skylines=' + self.skylines \
-    + ' --merge'\
-    + ' sci_basic_object.sof'
+    + ' --merge'
+    sof = ' sci_basic_object.sof'
 
     esorex_cmd_std = '--log-file=sci_basic_std.log --log-level=debug'\
     + ' muse_scibasic'\
@@ -1354,8 +1357,8 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --resample'\
     + ' --saveimage=true'\
     + ' --skyreject=15.,15.,1'\
-    + ' --merge'\
-    + ' sci_basic_std.sof'
+    + ' --merge'
+    sof = ' sci_basic_std.sof'
 
     if os.path.exists(self.working_dir + 'std/sci_basic_std.sof'):
         os.remove(self.working_dir + 'std/sci_basic_std.sof')
@@ -1501,7 +1504,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             f_object.close()
 
         if not self.debug:
-            _call_esorex(self, exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         if os.path.isfile(self.working_dir + 'std/sci_basic_std.sof'):
             assert filecmp.cmp(self.working_dir + 'std/sci_basic_std.sof',\
             self.working_dir + 'std/sci_basic_std_temp.sof'),\
@@ -1544,8 +1547,8 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
     esorex_cmd = ' --log-file=std_flux.log --log-level=debug'\
     + ' muse_standard'\
-    + ' --filter=white'\
-    + ' std_flux.sof'
+    + ' --filter=white'
+    sof = ' std_flux.sof'
 
     PIXTABLE_STD_list = _get_filelist(self, self.working_dir + 'std/',\
     'PIXTABLE_STD*.fits')
@@ -1568,7 +1571,7 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         f.close()
 
     if not self.debug:
-        _call_esorex(self, self.working_dir + 'std/', esorex_cmd, esorex_kwargs=esorex_kwargs)
+        _call_esorex(self, self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
@@ -1657,12 +1660,12 @@ def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         esorex_cmd = '--log-file=sky.log --log-level=debug'\
         + ' muse_create_sky'\
         + ' --fraction=' + str(self.skyfraction)\
-        + ' --ignore=' + str(self.skyignore)\
-        + ' sky.sof'
+        + ' --ignore=' + str(self.skyignore)
+        sof = ' sky.sof'
 
         if self.skyfield == 'auto' and (sky == True).any():
             if not self.debug:
-                _call_esorex(self, exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         else:
             if not self.debug:
                 _call_esorex(self, exposure_dir,\
@@ -2473,8 +2476,8 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
     esorex_cmd = '--log-file=exp_align.log --log-level=debug'\
     + ' muse_exp_align'\
     + ' --srcmin='+str(self.config['exp_align']['srcmin'])\
-    + ' --srcmax='+str(self.config['exp_align']['srcmax'])\
-    + ' exp_align.sof'
+    + ' --srcmax='+str(self.config['exp_align']['srcmax'])
+    sof = ' exp_align.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
@@ -2577,7 +2580,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withoutsky,\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             if not self.skysub:
                 exp_list = _get_filelist(self,\
@@ -2595,7 +2598,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withsky,\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
         else:
             exp_list = _get_filelist(self,\
@@ -2609,7 +2612,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     + '/' + exp_list[i] + ' IMAGE_FOV\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
@@ -2642,8 +2645,8 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --filter=white'\
     + ' --save=cube'\
     + ' --crsigma=5.'\
-    + ' --weight=' + str(self.weight)\
-    + ' exp_combine.sof'
+    + ' --weight=' + str(self.weight)
+    sof = ' exp_combine.sof'
 
     unique_pointings = np.array([])
     unique_tester = ' '
@@ -2720,7 +2723,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withoutsky,\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             if not self.skysub:
                 pixtable_list = _get_filelist(self,\
@@ -2743,7 +2746,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withsky,\
-                    esorex_cmd, esorex_kwargs=esorex_kwargs)
+                    esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         else:
             pixtable_list = _get_filelist(self,\
             combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
@@ -2760,4 +2763,4 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 + 'filter_list.fits FILTER_LIST\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
