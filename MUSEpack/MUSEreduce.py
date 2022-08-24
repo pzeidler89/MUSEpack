@@ -1915,6 +1915,8 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
     unique_pointings = np.array([])
     unique_tester = ' '
 
+    sof = 'scipost.sof'
+
     sci = np.zeros_like(exp_list_SCI, dtype=bool)
     for idx, exposure in enumerate(exp_list_SCI):
         if exposure[-8:-5] == 'SCI':
@@ -2010,8 +2012,8 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     + ' --save=cube,skymodel,individual,raman,autocal'\
                     + ' --skymethod=' + self.skymethod\
                     + ' --autocalib=' + self.autocalib
-                    + ' --filter=white'\
-                    + ' scipost.sof', esorex_kwargs=esorex_kwargs)
+                    + ' --filter=white',\
+                    sof, esorex_kwargs=esorex_kwargs)
 
                 if self.skysub:
 
@@ -2048,8 +2050,8 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                         + ' --skymethod=none'\
                         + ' --filter=white'\
                         + ' --autocalib=' + self.autocalib\
-                        + ' --rvcorr=none'\
-                        + ' scipost.sof', esorex_kwargs=esorex_kwargs)
+                        + ' --rvcorr=none',\
+                        sof, esorex_kwargs=esorex_kwargs)
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:
