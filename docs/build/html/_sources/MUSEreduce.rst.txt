@@ -41,6 +41,7 @@ The :obj:`json` configuration file is needed to run :class:`MUSEreduce.musereduc
 
 The file :download:`config file <../../MUSEpack/config.json>` is structured the following. If keywords are directly controlling toggles of the `MUSE data reduction pipeline`_ their naming is identical.
 
+
 .. json:object:: config
 
    :property global: global parameters affecting the data reduction process
@@ -71,45 +72,45 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :proptype exp_combine: :json:object:`exp_combine`
 
 .. json:object:: global
-   
+
    :property pipeline_path: The absolut path to the `MUSE data reduction pipeline`_ installation folder.
    :proptype pipeline_path: string
-   
+
    :property mode: The observation mode the data was obtained with.
    :proptype mode: string
    :options mode: WFM-NOAO, WFM-AO, NFM-AO
-   
+
    :property withrvcorr: bariocentric correction. Needs to be turned off, if one wants run an own wavelength calibration
-    :proptype withrvcorr: bool
+   :proptype withrvcorr: bool
    :options withrvcorr: true, false, default='true'
-   
-   :property auto_sort_data: The raw data is sorted and the calibration files are assigned based on their header information. If :obj:`True`, 
+
+   :property auto_sort_data: The raw data is sorted and the calibration files are assigned based on their header information. If :obj:`True`,
                              the file lists `ID_DAR.list`, `ID_SCI.list`, and `ID_TWI.list` are created. If these have to be altered manually (e.g., using
                              different calibration files), we recommend to run it first with ``auto_sort_data`` = :obj:`True`, then make the changes accordingly
                              and from this point on set ``auto_sort_data`` = :obj:`False`.
    :proptype auto_sort_data: bool
    :options auto_sort_data: false, true, default=true
-   
-   :property using_specific_exposure_time: The user can choose to only reduce a specific exposure time, if the same OB contains multiple exposures with 
+
+   :property using_specific_exposure_time: The user can choose to only reduce a specific exposure time, if the same OB contains multiple exposures with
                                             different exposure times (e.g., long and short exposures)
    :proptype using_specific_exposure_time: float
-   
+
    :property dither_multiple_OBs: Each OB is normally limited to a total exposure time of one hour. Therefore, one pointing may be distributed via multiple OBs.
                                  If ``dither_multiple_OBs`` = :obj:`True` it is possible to dither exposures from multiple OBs.
                                  In this case one must provide an ``OB_list``.
    :proptype dither_multiple_OBs: bool
    :options dither_multiple_OBs: false, true, default=false
-   
+
    :property n_CPU: The number of CPUs used to reduce the data. If set to -1 all available cores are used.
    :proptype n_CPU: int
    :options n_CPU: default=-1
-   
+
    :property rootpath: The absolut path in which the `raw` folder is located and in which the `processed` folder will be created.
    :proptype rootpath: string
-   
+
    :property OB: The name of the OB that shall be reduce. It must identical to the OB_ID given in the `raw` folder.
    :proptype OB: string
-   
+
    :property OB_list: If ``dither_multiple_OBs`` = :obj:`True` one must give a :obj:`string` list of OB_IDs, which will be dithered in the end.
                      The calibration and data reduction runs on each individual OB to take into account different calibration files.
    :proptype OB_list: list
@@ -117,19 +118,19 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
 
 .. json:object:: calibration
 
-   :property execute: Must be set :obj:`True` if this step should be executed
+   :property execute: Must be set :obj:`True` if this step should be execute
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property using_ESO_Calibration: If the user wants to use the ESO calibration files (recommended if available) instead of running the calibration themselves (BIAS,                                           DARK, FLAT, WAVECAL, LSF, TWILIGHT) it must be set to :obj:`True`
    :proptype using_ESO_Calibration: bool
    :options using_ESO_Calibration: false, true, default=true
-   
+
    :property renew_statics: Set to :obj:`True` if the static calibration files should be copied again from the `MUSE data reduction pipeline`_ folder. This is necessary if
                              the installed version of the pipline changes and one wants to obtain the latest static calibrations
    :proptype renew_statics: bool
    :options renew_statics: false, true, default=false
-   
+
    :property dark: Set to :obj:`True` if one wants to also use the DARK files from the calibration.
    :proptype dark: bool
    :options dark: false, true, default=false
@@ -157,7 +158,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property esorex_kwargs_twilight: A string of additional parameters for the `TWILIGHT` recipe from the MUSE Pipeline User Manual that are not included in the :obj:`json` configuration file otherwise can be provided
    :proptype esorex_kwargs_twilight: string
    :options esorex_kwargs_twilight: default='none'
-   
+
    :property create_sof: Must be set :obj:`True` if one wants to create a new `.sof` file. In case the user wants to change or create the `.sof` file manually,
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
@@ -168,17 +169,17 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property execute_std: Must be set :obj:`True` if the STD star should be reduced
    :proptype execute_std: bool
    :options execute_std: false, true, default=true
-   
+
    :property sky_reject: The sigma clipping parameters for the Gaussian fit to each sky emission line: `high sigma clipping limit` (:obj:`float`),
                          `low sigma clipping limit` (:obj:`float`), `number of iterations` (:obj:`int`). For a more detailed description we refer to the
                          `MUSE data reduction pipeline`_ manual.
    :proptype sky_reject: string
    :options sky_reject: default='15.,15.,1'
-   
+
    :property skylines: The sky lines used to calibrate the wavelength offset in each IFU. the default are two lines but more strong skylines may be provided. For a
                        more detailed description we refer to the `MUSE data reduction pipeline`_ manual.
    :proptype skylines: string
@@ -192,7 +193,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
                         than it must be set to :obj:`False` since it will be overwritten otherwise
    :proptype create_sof: bool
    :options create_sof: false, true, default=true
-   
+
 .. json:object:: std_flux
 
    :property execute: Must be set :obj:`True` if this step should be executed
@@ -213,27 +214,27 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property modified: If set :obj:`True` the modified sky subtraction will be executed. This method will prevent the over subtraction of emission lines that are both emitted from the Earth's atmosphere (tellurics) and the target (e.g., HII regions). For a detailed description of this method we refer to `Zeidler et al. 2019`_. If ``modified`` = :obj:`True` the ``method`` should be `subtract_model`. Other methods will **not** lead to an error but they may lead to wrong results.
    :proptype modified: bool
    :options modified: false, true, default=false
-   
+
    :property sky_field: Determines if a sky observation (if available) or the science observation itself is used to determine the background
                         contamination (tellurics). If set to `auto` the pipeline will check if there are sky observations available and use the closest one in time to
                         the science exposures. If the ``skyfield``  = `object`, the science exposure will be used.
    :proptype sky_field: string
    :options sky_field: 'auto', 'object', default='auto'
-   
+
    :property fraction: The fraction of the image used to be considered as sky. Must be between 0. and 1. For more details we refer to the
                          `MUSE data reduction pipeline`_ handbook.
    :proptype fraction: float
    :options fraction: [0.,1.[, default=0.05
-   
+
    :property ignore: The fraction of the image ignored for sky consideration. Must be between 0. and 1. For more details we refer to the
                          `MUSE data reduction pipeline`_ handbook.
    :proptype ignore: float
    :options ignore: [0.,1.[, default=0.05
-   
+
    :property method: The method how the determined sky spectrum is fitted to each spaxel to subtract the sky background. Should be set to 'subtract-model' in case
                      of ``modified`` = :obj:`True`. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
    :proptype method: string
@@ -253,16 +254,16 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property autocalib: This may execute the flux autocalibration between the different IFUs for empty fields. If ``user`` a AUTOCAL_FACTORS.fits table has to be provided by the user.
    :proptype autocalib: string
    :options autocalib: 'none', 'deepfield', 'user', default=none
-   
+
    :property subtract_sky: The user can decide to not run any sky subtraction. All telluric lines will be included in the final datacube. this may be useful if one
                             wants to do their own wavelength calibration.
    :proptype subtract_sky: bool
    :options subtract_sky: false, true, default=true
-   
+
    :property raman: If laser guide stars are used raman scattering in the atmosphere may be visible in the final data cubes. If set to :obj:`True` the Raman lines
                      are removed. For more details we refer to the `MUSE data reduction pipeline`_ handbook.
    :proptype raman: bool
@@ -281,7 +282,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property user_list: A user list with the identifiers of the dither positions, in case only a subset shall be collected and copied to the final folder
                         to be used for the combination. If left empty all dither positions are used to create the final data cube.
    :proptype user_list: list
@@ -307,7 +308,7 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
    :property execute: Must be set :obj:`True` if this step should be executed
    :proptype execute: bool
    :options execute: false, true, default=true
-   
+
    :property weight: The method how the fluxes in each dither position sre weighted. For more details we refer to
                      the `MUSE data reduction pipeline`_ handbook.
    :proptype weight: string

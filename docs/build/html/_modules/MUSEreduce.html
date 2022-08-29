@@ -1833,6 +1833,8 @@
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;... SKY CREATION MODIFIED&#39;</span><span class="p">)</span>
 
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39;sky.sof&#39;</span>
+
     <span class="n">sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="n">sci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -1899,16 +1901,16 @@
                 <span class="s1">&#39;--log-file=sky.log --log-level=debug&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; muse_create_sky&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">),</span>\
+                <span class="n">sof</span> <span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span>\
                 <span class="s1">&#39;--log-file=sky.log --log-level=debug&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; muse_create_sky&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">),</span>\
+                <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exposure_dir</span><span class="p">)</span>
         <span class="n">sky_cont_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;SKY_CONTINUUM.fits&#39;</span><span class="p">,</span> <span class="n">checksum</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1957,16 +1959,16 @@
                 <span class="s1">&#39;--log-file=sky.log --log-level=debug&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; muse_create_sky&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">),</span>\
+                <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="n">_call_esorex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exposure_dir</span><span class="p">,</span>\
                 <span class="s1">&#39; --log-file=sky.log --log-level=debug&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; muse_create_sky&#39;</span>\
                 <span class="o">+</span> <span class="s1">&#39; --fraction=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyfraction</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">)</span>\
-                <span class="o">+</span> <span class="s1">&#39; sky.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39; --ignore=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyignore</span><span class="p">),</span>\
+                <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exposure_dir</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SKY_CONTINUUM_zero.fits ==&gt; SKY_CONTINUUM.fits&#39;</span><span class="p">)</span>
@@ -2028,6 +2030,8 @@
 
     <span class="n">unique_pointings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
     <span class="n">unique_tester</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+
+    <span class="n">sof</span> <span class="o">=</span> <span class="s1">&#39;scipost.sof&#39;</span>
 
     <span class="n">sci</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">exposure</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exp_list_SCI</span><span class="p">):</span>
@@ -2124,8 +2128,8 @@
                     <span class="o">+</span> <span class="s1">&#39; --save=cube,skymodel,individual,raman,autocal&#39;</span>\
                     <span class="o">+</span> <span class="s1">&#39; --skymethod=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skymethod</span>\
                     <span class="o">+</span> <span class="s1">&#39; --autocalib=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span>
-                    <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span>\
-                    <span class="o">+</span> <span class="s1">&#39; scipost.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span><span class="p">,</span>\
+                    <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skysub</span><span class="p">:</span>
 
@@ -2162,8 +2166,8 @@
                         <span class="o">+</span> <span class="s1">&#39; --skymethod=none&#39;</span>\
                         <span class="o">+</span> <span class="s1">&#39; --filter=white&#39;</span>\
                         <span class="o">+</span> <span class="s1">&#39; --autocalib=&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocalib</span>\
-                        <span class="o">+</span> <span class="s1">&#39; --rvcorr=none&#39;</span>\
-                        <span class="o">+</span> <span class="s1">&#39; scipost.sof&#39;</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="s1">&#39; --rvcorr=none&#39;</span><span class="p">,</span>\
+                        <span class="n">sof</span><span class="p">,</span> <span class="n">esorex_kwargs</span><span class="o">=</span><span class="n">esorex_kwargs</span><span class="p">)</span>
 
                 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">exp_list</span><span class="p">[</span><span class="n">exp_num</span><span class="p">][:</span><span class="o">-</span><span class="mi">9</span><span class="p">])</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
