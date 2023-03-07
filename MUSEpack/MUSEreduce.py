@@ -1963,9 +1963,13 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 if not self.using_ESO_calibration:
                     f.write(self.calibration_dir\
                     + 'SCIENCE/LSF_PROFILE.fits LSF_PROFILE\n')
+                    f.write(self.calibration_dir\
+                            + 'ASTROMETRY_WCS_0001.fits ASTROMETRY_WCS\n')
                 if self.using_ESO_calibration:
                     f.write(self.ESO_calibration_dir\
                     + 'LSF_PROFILE.fits LSF_PROFILE\n')
+                    f.write(self.ESO_calibration_dir\
+                            + 'ASTROMETRY_WCS.fits ASTROMETRY_WCS\n')
 
                 f.write(self.working_dir\
                 + 'std/' + 'STD_RESPONSE_0001.fits STD_RESPONSE\n')
@@ -1976,12 +1980,12 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     + '/' + 'SKY_LINES.fits SKY_LINES\n')
                     f.write(exp_list[exp_num][:-9]\
                     + '/' + 'SKY_CONTINUUM.fits SKY_CONTINUUM\n')
-                if self.mode == 'WFM-AO' or self.mode == 'WFM-NOAO':
-                    f.write(self.static_calibration_dir\
-                    + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
-                if self.mode == 'NFM-AO':
-                    f.write(self.static_calibration_dir\
-                    + 'astrometry_wcs_nfm.fits ASTROMETRY_WCS\n')
+                # if self.mode == 'WFM-AO' or self.mode == 'WFM-NOAO':
+                #     f.write(self.static_calibration_dir\
+                #     + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
+                # if self.mode == 'NFM-AO':
+                #     f.write(self.static_calibration_dir\
+                #     + 'astrometry_wcs_nfm.fits ASTROMETRY_WCS\n')
                 if not self.autocalib == 'none':
                     f.write(exp_list[exp_num][:-9]\
                     + '/' + 'SKY_MASK.fits SKY_MASK\n')
