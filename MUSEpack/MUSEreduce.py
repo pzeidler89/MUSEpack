@@ -2014,8 +2014,8 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     '--log-file=scipost.log --log-level=debug'\
                     + ' muse_scipost'\
                     + ' --save=cube,skymodel,individual,raman,autocal'\
-                    + ' --skymethod=' + str(self.skymethod)\
-                    + ' --autocalib=' + str(self.autocalib)\
+                    + ' --skymethod=' + self.skymethod\
+                    + ' --autocalib=' + str(self.autocalib).lower()\
                     + ' --filter=white',\
                     sof, esorex_kwargs=esorex_kwargs)
 
