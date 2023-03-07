@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='MUSEpack',
-      version='1.2.1',
+      version='1.2.2',
       packages=['MUSEpack'],
       author='Peter Zeidler',
       author_email='peterzeidler89@gmail.com',

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 
-__revision__ = '20220824'
+__revision__ = '20230307'
 
 import sys
 import shutil
@@ -114,7 +114,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Aug 22, 2022                    #####')
+        print('#####                    Mar 07, 2023                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1571,6 +1571,7 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         f.close()
 
     if not self.debug:
+        print(self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs)
         _call_esorex(self, self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
