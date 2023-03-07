@@ -2051,7 +2051,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                         '--log-file=scipost.log --log-level=debug'\
                         + ' muse_scipost'\
                         + ' --save=cube,skymodel,individual,raman,autocal'\
-                        + ' --skymethod=none'\
+                        + ' --skymethod=none' \
                         + ' --filter=white'\
                         + ' --autocalib=' + self.autocalib\
                         + ' --rvcorr=none',\
