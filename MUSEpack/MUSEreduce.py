@@ -397,7 +397,7 @@ def _get_filelist(self, data_dir, filename_wildcard):
     return raw_data_list
 
 
-def _call_esorex(self, exec_dir, esorex_cmd, sof ,esorex_kwargs=None):
+def _call_esorex(self, exec_dir, esorex_cmd, sof, esorex_kwargs=None):
 
     '''
     This module calls the various ESOrex commands and gives it to the
@@ -1571,7 +1571,6 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         f.close()
 
     if not self.debug:
-        print(self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs)
         _call_esorex(self, self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
