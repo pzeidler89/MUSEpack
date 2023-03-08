@@ -1,6 +1,7 @@
 {
   "global": {
     "pipeline_path": "path_to_pipeline/muse/2.8.7/",
+    "static_calib_path": null,
     "mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
@@ -34,7 +35,7 @@
   },
   "std_flux":{
     "execute": true,
-    "esorex_kwargs": "none",
+    "esorex_kwargs": null,
     "create_sof": true
   },
   "sky":{
@@ -49,7 +50,7 @@
   },
   "sci_post":{
     "execute": true,
-    "autocalib": "none",
+    "autocalib": null,
     "subtract_sky": true,
     "raman": false,
     "esorex_kwargs": null,

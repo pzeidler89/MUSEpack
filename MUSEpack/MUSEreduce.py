@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
-__revision__ = '20230307'
+__revision__ = '20230308'
 
 import sys
 import shutil
@@ -114,7 +114,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 07, 2023                    #####')
+        print('#####                    Mar 08, 2023                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -129,6 +129,11 @@ class musereduce:
         if self.dithering_multiple_OBs and len(self.user_list) > 0:
             print('Currently a user list cannot be provided with multiple OBs')
             sys.exit()
+        self.static_calib_path = self.config.get('global', {}).get('static_calib_path', None)
+        if not self.static_calib_path:
+            os.path.join(self.config['global']['pipeline_path'], 'calib/muse*/')
+            print('No specific static calibration path defined')
+        print('>>> Static Calibration path: ' + self.static_calib_path)
 
         print('... Perfect, everything checks out')
         print('')
@@ -271,8 +276,7 @@ class musereduce:
             if os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
             os.mkdir(self.static_calibration_dir)
-            for itername in glob.glob(os.path.join(
-                    self.config['global']['pipeline_path'], 'calib/muse*/*.*')):
+            for itername in glob.glob(os.path.join(self.static_calib_path, '*.*')):
                 shutil.copy(itername, self.static_calibration_dir + '.')
 
             print('... Sorting the data')

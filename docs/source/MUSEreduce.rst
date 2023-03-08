@@ -3,7 +3,7 @@
 MUSEreduce
 **********
 
-:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.7 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has been tested with version v2.8.1 of the data reduction pipeline.
+:class:`MUSEreduce.musereduce` is an easy-to-use python Class used as wrapper for the VLT/`MUSE data reduction pipeline`_ and does not replace the core functionalities of the pipeline provided by ESO. In order to function properly with this version of :class:`MUSEreduce.musereduce` we recommend to install the pipeline version v2.8.7 found under: https://www.eso.org/sci/software/pipelines/muse/. This version of :class:`MUSEreduce.musereduce` has been tested with version v2.8.7 of the data reduction pipeline.
 
 .. _MUSE data reduction pipeline: https://www.eso.org/sci/software/pipelines/muse/
 
@@ -75,6 +75,10 @@ The file :download:`config file <../../MUSEpack/config.json>` is structured the 
 
    :property pipeline_path: The absolut path to the `MUSE data reduction pipeline`_ installation folder.
    :proptype pipeline_path: string
+
+   :property static_calibration_path: The path to the static calibration files delivered with the pipeline.
+   :proptype static_calibration_path: string
+   :options static_calibration_path: default=null
 
    :property mode: The observation mode the data was obtained with.
    :proptype mode: string
@@ -405,3 +409,5 @@ History
     :class:`MUSEreduce.musereduce` supports now *pipeline v2.8.7*. Additonally, kwargs can be set in the `json` configuration file for the different routines to support any other ``esorex`` command that is not specifically listed.
 .. versionadded:: 1.2.1
     :class:`MUSEreduce.musereduce` changed that the sof file gets included individually when calling the sorex command. thats was needed that additional kwargs can be provided.
+.. versionadded:: 1.2.1
+    :class:`MUSEreduce.musereduce` keyword *static_calib_path* was addded to *config.json* in ``global`` so a different pipline static calibration path can be defined. This is might be neeeded if ESORex was installed using MacPorts. If nothing is given this defaults to the standard linux installation.
