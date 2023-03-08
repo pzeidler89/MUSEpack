@@ -134,7 +134,6 @@ class musereduce:
             self.static_calib_path = os.path.join(self.config['global']['pipeline_path'], 'calib/muse*/')
             print('No specific static calibration path defined')
         print('>>> Static Calibration path: ' + self.static_calib_path)
-        assert os.path.isdir(self.static_calib_path), 'STATIC CALIBRATION PATH DOES NOT EXIST'
 
         print('... Perfect, everything checks out')
         print('')
