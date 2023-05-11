@@ -124,7 +124,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         if len(cube) == 3:
             prihdr = cube[0].header
             sechdr = cube[1].header
-            assert prihdr['INSTRUME'] != 'MUSE    ',\
+            assert prihdr['INSTRUME'].strip() != 'MUSE',\
             ' This is not a MUSE cube. Please check'
 
             if not in_frame:
