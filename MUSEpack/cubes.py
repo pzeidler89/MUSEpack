@@ -128,7 +128,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             ' This is not a MUSE cube. Please check'
 
             if not in_frame:
-                in_frame = prihdr['RADECSYS'].lower()
+                in_frame = prihdr['RADESYS'].lower()
             print('MUSE cube detected')
 
         if len(cube) != 3:
