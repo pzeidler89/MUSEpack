@@ -135,8 +135,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             print('No MUSE cube header info assumed to be in one extension')
             prihdr = cube[0].header
             sechdr = cube[0].header
-            if 'RADECSYS' in prihdr:
-                in_frame = prihdr['RADECSYS'].lower()
+            if 'RADESYS' in prihdr:
+                in_frame = prihdr['RADESYS'].lower()
             if correct_flux:
                 print('Flux correction currently only supported'\
                 + ' for MUSE cubes')
