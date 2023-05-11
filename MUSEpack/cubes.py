@@ -2,7 +2,7 @@
 
 __version__ = '0.1.3'
 
-__revision__ = '20211019'
+__revision__ = '20220511'
 
 import sys
 import os
@@ -207,7 +207,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                     spec_head['HIERARCH SPECTRUM MAG F814W'] + 50. + aboffset)
                     cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
 
-            del_mag = cat_mag - muse_mag
+            del_mag = np.array(cat_mag) - np.array(muse_mag)
             clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)
             fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
 
