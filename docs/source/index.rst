@@ -1,4 +1,4 @@
-MUSEpack v1.2.1dev20220824
+MUSEpack v1.2.2dev20230228
 ===========================
 
 Introduction

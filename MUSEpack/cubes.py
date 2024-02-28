@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
-__revision__ = '20220511'
+__revision__ = '20240228'
 
 import sys
 import os
@@ -128,7 +128,11 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             ' This is not a MUSE cube. Please check'
 
             if not in_frame:
-                in_frame = prihdr['RADESYS'].lower()
+                if 'RADESYS' in prihdr:
+                    in_frame = prihdr['RADESYS'].lower()
+                elif:
+                    'RADECSYS' in prihdr:
+                    in_frame = prihdr['RADECSYS'].lower()
             print('MUSE cube detected')
 
         if len(cube) != 3:
@@ -137,6 +141,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             sechdr = cube[0].header
             if 'RADESYS' in prihdr:
                 in_frame = prihdr['RADESYS'].lower()
+            elif:
+                'RADECSYS' in prihdr:
+                in_frame = prihdr['RADECSYS'].lower()
             if correct_flux:
                 print('Flux correction currently only supported'\
                 + ' for MUSE cubes')
@@ -170,7 +177,11 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
             sechdr['CRVAL1'] = trans_ref_coord.ra.value
             sechdr['CRVAL2'] = trans_ref_coord.dec.value
-            sechdr.set('RADESYS', out_frame.upper())
+            if 'RADESYS' in sechdr:
+                sechdr.set('RADESYS', out_frame.upper())
+            elif:
+                'RADECSYS' in sechdr:
+                sechdr.set('RADECSYS', out_frame.upper())
 
         ref_xy = np.array([sechdr['CRPIX1'], sechdr['CRPIX2']])
         ref_xy_new = (np.dot(r, np.ones(ref_xy.T.shape))\
