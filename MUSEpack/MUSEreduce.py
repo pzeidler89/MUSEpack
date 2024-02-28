@@ -557,7 +557,7 @@ def _sort_data(self):
     for sci_file_idx in range(len(science_files)):
 
         hdu = fits.open(self.raw_data_dir + science_files[sci_file_idx])[0]
-        OBs_ids[sci_file_idx] = hdu.header['HIERARCH ESO OBS NAME'])
+        OB_ids[sci_file_idx] = hdu.header['HIERARCH ESO OBS NAME']
         RA = hdu.header['RA']
         DEC = hdu.header['DEC']
         EXPTIME = hdu.header['EXPTIME']
@@ -586,7 +586,7 @@ def _sort_data(self):
         ROT = hdu.header['HIERARCH ESO INS DROT POSANG']
         DATE = hdu.header['MJD-OBS']
 
-        working_dir_temp = os.path.join(self.working_dir, OBs_ids[sci_file_idx])
+        working_dir_temp = os.path.join(self.working_dir, OB_ids[sci_file_idx])
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
         frame='fk5').to_string('hmsdms', sep='',\
