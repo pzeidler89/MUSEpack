@@ -91,11 +91,14 @@ class musereduce:
 
         self.raw_data_dir = self.rootpath + 'raw/'
         self.working_dir = self.rootpath + 'reduced/'
+
+        if not os.path.exists(self.working_dir):
+            os.mkdir(self.working_dir)
+
         self.combining_OBs_dir = None
         self.calibration_dir = None
         self.ESO_calibration_dir = None
         self.static_calibration_dir = None
-
         self.dithername = None
 
         self.debug = debug
