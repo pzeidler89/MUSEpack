@@ -483,6 +483,8 @@ def _create_ob_folders(self):
     self.config['global']['OB_list'] = np.unique(obs_name)
     for unique_ob in self.config['global']['OB_list']:
         print("OB folder: ", unique_ob)
+        if os.path.exists(os.path.join(self.working_dir, unique_ob)):
+            shutil.rmtree(os.path.join(self.working_dir, unique_ob))
         os.mkdir(os.path.join(self.working_dir, unique_ob))
 
 def _sort_data(self):
