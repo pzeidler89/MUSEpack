@@ -241,10 +241,10 @@ class musereduce:
         # if not os.path.exists(self.rootpath + 'reduced/'):
         #     os.mkdir(self.rootpath + 'reduced/')
 
-
+        print(' ')
+        print('... Creating directories')
         for OB in self.OB_list:
-            print(' ')
-            print('... Creating directories')
+
             print('>>> for OB: ' + OB)
             print(' ')
 
@@ -275,7 +275,7 @@ class musereduce:
             self.ESO_calibration_dir = self.working_dir + 'ESO_calibrations/'
             self.static_calibration_dir = self.working_dir\
             + 'static_calibration_files/'
-            print(self.ESO_calibration_dir)
+
             if self.renew_statics and\
             os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
@@ -480,7 +480,7 @@ def _create_ob_folders(self):
             if dprcatg == 'SCIENCE':
                 obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
 
-    self.OB_list = np.unique(obs_name)
+    self.OB_list = np.sort(np.unique(obs_name))
     for unique_ob in self.config['global']['OB_list']:
         print("OB folder: ", unique_ob)
         if os.path.exists(os.path.join(self.working_dir, unique_ob)):
@@ -555,7 +555,7 @@ def _sort_data(self):
     rot_angles = np.zeros(len(science_files))
     points = np.zeros(len(science_files), dtype=object)
     rot_angles_ident = np.zeros(len(science_files))
-    OB_ids = np.zeros(len(science_files))
+    OB_ids = np.zeros(len(science_files), dtype=object)
 
     for sci_file_idx in range(len(science_files)):
 
