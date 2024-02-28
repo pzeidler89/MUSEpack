@@ -238,8 +238,8 @@ class musereduce:
 
         if self.dithering_multiple_OBs:
             self.dithername = np.array(self.config['global']['OB_list'][0])
-        if not os.path.exists(self.rootpath + 'reduced/'):
-            os.mkdir(self.rootpath + 'reduced/')
+        # if not os.path.exists(self.rootpath + 'reduced/'):
+        #     os.mkdir(self.rootpath + 'reduced/')
 
 
         for OB in self.OB_list:
@@ -275,7 +275,7 @@ class musereduce:
             self.ESO_calibration_dir = self.working_dir + 'ESO_calibrations/'
             self.static_calibration_dir = self.working_dir\
             + 'static_calibration_files/'
-
+            print(self.ESO_calibration_dir)
             if self.renew_statics and\
             os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
