@@ -465,7 +465,7 @@ def _create_ob_folders(self):
     '''
     file_list = _get_filelist(self, self.raw_data_dir, '*.fits*')
     science_files = np.array([])
-    ob_name = np.array([])
+    obs_name = np.array([])
 
     for files in file_list:
 
