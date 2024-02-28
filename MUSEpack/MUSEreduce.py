@@ -127,7 +127,7 @@ class musereduce:
         assert self.config['global']['pipeline_path'],\
             'NO PIPELINE PATH DEFINED'
         assert self.config['global']['rootpath'], 'NO ROOTPATH DEFINED'
-        assert self.config['global']['OB_list'] and self.config['global']['auto_create_OB_list'], 'NO OBs given'
+        assert self.config['global']['OB_list'] and not self.config['global']['auto_create_OB_list'], 'NO OBs given'
         if self.config['global']['auto_create_OB_list'] and not self.config['global']['OB_list']:
             print('The OB list is automatically created from the input raw folder')
         if self.config['global']['OB_list']:
