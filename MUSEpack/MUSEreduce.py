@@ -470,7 +470,6 @@ def _create_ob_folders(self):
     for files in file_list:
 
         hdu = fits.open(self.raw_data_dir + files)
-
         dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
 
         if dprcatg_exist:
