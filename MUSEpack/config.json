@@ -5,6 +5,7 @@
     "mode": "WFM-NOAO",
     "withrvcorr": true,
     "auto_sort_data": true,
+    "auto_create_OB_list": true,
     "using_specific_exposure_time": false,
     "dither_multiple_OBs": false,
     "n_CPU": -1,

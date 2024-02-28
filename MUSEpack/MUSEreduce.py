@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.2.3'
+__version__ = '1.3.0'
 
-__revision__ = '20230308'
+__revision__ = '20240229'
 
 import sys
 import shutil
@@ -45,14 +45,14 @@ class musereduce:
 
         self.withrvcorr = self.config['global']['withrvcorr']
         self.OB_list = np.array(self.config['global']['OB_list'])
-        self.dithername = self.config['global']['OB']
         self.dithering_multiple_OBs =\
             self.config['global']['dither_multiple_OBs']
-        if not self.dithering_multiple_OBs:
-            self.OB_list = np.array([self.dithername])
+        # if not self.dithering_multiple_OBs:
+        #     self.OB_list = np.array([self.dithername])
         self.rootpath = self.config['global']['rootpath']
         self.mode = self.config['global']['mode']
         self.auto_sort_data = self.config['global']['auto_sort_data']
+        self.auto_create_OB_list = self.config['global']['auto_create_OB_list']
         self.using_specific_exposure_time =\
         self.config['global']['using_specific_exposure_time']
 
@@ -89,12 +89,14 @@ class musereduce:
         self.user_list =\
             np.array(self.config['dither_collect']['user_list'], dtype=object)
 
-        self.raw_data_dir = None
-        self.working_dir = None
+        self.raw_data_dir = self.rootpath + 'raw/'
+        self.working_dir = self.rootpath + 'reduced/'
         self.combining_OBs_dir = None
         self.calibration_dir = None
         self.ESO_calibration_dir = None
         self.static_calibration_dir = None
+
+        self.dithername = None
 
         self.debug = debug
 
@@ -125,7 +127,11 @@ class musereduce:
         assert self.config['global']['pipeline_path'],\
             'NO PIPELINE PATH DEFINED'
         assert self.config['global']['rootpath'], 'NO ROOTPATH DEFINED'
-        assert self.config['global']['OB'], 'NO OBs given'
+        assert self.config['global']['OB_list'] and self.config['global']['auto_create_OB_list'], 'NO OBs given'
+        if self.config['global']['auto_create_OB_list'] and not self.config['global']['OB_list']:
+            print('The OB list is automatically created from the input raw folder')
+        if self.config['global']['OB_list']:
+            print('Input OB list is used')
         if self.dithering_multiple_OBs and len(self.user_list) > 0:
             print('Currently a user list cannot be provided with multiple OBs')
             sys.exit()
@@ -186,7 +192,7 @@ class musereduce:
             print('==> The pointing name is: ' + self.dithername)
             self.multOB_exp_counter = 0
         else:
-            print('>>> All exposures are located in one OB')
+            print('>>> All exposures per pointing are located in one OB')
             if len(self.user_list) > 0:
                 print('>>> Dithering exposures input list:')
                 for li in self.user_list:
@@ -223,18 +229,25 @@ class musereduce:
 
         print('#####  All parameters set: Starting the data reduction   #####')
 
+        if self.auto_create_OB_list:
+            print('>>> Creating OB list')
+            _create_ob_folders(self)
+
+        if self.dithering_multiple_OBs:
+            self.dithername = np.array(self.config['global']['OB_list'][0])
+        if not os.path.exists(self.rootpath + 'reduced/'):
+            os.mkdir(self.rootpath + 'reduced/')
+
+
         for OB in self.OB_list:
             print(' ')
             print('... Creating directories')
             print('>>> for OB: ' + OB)
             print(' ')
 
-            if not os.path.exists(self.rootpath + 'reduced/'):
-                os.mkdir(self.rootpath + 'reduced/')
-
             if self.dithering_multiple_OBs:
-                self.raw_data_dir = self.rootpath + 'raw/' +\
-                self.dithername + '/' + OB + '/'
+                # self.raw_data_dir = self.rootpath + 'raw/' +\
+                # self.dithername + '/' + OB + '/'
                 self.working_dir = self.rootpath + 'reduced/'\
                 + self.dithername + '/' + OB + '/'
                 self.combining_OBs_dir = self.rootpath + 'reduced/'\
@@ -242,7 +255,16 @@ class musereduce:
                 if not os.path.exists(self.combining_OBs_dir):
                     os.mkdir(self.combining_OBs_dir)
             else:
-                self.raw_data_dir = self.rootpath + 'raw/' + OB + '/'
+                # if self.auto_create_OB_list:
+                #     self.raw_data_dir = self.rootpath + 'raw/'
+                #     self.working_dir = self.rootpath + 'reduced/'
+                #     self.combining_OBs_dir = None
+                #
+                #     print('>>> Creating OB list')
+                #     _create_ob_folders(self)
+
+                # else:
+                # self.raw_data_dir = self.rootpath + 'raw/' + OB + '/'
                 self.working_dir = self.rootpath + 'reduced/' + OB + '/'
                 self.combining_OBs_dir = None
 
@@ -279,14 +301,16 @@ class musereduce:
             for itername in glob.glob(os.path.join(self.static_calib_path, '*.*')):
                 shutil.copy(itername, self.static_calibration_dir + '.')
 
-            print('... Sorting the data')
+        print('... Sorting the data')
 
-            if self.auto_sort_data:
-                print('>>> Sorting the raw data')
-                _sort_data(self)
-            else:
-                print('>>> MANUAL INTERACTION NEEDED')
+        if self.auto_sort_data:
+            print('>>> Sorting the raw data')
+            _sort_data(self)
+        else:
+            print('>>> MANUAL INTERACTION NEEDED')
 
+        for OB in self.OB_list:
+            self.working_dir = os.path.join(self.rootpath,'reduced',OB)
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
                 np.concatenate([glob.glob(self.working_dir + '*_SCI.list'),\
@@ -434,6 +458,32 @@ def _call_esorex(self, exec_dir, esorex_cmd, sof, esorex_kwargs=None):
     os.chdir(self.rootpath)
 
 
+def _create_ob_folders(self):
+    '''
+    This module creates the neccessary OB folders, from the raw data
+
+    '''
+    file_list = _get_filelist(self, self.raw_data_dir, '*.fits*')
+    science_files = np.array([])
+    ob_name = np.array([])
+
+    for files in file_list:
+
+        hdu = fits.open(self.raw_data_dir + files)
+
+        dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
+
+        if dprcatg_exist:
+            dprcatg = (hdu[0].header['HIERARCH ESO DPR CATG'])
+
+            if dprcatg == 'SCIENCE':
+                obs_name = np.append(obs_name, hdu.header['HIERARCH ESO OBS NAME'])
+
+    self.config['global']['OB_list'] = np.unique(obs_name)
+    for unique_ob in self.config['global']['OB_list']:
+        print("OB folder: ", unique_ob)
+        os.mkdir(os.path.join(self.working_dir, unique_ob))
+
 def _sort_data(self):
 
     '''
@@ -502,10 +552,12 @@ def _sort_data(self):
     rot_angles = np.zeros(len(science_files))
     points = np.zeros(len(science_files), dtype=object)
     rot_angles_ident = np.zeros(len(science_files))
+    OB_ids = np.zeros(len(science_files))
 
     for sci_file_idx in range(len(science_files)):
 
         hdu = fits.open(self.raw_data_dir + science_files[sci_file_idx])[0]
+        OBs_ids[sci_file_idx] = hdu.header['HIERARCH ESO OBS NAME'])
         RA = hdu.header['RA']
         DEC = hdu.header['DEC']
         EXPTIME = hdu.header['EXPTIME']
@@ -533,6 +585,8 @@ def _sort_data(self):
         EXPTIME = hdu.header['EXPTIME']
         ROT = hdu.header['HIERARCH ESO INS DROT POSANG']
         DATE = hdu.header['MJD-OBS']
+
+        working_dir_temp = os.path.join(self.working_dir, OBs_ids[sci_file_idx])
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
         frame='fk5').to_string('hmsdms', sep='',\
@@ -577,13 +631,13 @@ def _sort_data(self):
         twilight_date = np.unique(twilight_date)
 
         if science_type[sci_file_idx] == 'OBJECT':
-            f_science = open(self.working_dir + filelist_science, 'w')
+            f_science = open(working_dir_temp + filelist_science, 'w')
 
         if science_type[sci_file_idx] == 'SKY':
-            f_science = open(self.working_dir + filelist_sky, 'w')
+            f_science = open(working_dir_temp + filelist_sky, 'w')
 
-        f_dark = open(self.working_dir + filelist_dark, 'w')
-        f_twilight = open(self.working_dir + filelist_twilight, 'w')
+        f_dark = open(working_dir_temp + filelist_dark, 'w')
+        f_twilight = open(working_dir_temp + filelist_twilight, 'w')
         f_science.write(self.raw_data_dir + science_files[sci_file_idx]\
         + '  ' + science_type[sci_file_idx] + '\n')
 
