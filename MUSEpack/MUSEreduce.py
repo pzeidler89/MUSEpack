@@ -475,7 +475,7 @@ def _create_ob_folders(self):
             dprcatg = (hdu[0].header['HIERARCH ESO DPR CATG'])
 
             if dprcatg == 'SCIENCE':
-                obs_name = np.append(obs_name, hdu.header['HIERARCH ESO OBS NAME'])
+                obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
 
     self.config['global']['OB_list'] = np.unique(obs_name)
     for unique_ob in self.config['global']['OB_list']:
