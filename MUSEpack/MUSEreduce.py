@@ -480,7 +480,7 @@ def _create_ob_folders(self):
             if dprcatg == 'SCIENCE':
                 obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
 
-    self.config['global']['OB_list'] = np.unique(obs_name)
+    self.OB_list = np.unique(obs_name)
     for unique_ob in self.config['global']['OB_list']:
         print("OB folder: ", unique_ob)
         if os.path.exists(os.path.join(self.working_dir, unique_ob)):
