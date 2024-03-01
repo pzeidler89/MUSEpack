@@ -14,6 +14,7 @@ import numpy as np
 from astropy.io import ascii, fits
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+from astropy.utils import xml
 from datetime import datetime, timedelta
 import time
 import json
@@ -119,7 +120,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 08, 2023                    #####')
+        print('#####                    Feb 28, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -589,6 +590,14 @@ def _sort_data(self):
         ROT = hdu.header['HIERARCH ESO INS DROT POSANG']
         DATE = hdu.header['MJD-OBS']
 
+        xmlraw2raw = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-4] + '_raw2raw.xml'))
+        xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-4] + '_raw2master.xml'))
+
+        xmlraw2raw_string = '\t'.join(xmlraw2raw)
+        xmlraw2raw_string = '\t'.join(xmlraw2master)
+
+        xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
+
         working_dir_temp = os.path.join(self.working_dir, OB_ids[sci_file_idx])
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
@@ -641,42 +650,48 @@ def _sort_data(self):
 
         f_dark = open(working_dir_temp + filelist_dark, 'w')
         f_twilight = open(working_dir_temp + filelist_twilight, 'w')
+
         f_science.write(self.raw_data_dir + science_files[sci_file_idx]\
         + '  ' + science_type[sci_file_idx] + '\n')
 
         for calibfiles in range(len(calibration_files)):
-            temp_date = fits.open(self.raw_data_dir\
-            + calibration_files[calibfiles])[0].header['MJD-OBS']
 
-            if abs(temp_date - DATE) <= 1.:
-                f_science.write(self.raw_data_dir\
-                + calibration_files[calibfiles] + '  ' +\
-                calibration_type[calibfiles] + '\n')
+            calibfilename = calibfiles.split("/")[-1][:-5]
 
-            if calibration_type[calibfiles] == 'STD'\
-            and abs(temp_date - DATE) > 1.:
+            if calibfilename in xmlraw_superstring:
 
-                f_science.write(self.raw_data_dir\
-                + calibration_files[calibfiles]\
-                + '  ' + calibration_type[calibfiles] + '\n')
+                temp_date = fits.open(self.raw_data_dir\
+                + calibration_files[calibfiles])[0].header['MJD-OBS']
 
-                if calibration_type[calibfiles] == 'ILLUM' and abs(temp_date\
-                - DATE) > 1.:
+                if abs(temp_date - DATE) <= 1.:
                     f_science.write(self.raw_data_dir\
-                    + calibration_files[calibfiles] + '  '\
-                    + calibration_type[calibfiles] + '\n')
+                    + calibration_files[calibfiles] + '  ' +\
+                    calibration_type[calibfiles] + '\n')
 
-                print('WARNING: STD and SCI obs more than 24 hours apart')
+                if calibration_type[calibfiles] == 'STD'\
+                and abs(temp_date - DATE) > 1.:
 
-            if (abs(temp_date - dark_date) <= 1.).all():
-                    f_dark.write(self.raw_data_dir\
+                    f_science.write(self.raw_data_dir\
                     + calibration_files[calibfiles]\
                     + '  ' + calibration_type[calibfiles] + '\n')
 
-            if (abs(temp_date - twilight_date) <= 1.).all():
-                    f_twilight.write(self.raw_data_dir\
-                    + calibration_files[calibfiles]\
-                    + '  ' + calibration_type[calibfiles] + '\n')
+                    if calibration_type[calibfiles] == 'ILLUM' and abs(temp_date\
+                    - DATE) > 1.:
+                        f_science.write(self.raw_data_dir\
+                        + calibration_files[calibfiles] + '  '\
+                        + calibration_type[calibfiles] + '\n')
+
+                    print('WARNING: STD and SCI obs more than 24 hours apart')
+
+                if (abs(temp_date - dark_date) <= 1.).all():
+                        f_dark.write(self.raw_data_dir\
+                        + calibration_files[calibfiles]\
+                        + '  ' + calibration_type[calibfiles] + '\n')
+
+                if (abs(temp_date - twilight_date) <= 1.).all():
+                        f_twilight.write(self.raw_data_dir\
+                        + calibration_files[calibfiles]\
+                        + '  ' + calibration_type[calibfiles] + '\n')
 
         f_science.close()
         f_dark.close()
