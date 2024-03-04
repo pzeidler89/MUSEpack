@@ -549,10 +549,10 @@ def _sort_data(self):
                 if procatg == cal_category:
                     ESO_calibration_type =\
                     np.append(ESO_calibration_type, cal_category)
-                    if not os.path.isfile(self.ESO_calibration_dir\
-                    + cal_category):
-                        shutil.copy(self.raw_data_dir + files,\
-                        self.ESO_calibration_dir + cal_category + '.fits')
+                    # if not os.path.isfile(self.ESO_calibration_dir\
+                    # + cal_category):
+                    #     shutil.copy(self.raw_data_dir + files,\
+                    #     self.ESO_calibration_dir + cal_category + '.fits')
 
     rot_angles = np.zeros(len(science_files))
     points = np.zeros(len(science_files), dtype=object)
@@ -600,7 +600,6 @@ def _sort_data(self):
         xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
 
         working_dir_temp = os.path.join(self.reduced_dir, OB_ids[sci_file_idx])
-        print(working_dir_temp)
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
         frame='fk5').to_string('hmsdms', sep='',\
@@ -657,10 +656,22 @@ def _sort_data(self):
         f_science.write(self.raw_data_dir + science_files[sci_file_idx]\
         + '  ' + science_type[sci_file_idx] + '\n')
 
+        ### Sorting the ESO calibration files
+        ESO_calibration_dir_temp = os.path.join(working_dir_temp, ESO_calibrations)
+
+        if len(ESO_calibration_files) > 0:
+            for ifile, ESO_calibration_file in enumerate(ESO_calibration_files):
+                ESO_calibration_filename = ESO_calibration_file.split("/")[-1][:-8]
+
+                if ESO_calibration_filename in xmlraw_superstring and not\
+                        os.path.isfile(os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile])):
+
+                    shutil.copy(self.raw_data_dir + files, os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile] + '.fits')
+
         for calibfiles in range(len(calibration_files)):
 
             calibfilename = calibration_files[calibfiles].split("/")[-1][:-8]
-            # print(calibfilename)
+
             if calibfilename in xmlraw_superstring:
 
                 temp_date = fits.open(self.raw_data_dir\
