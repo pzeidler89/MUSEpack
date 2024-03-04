@@ -590,8 +590,8 @@ def _sort_data(self):
         ROT = hdu.header['HIERARCH ESO INS DROT POSANG']
         DATE = hdu.header['MJD-OBS']
 
-        xmlraw2raw = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-4] + '_raw2raw.xml'))
-        xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-4] + '_raw2master.xml'))
+        xmlraw2raw = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-7] + '_raw2raw.xml'))
+        xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-7] + '_raw2master.xml'))
 
         xmlraw2raw_string = '\t'.join(xmlraw2raw)
         xmlraw2raw_string = '\t'.join(xmlraw2master)
