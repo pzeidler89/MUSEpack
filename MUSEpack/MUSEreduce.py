@@ -594,7 +594,7 @@ def _sort_data(self):
         xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-8] + '_raw2master.xml'))
 
         xmlraw2raw_string = '\t'.join(xmlraw2raw)
-        xmlraw2raw_string = '\t'.join(xmlraw2master)
+        xmlraw2master_string = '\t'.join(xmlraw2master)
 
         xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
 
