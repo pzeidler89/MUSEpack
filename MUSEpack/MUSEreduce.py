@@ -91,7 +91,8 @@ class musereduce:
             np.array(self.config['dither_collect']['user_list'], dtype=object)
 
         self.raw_data_dir = self.rootpath + 'raw/'
-        self.working_dir = self.rootpath + 'reduced/'
+        self.reduced_dir = self.rootpath + 'reduced/'
+        self.working_dir = self.reduced_dir
 
         if not os.path.exists(self.working_dir):
             os.mkdir(self.working_dir)
@@ -314,7 +315,7 @@ class musereduce:
             print('>>> MANUAL INTERACTION NEEDED')
 
         for OB in self.OB_list:
-            self.working_dir = os.path.join(self.rootpath,'reduced',OB)
+            self.working_dir = os.path.join(self.reduced_dir, OB)
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
                 np.concatenate([glob.glob(self.working_dir + '*_SCI.list'),\
@@ -598,7 +599,7 @@ def _sort_data(self):
 
         xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
 
-        working_dir_temp = os.path.join(self.working_dir, OB_ids[sci_file_idx])
+        working_dir_temp = os.path.join(self.reduced_dir, OB_ids[sci_file_idx])
         print(working_dir_temp)
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
@@ -644,14 +645,14 @@ def _sort_data(self):
         twilight_date = np.unique(twilight_date)
 
         if science_type[sci_file_idx] == 'OBJECT':
-            f_science = open(working_dir_temp + filelist_science, 'w')
+            f_science = open(os.path.join(working_dir_temp, filelist_science), 'w')
             print(working_dir_temp + filelist_science)
 
         if science_type[sci_file_idx] == 'SKY':
-            f_science = open(working_dir_temp + filelist_sky, 'w')
+            f_science = open(os.path.join(working_dir_temp, filelist_sky), 'w')
 
-        f_dark = open(working_dir_temp + filelist_dark, 'w')
-        f_twilight = open(working_dir_temp + filelist_twilight, 'w')
+        f_dark = open(os.path.join(working_dir_temp, filelist_dark), 'w')
+        f_twilight = open(os.path.join(working_dir_temp, filelist_twilight), 'w')
 
         f_science.write(self.raw_data_dir + science_files[sci_file_idx]\
         + '  ' + science_type[sci_file_idx] + '\n')
