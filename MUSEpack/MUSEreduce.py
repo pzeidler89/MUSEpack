@@ -645,6 +645,7 @@ def _sort_data(self):
 
         if science_type[sci_file_idx] == 'OBJECT':
             f_science = open(working_dir_temp + filelist_science, 'w')
+            print(working_dir_temp + filelist_science)
 
         if science_type[sci_file_idx] == 'SKY':
             f_science = open(working_dir_temp + filelist_sky, 'w')
@@ -657,8 +658,8 @@ def _sort_data(self):
 
         for calibfiles in range(len(calibration_files)):
 
-            calibfilename = calibration_files[calibfiles].split("/")[-1][:-5]
-            print(calibfilename)
+            calibfilename = calibration_files[calibfiles].split("/")[-1][:-8]
+            # print(calibfilename)
             if calibfilename in xmlraw_superstring:
 
                 temp_date = fits.open(self.raw_data_dir\
