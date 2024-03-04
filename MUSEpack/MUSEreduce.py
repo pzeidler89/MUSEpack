@@ -544,11 +544,12 @@ def _sort_data(self):
         if procatg_exist:
             procatg = (hdu[0].header['HIERARCH ESO PRO CATG'])
             ESO_calibration_files = np.append(ESO_calibration_files, files)
+            ESO_calibration_type = np.append(ESO_calibration_type, procatg)
 
-            for cal_category in cal_categories:
-                if procatg == cal_category:
-                    ESO_calibration_type =\
-                    np.append(ESO_calibration_type, cal_category)
+            # for cal_category in cal_categories:
+            #     if procatg == cal_category:
+            #         ESO_calibration_type =\
+            #         np.append(ESO_calibration_type, cal_category)
                     # if not os.path.isfile(self.ESO_calibration_dir\
                     # + cal_category):
                     #     shutil.copy(self.raw_data_dir + files,\
