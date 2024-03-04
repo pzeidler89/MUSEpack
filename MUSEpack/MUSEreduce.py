@@ -599,6 +599,7 @@ def _sort_data(self):
         xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
 
         working_dir_temp = os.path.join(self.working_dir, OB_ids[sci_file_idx])
+        print(working_dir_temp)
 
         c = SkyCoord(ra=RA * u.degree, dec=DEC * u.degree,\
         frame='fk5').to_string('hmsdms', sep='',\
@@ -657,7 +658,7 @@ def _sort_data(self):
         for calibfiles in range(len(calibration_files)):
 
             calibfilename = calibration_files[calibfiles].split("/")[-1][:-5]
-
+            print(calibfilename)
             if calibfilename in xmlraw_superstring:
 
                 temp_date = fits.open(self.raw_data_dir\
