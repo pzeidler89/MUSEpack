@@ -666,7 +666,7 @@ def _sort_data(self):
                 if ESO_calibration_filename in xmlraw_superstring and not\
                         os.path.isfile(os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile])):
 
-                    shutil.copy(self.raw_data_dir + files, os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile] + '.fits')
+                    shutil.copy(self.raw_data_dir + files, os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile] + '.fits'))
 
         for calibfiles in range(len(calibration_files)):
 
