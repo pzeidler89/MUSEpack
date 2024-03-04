@@ -657,7 +657,7 @@ def _sort_data(self):
         + '  ' + science_type[sci_file_idx] + '\n')
 
         ### Sorting the ESO calibration files
-        ESO_calibration_dir_temp = os.path.join(working_dir_temp, ESO_calibrations)
+        ESO_calibration_dir_temp = os.path.join(working_dir_temp, "ESO_calibrations")
 
         if len(ESO_calibration_files) > 0:
             for ifile, ESO_calibration_file in enumerate(ESO_calibration_files):
