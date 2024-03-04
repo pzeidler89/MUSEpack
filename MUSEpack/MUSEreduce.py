@@ -656,7 +656,7 @@ def _sort_data(self):
 
         for calibfiles in range(len(calibration_files)):
 
-            calibfilename = calibfiles.split("/")[-1][:-5]
+            calibfilename = calibration_files[calibfiles].split("/")[-1][:-5]
 
             if calibfilename in xmlraw_superstring:
 
