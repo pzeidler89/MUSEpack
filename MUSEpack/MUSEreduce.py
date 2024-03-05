@@ -247,9 +247,6 @@ class musereduce:
         print('... Creating directories')
         for OB in self.OB_list:
 
-            print('>>> for OB: ' + OB)
-            print(' ')
-
             if self.dithering_multiple_OBs:
                 # self.raw_data_dir = self.rootpath + 'raw/' +\
                 # self.dithername + '/' + OB + '/'
@@ -646,7 +643,6 @@ def _sort_data(self):
 
         if science_type[sci_file_idx] == 'OBJECT':
             f_science = open(os.path.join(working_dir_temp, filelist_science), 'w')
-            print(working_dir_temp + filelist_science)
 
         if science_type[sci_file_idx] == 'SKY':
             f_science = open(os.path.join(working_dir_temp, filelist_sky), 'w')
