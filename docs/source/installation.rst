@@ -21,5 +21,5 @@ To fully run all modules the following **non-standard** modules need to be insta
 Additional 3rd party software
 -----------------------------
 
-To properly run :class:`MUSEreduce.musereduce` the ESO's MUSE data reduction pipeline v2.8.7 has to be installed. The latest version including the manual and further instructions can be found under: https://www.eso.org/sci/software/pipelines/muse/.
+To properly run :class:`MUSEreduce.musereduce` the ESO's MUSE data reduction pipeline v2.8.9 has to be installed. The latest version including the manual and further instructions can be found under: https://www.eso.org/sci/software/pipelines/muse/.
 
