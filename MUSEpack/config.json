@@ -10,7 +10,6 @@
     "dither_multiple_OBs": false,
     "n_CPU": -1,
     "rootpath": "path_to_data_folder",
-    "OB": "",
     "OB_list": []
   },
   "calibration":{
