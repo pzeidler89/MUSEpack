@@ -1637,7 +1637,7 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --filter=white'
     sof = ' std_flux.sof'
 
-    PIXTABLE_STD_list = _get_filelist(self, os.path.join(self.working_dir,'std')),\
+    PIXTABLE_STD_list = _get_filelist(self, os.path.join(self.working_dir,'std'),\
     'PIXTABLE_STD*.fits')
 
     if create_sof:
