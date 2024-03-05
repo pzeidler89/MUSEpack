@@ -1637,18 +1637,18 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     + ' --filter=white'
     sof = ' std_flux.sof'
 
-    PIXTABLE_STD_list = _get_filelist(self, self.working_dir + 'std/',\
+    PIXTABLE_STD_list = _get_filelist(self, os.path.join(self.working_dir,'std')),\
     'PIXTABLE_STD*.fits')
 
     if create_sof:
 
-        if os.path.exists(self.working_dir + 'std/' + 'std_flux.sof'):
-            os.remove(self.working_dir + 'std/' + 'std_flux.sof')
+        if os.path.exists(os.path.join(self.working_dir,'std','std_flux.sof')):
+            os.remove(os.path.join(self.working_dir,'std','std_flux.sof'))
 
-        f = open(self.working_dir + 'std/' + 'std_flux.sof', 'w')
+        f = open(os.path.join(self.working_dir,'std','std_flux.sof'), 'w')
         for i in range(len(PIXTABLE_STD_list)):
-            f.write(self.working_dir + 'std/' + PIXTABLE_STD_list[i]\
-            + ' PIXTABLE_STD\n')
+            f.write(os.path.join(self.working_dir,'std',PIXTABLE_STD_list[i]\
+            + ' PIXTABLE_STD') + '\n')
         f.write(self.static_calibration_dir
         + 'extinct_table.fits EXTINCT_TABLE\n')
         f.write(self.static_calibration_dir\
@@ -1658,7 +1658,7 @@ def _std_flux(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         f.close()
 
     if not self.debug:
-        _call_esorex(self, self.working_dir + 'std/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+        _call_esorex(self, os.path.join(self.working_dir,'std'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
