@@ -21,13 +21,13 @@ sys.path.insert(0, os.path.abspath('../../MUSEpack'))
 # -- Project information -----------------------------------------------------
 
 project = 'MUSEpack'
-copyright = '2019 - 2023, Peter Zeidler'
+copyright = '2019 - 2024, Peter Zeidler'
 author = 'Peter Zeidler'
 
 # The short X.Y version
-version = '1.2.2'
+version = '1.3.0'
 # The full version, including alpha/beta/rc tags
-release = '1.2.2dev20230308'
+release = '1.3.0dev20240305'
 
 
 # -- General configuration ---------------------------------------------------
