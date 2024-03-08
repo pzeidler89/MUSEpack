@@ -316,34 +316,34 @@ class musereduce:
             print(self.working_dir)
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
-                np.concatenate([glob.glob(self.working_dir + '*_SCI.list'),\
-                glob.glob(self.working_dir + '*_SKY.list')])
+                np.concatenate([glob.glob(self.working_dir + '/*_SCI.list'),\
+                glob.glob(self.working_dir + '/*_SKY.list')])
                 exp_list_SCI = sorted(exp_list_SCI)
 
                 exp_list_DAR =\
-                sorted(glob.glob(self.working_dir + '*_DAR.list'))
+                sorted(glob.glob(self.working_dir + '/*_DAR.list'))
 
                 exp_list_TWI =\
-                sorted(glob.glob(self.working_dir + '*_TWI.list'))
+                sorted(glob.glob(self.working_dir + '/*_TWI.list'))
 
             if self.using_specific_exposure_time:
 
                 exp_list_SCI =\
-                sorted(np.concatenate([glob.glob(self.working_dir + '*'\
+                sorted(np.concatenate([glob.glob(self.working_dir + '/*'\
                 + str('{:04d}'.format(self.using_specific_exposure_time)) +\
-                '*_SCI.list'), glob.glob(self.working_dir + '*'\
+                '*_SCI.list'), glob.glob(self.working_dir + '/*'\
                 + str('{:04d}'.format(self.using_specific_exposure_time))\
                 + '*_SKY.list')]))
 
                 exp_list_DAR =\
                 sorted(glob.glob(self.working_dir + '*'\
                 + str('{:04d}'.format(self.using_specific_exposure_time))\
-                + '*_DAR.list'))
+                + '/*_DAR.list'))
 
                 exp_list_TWI =\
                 sorted(glob.glob(self.working_dir + '*'\
                 + str('{:04d}'.format(self.using_specific_exposure_time))\
-                + '*_TWI.list'))
+                + '/*_TWI.list'))
 
             for exposure in exp_list_SCI:
                 exposure_dir = exposure[:-9] + '/'
