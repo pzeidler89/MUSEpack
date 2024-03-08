@@ -372,6 +372,7 @@ class musereduce:
             ### OBSERVATION PRE-PROCESSING ###
             if self.config['sci_basic']['execute']:
                 create_sof = self.config['sci_basic']['create_sof']
+                print(exp_list_SCI)
                 _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['sci_basic']['esorex_kwargs'])
 
             ### OBSERVATION POST-PROCESSING ###
