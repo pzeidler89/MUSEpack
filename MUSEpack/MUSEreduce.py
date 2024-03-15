@@ -40,7 +40,7 @@ class musereduce:
     def __init__(self, configfile, debug=False):
 
         if configfile == None:
-            configfile = os.path.dirname(__file__) + "/config.json"
+            configfile = os.path.join(os.path.dirname(__file__),"/config.json")
         with open(configfile, "r") as read_file:
             self.config = json.load(read_file)
 
@@ -90,8 +90,8 @@ class musereduce:
         self.user_list =\
             np.array(self.config['dither_collect']['user_list'], dtype=object)
 
-        self.raw_data_dir = self.rootpath + 'raw/'
-        self.reduced_dir = self.rootpath + 'reduced/'
+        self.raw_data_dir = os.path.join(self.rootpath, 'raw/')
+        self.reduced_dir = os.path.join(self.rootpath, 'reduced/')
         self.working_dir = self.reduced_dir
 
         if not os.path.exists(self.working_dir):
@@ -248,32 +248,18 @@ class musereduce:
         for OB in self.OB_list:
 
             if self.dithering_multiple_OBs:
-                # self.raw_data_dir = self.rootpath + 'raw/' +\
-                # self.dithername + '/' + OB + '/'
-                self.working_dir = self.rootpath + 'reduced/'\
-                + self.dithername + '/' + OB + '/'
-                self.combining_OBs_dir = self.rootpath + 'reduced/'\
-                + self.dithername + '/'
+
+                self.working_dir = os.path.join(self.rootpath, 'reduced', self.dithername, OB)
+                self.combining_OBs_dir = os.path.join(self.rootpath, 'reduced', self.dithername)
                 if not os.path.exists(self.combining_OBs_dir):
                     os.mkdir(self.combining_OBs_dir)
             else:
-                # if self.auto_create_OB_list:
-                #     self.raw_data_dir = self.rootpath + 'raw/'
-                #     self.working_dir = self.rootpath + 'reduced/'
-                #     self.combining_OBs_dir = None
-                #
-                #     print('>>> Creating OB list')
-                #     _create_ob_folders(self)
-
-                # else:
-                # self.raw_data_dir = self.rootpath + 'raw/' + OB + '/'
-                self.working_dir = self.rootpath + 'reduced/' + OB + '/'
+                self.working_dir = os.path.join(self.rootpath, 'reduced/', OB)
                 self.combining_OBs_dir = None
 
-            self.calibration_dir = self.working_dir + 'calibrations/'
-            self.ESO_calibration_dir = self.working_dir + 'ESO_calibrations/'
-            self.static_calibration_dir = self.working_dir\
-            + 'static_calibration_files/'
+            self.calibration_dir = os.path.join(self.working_dir, 'calibrations')
+            self.ESO_calibration_dir = os.path.join(self.working_dir, 'ESO_calibrations')
+            self.static_calibration_dir = os.path.join(self.working_dir, 'static_calibration_files')
 
             if self.renew_statics and\
             os.path.exists(self.static_calibration_dir):
@@ -283,25 +269,25 @@ class musereduce:
                 shutil.rmtree(self.ESO_calibration_dir)
             if not os.path.exists(self.working_dir):
                 os.mkdir(self.working_dir)
-            if not os.path.exists(self.working_dir + 'std/'):
-                os.mkdir(self.working_dir + 'std/')
+            if not os.path.exists(os.path.join(self.working_dir, 'std')):
+                os.mkdir(os.path.join(self.working_dir, 'std'))
             if not os.path.exists(self.calibration_dir):
                 os.mkdir(self.calibration_dir)
             if not os.path.exists(self.ESO_calibration_dir):
                 os.mkdir(self.ESO_calibration_dir)
-            if not os.path.exists(self.calibration_dir + 'DARK/')\
+            if not os.path.exists(os.path.join(self.calibration_dir, 'DARK'))\
             and self.dark:
-                os.mkdir(self.calibration_dir + 'DARK/')
+                os.mkdir(os.path.join(self.calibration_dir, 'DARK'))
 
-            if not os.path.exists(self.calibration_dir + 'TWILIGHT/'):
-                os.mkdir(self.calibration_dir + 'TWILIGHT/')
-            if not os.path.exists(self.calibration_dir + 'SCIENCE/'):
-                os.mkdir(self.calibration_dir + 'SCIENCE/')
+            if not os.path.exists(os.path.join(self.calibration_dir, 'TWILIGHT')):
+                os.mkdir(os.path.join(self.calibration_dir, 'TWILIGHT'))
+            if not os.path.exists(os.path.join(self.calibration_dir, 'SCIENCE')):
+                os.mkdir(os.path.join(self.calibration_dir, 'SCIENCE'))
             if os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
             os.mkdir(self.static_calibration_dir)
             for itername in glob.glob(os.path.join(self.static_calib_path, '*.*')):
-                shutil.copy(itername, self.static_calibration_dir + '.')
+                shutil.copy(itername, os.path.join(self.static_calibration_dir, '.'))
 
         print('... Sorting the data')
 
@@ -316,37 +302,30 @@ class musereduce:
             print(self.working_dir)
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
-                np.concatenate([glob.glob(self.working_dir + '/*_SCI.list'),\
-                glob.glob(self.working_dir + '/*_SKY.list')])
+                np.concatenate([glob.glob(os.path.join(self.working_dir, '*_SCI.list')),\
+                glob.glob(os.path.join(self.working_dir, '*_SKY.list'))])
                 exp_list_SCI = sorted(exp_list_SCI)
 
                 exp_list_DAR =\
-                sorted(glob.glob(self.working_dir + '/*_DAR.list'))
+                sorted(glob.glob(os.path.join(self.working_dir, '*_DAR.list')))
 
                 exp_list_TWI =\
-                sorted(glob.glob(self.working_dir + '/*_TWI.list'))
+                sorted(glob.glob(os.path.join(self.working_dir, '*_TWI.list')))
 
             if self.using_specific_exposure_time:
 
                 exp_list_SCI =\
-                sorted(np.concatenate([glob.glob(self.working_dir + '/*'\
-                + str('{:04d}'.format(self.using_specific_exposure_time)) +\
-                '*_SCI.list'), glob.glob(self.working_dir + '/*'\
-                + str('{:04d}'.format(self.using_specific_exposure_time))\
-                + '*_SKY.list')]))
+                sorted(np.concatenate([glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_SCI.list')),
+                                       glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_SKY.list'))]))
 
                 exp_list_DAR =\
-                sorted(glob.glob(self.working_dir + '*'\
-                + str('{:04d}'.format(self.using_specific_exposure_time))\
-                + '/*_DAR.list'))
+                sorted(glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_DAR.list')))
 
                 exp_list_TWI =\
-                sorted(glob.glob(self.working_dir + '*'\
-                + str('{:04d}'.format(self.using_specific_exposure_time))\
-                + '/*_TWI.list'))
+                sorted(glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_TWI.list')))
 
             for exposure in exp_list_SCI:
-                exposure_dir = exposure[:-9] + '/'
+                exposure_dir = os.path.join(exposure[:-9],' ')
                 if not os.path.exists(exposure_dir):
                     os.mkdir(exposure_dir)
 
@@ -472,7 +451,7 @@ def _create_ob_folders(self):
 
     for files in file_list:
 
-        hdu = fits.open(self.raw_data_dir + files)
+        hdu = fits.open(os.path.join(self.raw_data_dir, files))
         dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
 
         if dprcatg_exist:
@@ -512,7 +491,7 @@ def _sort_data(self):
 
     for files in file_list:
 
-        hdu = fits.open(self.raw_data_dir + files)
+        hdu = fits.open(os.path.join(self.raw_data_dir, files))
 
         dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
         procatg_exist = hdu[0].header.get('HIERARCH ESO PRO CATG', False)
@@ -545,15 +524,6 @@ def _sort_data(self):
             ESO_calibration_files = np.append(ESO_calibration_files, files)
             ESO_calibration_type = np.append(ESO_calibration_type, procatg)
 
-            # for cal_category in cal_categories:
-            #     if procatg == cal_category:
-            #         ESO_calibration_type =\
-            #         np.append(ESO_calibration_type, cal_category)
-                    # if not os.path.isfile(self.ESO_calibration_dir\
-                    # + cal_category):
-                    #     shutil.copy(self.raw_data_dir + files,\
-                    #     self.ESO_calibration_dir + cal_category + '.fits')
-
     rot_angles = np.zeros(len(science_files))
     points = np.zeros(len(science_files), dtype=object)
     rot_angles_ident = np.zeros(len(science_files))
@@ -561,7 +531,7 @@ def _sort_data(self):
 
     for sci_file_idx in range(len(science_files)):
 
-        hdu = fits.open(self.raw_data_dir + science_files[sci_file_idx])[0]
+        hdu = fits.open(os.path.join(self.raw_data_dir, science_files[sci_file_idx]))[0]
         OB_ids[sci_file_idx] = hdu.header['HIERARCH ESO OBS NAME']
         RA = hdu.header['RA']
         DEC = hdu.header['DEC']
@@ -584,7 +554,7 @@ def _sort_data(self):
 
     for sci_file_idx in range(len(science_files)):
 
-        hdu = fits.open(self.raw_data_dir + science_files[sci_file_idx])[0]
+        hdu = fits.open(os.path.join(self.raw_data_dir, science_files[sci_file_idx]))[0]
         RA = hdu.header['RA']
         DEC = hdu.header['DEC']
         EXPTIME = hdu.header['EXPTIME']
@@ -627,15 +597,13 @@ def _sort_data(self):
 
         for calibfiles in range(len(calibration_files)):
             if calibration_type[calibfiles] == 'DARK':
-                hdu_temp = fits.open(self.raw_data_dir\
-                + calibration_files[calibfiles])[0]
+                hdu_temp = fits.open(os.path.join(self.raw_data_dir, calibration_files[calibfiles]))[0]
 
                 temp_date = hdu_temp.header['MJD-OBS']
                 dark_date = np.append(dark_date, temp_date)
 
             if calibration_type[calibfiles] == 'SKYFLAT':
-                hdu_temp = fits.open(self.raw_data_dir\
-                + calibration_files[calibfiles])[0]
+                hdu_temp = fits.open(os.path.join(self.raw_data_dir, calibration_files[calibfiles]))[0]
 
                 temp_date = hdu_temp.header['MJD-OBS']
                 twilight_date = np.append(twilight_date, temp_date)
@@ -652,7 +620,7 @@ def _sort_data(self):
         f_dark = open(os.path.join(working_dir_temp, filelist_dark), 'w')
         f_twilight = open(os.path.join(working_dir_temp, filelist_twilight), 'w')
 
-        f_science.write(self.raw_data_dir + science_files[sci_file_idx]\
+        f_science.write(os.path.join(self.raw_data_dir, science_files[sci_file_idx])\
         + '  ' + science_type[sci_file_idx] + '\n')
 
         ### Sorting the ESO calibration files
@@ -665,7 +633,7 @@ def _sort_data(self):
                 if ESO_calibration_filename in xmlraw_superstring and not\
                         os.path.isfile(os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile])):
 
-                    shutil.copy(self.raw_data_dir + files, os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile] + '.fits'))
+                    shutil.copy(os.path.join(self.raw_data_dir, files), os.path.join(ESO_calibration_dir_temp, ESO_calibration_type[ifile] + '.fits'))
 
         for calibfiles in range(len(calibration_files)):
 
@@ -673,37 +641,31 @@ def _sort_data(self):
 
             if calibfilename in xmlraw_superstring:
 
-                temp_date = fits.open(self.raw_data_dir\
-                + calibration_files[calibfiles])[0].header['MJD-OBS']
+                temp_date = fits.open(os.path.join(self.raw_data_dir, calibration_files[calibfiles]))[0].header['MJD-OBS']
 
                 if abs(temp_date - DATE) <= 1.:
-                    f_science.write(self.raw_data_dir\
-                    + calibration_files[calibfiles] + '  ' +\
+                    f_science.write(os.path.join(self.raw_data_dir, calibration_files[calibfiles]) + '  ' +\
                     calibration_type[calibfiles] + '\n')
 
                 if calibration_type[calibfiles] == 'STD'\
                 and abs(temp_date - DATE) > 1.:
 
-                    f_science.write(self.raw_data_dir\
-                    + calibration_files[calibfiles]\
+                    f_science.write(os.path.join(self.raw_data_dir, calibration_files[calibfiles])\
                     + '  ' + calibration_type[calibfiles] + '\n')
 
                     if calibration_type[calibfiles] == 'ILLUM' and abs(temp_date\
                     - DATE) > 1.:
-                        f_science.write(self.raw_data_dir\
-                        + calibration_files[calibfiles] + '  '\
+                        f_science.write(os.path.join(self.raw_data_dir, calibration_files[calibfiles]) + '  '\
                         + calibration_type[calibfiles] + '\n')
 
                     print('WARNING: STD and SCI obs more than 24 hours apart')
 
                 if (abs(temp_date - dark_date) <= 1.).all():
-                        f_dark.write(self.raw_data_dir\
-                        + calibration_files[calibfiles]\
+                        f_dark.write(os.path.join(self.raw_data_dir, calibration_files[calibfiles])\
                         + '  ' + calibration_type[calibfiles] + '\n')
 
                 if (abs(temp_date - twilight_date) <= 1.).all():
-                        f_twilight.write(self.raw_data_dir\
-                        + calibration_files[calibfiles]\
+                        f_twilight.write(os.path.join(self.raw_data_dir, calibration_files[calibfiles])\
                         + '  ' + calibration_type[calibfiles] + '\n')
 
         f_science.close()
@@ -750,14 +712,20 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
     sof = 'bias.sof'
 
     if create_sof:
+        sci_bias_sof = os.path.join(self.calibration_dir, 'SCIENCE/bias.sof')
+        dar_bias_sof = os.path.join(self.calibration_dir, 'DARK/bias.sof')
+        twi_bias_sof = os.path.join(self.calibration_dir, 'TWILIGHT/bias.sof')
 
-        if os.path.exists(self.calibration_dir + 'SCIENCE/bias.sof'):
-            os.remove(self.calibration_dir + 'SCIENCE/bias.sof')
-        if self.dark and os.path.exists(self.calibration_dir\
-        + 'DARK/bias.sof'):
-            os.remove(self.calibration_dir + 'DARK/bias.sof')
-        if os.path.exists(self.calibration_dir + 'TWILIGHT/bias.sof'):
-            os.remove(self.calibration_dir + 'TWILIGHT/bias.sof')
+        sci_bias_sof_temp = os.path.join(self.calibration_dir, 'SCIENCE/bias_temp.sof')
+        dar_bias_sof_temp = os.path.join(self.calibration_dir, 'DARK/bias_temp.sof')
+        twi_bias_sof_temp = os.path.join(self.calibration_dir, 'TWILIGHT/bias_temp.sof')
+
+        if os.path.exists(sci_bias_sof):
+            os.remove(sci_bias_sof)
+        if self.dark and os.path.exists(dar_bias_sof):
+            os.remove( dar_bias_sof)
+        if os.path.exists(twi_bias_sof):
+            os.remove(twi_bias_sof)
 
         for exposure_ID in range(len(exp_list_SCI)):
 
@@ -774,8 +742,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
             raw_data_list_TWILIGHT = ascii.read(exp_list_TWI[exposure_ID],\
                 format='no_header')
 
-            f_science = open(self.calibration_dir +\
-            'SCIENCE/bias_temp.sof', 'w')
+            f_science = open(sci_bias_sof_temp, 'w')
             for i in range(len(raw_data_list[1][:])):
                 if raw_data_list[i][1] == 'BIAS':
                     f_science.write(raw_data_list[i][0] + '  '\
@@ -783,75 +750,67 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
             f_science.close()
 
             if self.dark:
-                f_dark = open(self.calibration_dir
-                                + 'DARK/bias_temp.sof', 'w')
+                f_dark = open(dar_bias_sof_temp, 'w')
                 for i in range(len(raw_data_list_DARK[1][:])):
                     if raw_data_list_DARK[i][1] == 'BIAS':
                         f_dark.write(raw_data_list_DARK[i][0] + '  '\
                         + raw_data_list_DARK[i][1] + '\n')
                 f_dark.close()
 
-            f_twilight = open(self.calibration_dir\
-                + 'TWILIGHT/bias_temp.sof', 'w')
+            f_twilight = open(twi_bias_sof_temp, 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
                 if raw_data_list_TWILIGHT[i][1] == 'BIAS':
                     f_twilight.write(raw_data_list_TWILIGHT[i][0] + '  '\
                     + raw_data_list_TWILIGHT[i][1] + '\n')
             f_twilight.close()
 
-            if os.path.isfile(self.calibration_dir + 'SCIENCE/bias.sof'):
-                assert filecmp.cmp(self.calibration_dir + 'SCIENCE/bias.sof',\
-                self.calibration_dir + 'SCIENCE/bias_temp.sof'),\
+            if os.path.isfile(sci_bias_sof):
+                assert filecmp.cmp(sci_bias_sof,sci_bias_sof_temp),\
                 'CAUTION CALIBRATION FILES ARE DIFFERENT: PLEASE CHECK'
 
-                os.remove(self.calibration_dir + 'SCIENCE/bias_temp.sof')
+                os.remove(sci_bias_sof_temp)
 
             else:
-                os.rename(self.calibration_dir + 'SCIENCE/bias_temp.sof',\
-                self.calibration_dir + 'SCIENCE/bias.sof')
+                os.rename(sci_bias_sof_temp, sci_bias_sof)
 
                 if not self.debug:
-                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, os.path.join(self.calibration_dir, 'SCIENCE'),\
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
-            if os.path.isfile(self.calibration_dir + 'TWILIGHT/bias.sof'):
-                assert filecmp.cmp(self.calibration_dir + 'TWILIGHT/bias.sof',\
-                self.calibration_dir + 'TWILIGHT/bias_temp.sof'),\
+            if os.path.isfile(twi_bias_sof):
+                assert filecmp.cmp(twi_bias_sof, twi_bias_sof_temp),\
                 'CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK'
 
-                os.remove(self.calibration_dir + 'TWILIGHT/bias_temp.sof')
+                os.remove(twi_bias_sof_temp)
 
             else:
-                os.rename(self.calibration_dir + 'TWILIGHT/bias_temp.sof',\
-                self.calibration_dir + 'TWILIGHT/bias.sof')
+                os.rename(twi_bias_sof_temp, twi_bias_sof)
 
                 if not self.debug:
-                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, os.path.join(self.calibration_dir, 'TWILIGHT'),\
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             if self.dark:
-                if os.path.isfile(self.calibration_dir + 'DARK/bias.sof'):
-                    assert filecmp.cmp(self.calibration_dir + 'DARK/bias.sof',\
-                    self.calibration_dir + 'DARK/bias_temp.sof'),\
+                if os.path.isfile(dar_bias_sof):
+                    assert filecmp.cmp(dar_bias_sof_temp),\
                     'CAUTION DARK FILES ARE DIFFERENT: PLEASE CHECK'
 
-                    os.remove(self.calibration_dir + 'DARK/bias_temp.sof')
+                    os.remove(dar_bias_sof_temp)
 
                 else:
-                    os.rename(self.calibration_dir + 'DARK/bias_temp.sof',\
-                    self.calibration_dir + 'DARK/bias.sof')
+                    os.rename(dar_bias_sof_temp, dar_bias_sof)
 
                     if not self.debug:
-                        _call_esorex(self, self.calibration_dir + 'DARK/',
+                        _call_esorex(self, os.path.join(self.calibration_dir, 'DARK'),
                         esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, os.path.join(self.calibration_dir, 'SCIENCE'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, os.path.join(self.calibration_dir, 'TWILIGHT'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         if self.dark:
             if not self.debug:
-                _call_esorex(self, self.calibration_dir + 'DARK/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, os.path.join(self.calibration_dir, 'DARK'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
