@@ -2,7 +2,7 @@
 
 __version__ = '1.3.0'
 
-__revision__ = '20240308'
+__revision__ = '20240315'
 
 import sys
 import shutil
@@ -1442,7 +1442,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         choosen_illum_std = int(illum_index[np.argmin(np.abs(MJDsillum\
         - MJDstd))])
 
-        f_std = open(self.working_dir + 'std/sci_basic_std_temp.sof', 'w')
+        f_std = open(os.path.join(self.working_dir,'std','sci_basic_std_temp.sof'), 'w')
 
         for i in range(len(raw_data_list[1][:])):
             if raw_data_list[i][1] == 'STD':
