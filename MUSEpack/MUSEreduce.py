@@ -1411,7 +1411,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
         raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
         format='no_header')
-        exposure_dir = exp_list_SCI[exposure_ID][:-9] + '/'
+        exposure_dir = exp_list_SCI[exposure_ID][:-9]
 
         MJDsillum = np.array([])
         illum_index = np.array([])
@@ -1451,7 +1451,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             f_std.write(os.path.join(self.calibration_dir, 'SCIENCE', 'TRACE_TABLE.fits') + ' TRACE_TABLE\n')
             f_std.write(os.path.join(self.calibration_dir, 'SCIENCE', 'WAVECAL_TABLE.fits') + ' WAVECAL_TABLE\n')
             if self.dark:
-                f_std.write(os.ath.join( self.calibration_dir, 'DARK', 'MASTER_DARK.fits') + ' MASTER_DARK\n')
+                f_std.write(os.path.join( self.calibration_dir, 'DARK', 'MASTER_DARK.fits') + ' MASTER_DARK\n')
 
         if self.using_ESO_calibration:
             f_std.write(os.path.join(self.ESO_calibration_dir, 'MASTER_BIAS.fits') + ' MASTER_BIAS\n')
