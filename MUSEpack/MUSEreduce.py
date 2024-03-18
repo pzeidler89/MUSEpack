@@ -325,7 +325,7 @@ class musereduce:
                 sorted(glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_TWI.list')))
 
             for exposure in exp_list_SCI:
-                exposure_dir = os.path.join(exposure[:-9],' ')
+                exposure_dir = os.path.join(exposure[:-9])
                 if not os.path.exists(exposure_dir):
                     os.mkdir(exposure_dir)
 
