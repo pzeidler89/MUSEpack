@@ -1802,7 +1802,7 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             for i in range(len(PIXTABLE_SKY_list)):
                 f.write(os.path.join(exposure_dir, PIXTABLE_SKY_list[i]) + ' PIXTABLE_SKY\n')
             if not self.using_ESO_calibration:
-                f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'LSF_PROFILE.fits) + ' LSF_PROFILE\n')
+                f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
             if self.using_ESO_calibration:
                 f.write(os.path.join(self.ESO_calibration_dir\
