@@ -1634,31 +1634,24 @@ def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             _get_filelist(self, exposure_dir, 'PIXTABLE_OBJECT*.fits')
 
         if create_sof:
+            sky_sof = os.path.join(exposure_dir, 'sky.sof')
+            if os.path.exists(sky_sof):
+                os.remove(sky_sof)
 
-            if os.path.exists(exposure_dir + 'sky.sof'):
-                os.remove(exposure_dir + 'sky.sof')
-
-            f = open(exposure_dir + 'sky.sof', 'w')
+            f = open(sky_sof, 'w')
             for i in range(len(PIXTABLE_SKY_list)):
-                f.write(exposure_dir + PIXTABLE_SKY_list[i]\
-                + ' PIXTABLE_SKY\n')
+                f.write(os.path.join(exposure_dir, PIXTABLE_SKY_list[i]) + ' PIXTABLE_SKY\n')
             if not self.using_ESO_calibration:
-                f.write(self.calibration_dir +\
-                'SCIENCE/LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.calibration_dir,'SCIENCE','LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
             if self.using_ESO_calibration:
-                f.write(self.ESO_calibration_dir +\
-                'LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.ESO_calibration_dir, 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
-            f.write(self.working_dir\
-            + 'std/' + 'STD_RESPONSE_0001.fits STD_RESPONSE\n')
-            f.write(self.working_dir\
-            + 'std/' + 'STD_TELLURIC_0001.fits STD_TELLURIC\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_RESPONSE_0001.fits') + ' STD_RESPONSE\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
 
-            f.write(self.static_calibration_dir\
-            + 'extinct_table.fits EXTINCT_TABLE\n')
-            f.write(self.static_calibration_dir\
-            + 'sky_lines.fits SKY_LINES\n')
+            f.write(os.path.join(self.static_calibration_dir, 'extinct_table.fits') + ' EXTINCT_TABLE\n')
+            f.write(os.path.join(self.static_calibration_dir, 'sky_lines.fits') + ' SKY_LINES\n')
 
             f.close()
 
@@ -1684,16 +1677,14 @@ def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         skydate = np.ones_like(exp_list_SCI_sky, dtype=float)
 
         for idx, exps in enumerate(exp_list_SCI_sky):
-            skydate[idx] = fits.open(exps[:-9]\
-            + '/PIXTABLE_SKY_0001-01.fits')[0].header['MJD-OBS']
+            skydate[idx] = fits.open(os.path.join(exps[:-9], 'PIXTABLE_SKY_0001-01.fits'))[0].header['MJD-OBS']
         for idx, exps in enumerate(np.array(exp_list_SCI)[sci]):
-            scidate = fits.open(exps[:-9]\
-            + '/PIXTABLE_OBJECT_0001-01.fits')[0].header['MJD-OBS']
+            scidate = fits.open(os.path.join(exps[:-9], 'PIXTABLE_OBJECT_0001-01.fits'))[0].header['MJD-OBS']
 
             ind = np.argmin(abs(skydate - scidate))
-            flist = glob.glob(exp_list_SCI_sky[ind][:-9] + '/SKY_*.fits')
+            flist = glob.glob(os.path.join(exp_list_SCI_sky[ind][:-9], 'SKY_*.fits'))
             for f in flist:
-                shutil.copy(f, exps[:-9] + '/.')
+                shutil.copy(f, os.path.join(exps[:-9],'.'))
 
 
 def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
@@ -1746,41 +1737,32 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
         raw_data_list = ascii.read(exp_list_SCI_sky[exposure_ID],\
         format='no_header')
-        exposure_dir = exp_list_SCI_sky[exposure_ID][:-9] + '/'
+        exposure_dir = exp_list_SCI_sky[exposure_ID][:-9]
 
         if self.skyfield == 'auto' and (sky == True).any():
-            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir,\
-            'PIXTABLE_SKY*.fits')
+            PIXTABLE_SKY_list = _get_filelist(self, os.path.join(exposure_dir,'PIXTABLE_SKY*.fits'))
         else:
-            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir,\
-            'PIXTABLE_OBJECT*.fits')
+            PIXTABLE_SKY_list = _get_filelist(self, os.path.join(exposure_dir,'PIXTABLE_OBJECT*.fits'))
 
         if create_sof:
+            sky_sof = os.path.join(exposure_dir, 'sky.sof')
+            if os.path.exists(sky_sof):
+                os.remove(sky_sof)
 
-            if os.path.exists(exposure_dir + 'sky.sof'):
-                os.remove(exposure_dir + 'sky.sof')
-
-            f = open(exposure_dir + 'sky.sof', 'w')
+            f = open(sky_sof, 'w')
             for i in range(len(PIXTABLE_SKY_list)):
-                f.write(exposure_dir\
-                + PIXTABLE_SKY_list[i] + ' PIXTABLE_SKY\n')
+                f.write(os.path.join(exposure_dir, PIXTABLE_SKY_list[i]) + ' PIXTABLE_SKY\n')
             if not self.using_ESO_calibration:
-                f.write(self.calibration_dir\
-                + 'SCIENCE/LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
             if self.using_ESO_calibration:
-                f.write(self.ESO_calibration_dir\
-                + 'LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.ESO_calibration_dir, 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
-            f.write(self.working_dir\
-            + 'std/' + 'STD_RESPONSE_0001.fits STD_RESPONSE\n')
-            f.write(self.working_dir\
-            + 'std/' + 'STD_TELLURIC_0001.fits STD_TELLURIC\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_RESPONSE_0001.fits') + ' STD_RESPONSE\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
 
-            f.write(self.static_calibration_dir\
-            + 'extinct_table.fits EXTINCT_TABLE\n')
-            f.write(self.static_calibration_dir\
-            + 'sky_lines.fits SKY_LINES\n')
+            f.write(os.path.join(self.static_calibration_dir, 'extinct_table.fits') + ' EXTINCT_TABLE\n')
+            f.write(os.path.join(self.static_calibration_dir, 'sky_lines.fits') + ' SKY_LINES\n')
 
             f.close()
 
@@ -1812,33 +1794,26 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         os.chdir(self.rootpath)
 
         if create_sof:
+            sky_sof = os.path.join(exposure_dir, 'sky.sof')
+            if os.path.exists(sky_sof):
+                os.remove(sky_sof)
 
-            if os.path.exists(exposure_dir + 'sky.sof'):
-                os.remove(exposure_dir + 'sky.sof')
-
-            f = open(exposure_dir + 'sky.sof', 'w')
+            f = open(sky_sof, 'w')
             for i in range(len(PIXTABLE_SKY_list)):
-                f.write(exposure_dir + PIXTABLE_SKY_list[i]\
-                + ' PIXTABLE_SKY\n')
+                f.write(os.path.join(exposure_dir, PIXTABLE_SKY_list[i]) + ' PIXTABLE_SKY\n')
             if not self.using_ESO_calibration:
-                f.write(self.calibration_dir\
-                + 'SCIENCE/LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'LSF_PROFILE.fits) + ' LSF_PROFILE\n')
 
             if self.using_ESO_calibration:
-                f.write(self.ESO_calibration_dir\
-                + 'LSF_PROFILE.fits LSF_PROFILE\n')
+                f.write(os.path.join(self.ESO_calibration_dir\
+                + 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
 
-            f.write(self.working_dir\
-            + 'std/' + 'STD_RESPONSE_0001.fits STD_RESPONSE\n')
-            f.write(self.working_dir\
-            + 'std/' + 'STD_TELLURIC_0001.fits STD_TELLURIC\n')
-            f.write(exposure_dir\
-            + 'SKY_CONTINUUM_zero.fits SKY_CONTINUUM\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_RESPONSE_0001.fits') + ' STD_RESPONSE\n')
+            f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
+            f.write(os.path.join(exposure_dir, 'SKY_CONTINUUM_zero.fits') + ' SKY_CONTINUUM\n')
 
-            f.write(self.static_calibration_dir\
-            + 'extinct_table.fits EXTINCT_TABLE\n')
-            f.write(self.static_calibration_dir\
-            + 'sky_lines.fits SKY_LINES\n')
+            f.write(os.path.join(self.static_calibration_dir, 'extinct_table.fits') + ' EXTINCT_TABLE\n')
+            f.write(os.path.join(self.static_calibration_dir, 'sky_lines.fits') + ' SKY_LINES\n')
 
             f.close()
 
@@ -1877,16 +1852,14 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         skydate = np.ones_like(exp_list_SCI_sky, dtype=float)
 
         for idx, exps in enumerate(exp_list_SCI_sky):
-            skydate[idx] = fits.open(exps[:-9]\
-            + '/PIXTABLE_SKY_0001-01.fits')[0].header['MJD-OBS']
+            skydate[idx] = fits.open(os.path.join(exps[:-9], 'PIXTABLE_SKY_0001-01.fits'))[0].header['MJD-OBS']
         for idx, exps in enumerate(np.array(exp_list_SCI)[sci]):
-            scidate = fits.open(exps[:-9]\
-            + '/PIXTABLE_OBJECT_0001-01.fits')[0].header['MJD-OBS']
+            scidate = fits.open(os.path.join(exps[:-9], 'PIXTABLE_OBJECT_0001-01.fits'))[0].header['MJD-OBS']
 
             ind = np.argmin(abs(skydate - scidate))
-            flist = glob.glob(exp_list_SCI_sky[ind][:-9] + '/SKY_*.fits')
+            flist = glob.glob(os.path.join(exp_list_SCI_sky[ind][:-9], 'SKY_*.fits'))
             for f in flist:
-                shutil.copy(f, exps[:-9] + '/.')
+                shutil.copy(f, os.path.join(exps[:-9], '.'))
 
 
 def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
