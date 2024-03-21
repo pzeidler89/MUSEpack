@@ -1740,9 +1740,9 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         exposure_dir = exp_list_SCI_sky[exposure_ID][:-9]
 
         if self.skyfield == 'auto' and (sky == True).any():
-            PIXTABLE_SKY_list = _get_filelist(self, os.path.join(exposure_dir,'PIXTABLE_SKY*.fits'))
+            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir, 'PIXTABLE_SKY*.fits')
         else:
-            PIXTABLE_SKY_list = _get_filelist(self, os.path.join(exposure_dir,'PIXTABLE_OBJECT*.fits'))
+            PIXTABLE_SKY_list = _get_filelist(self, exposure_dir, 'PIXTABLE_OBJECT*.fits')
 
         if create_sof:
             sky_sof = os.path.join(exposure_dir, 'sky.sof')
