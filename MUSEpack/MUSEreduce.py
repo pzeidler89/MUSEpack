@@ -1927,7 +1927,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             PIXTABLE_OBJECT_list = _get_filelist(self, exp_list[exp_num][:-9], 'PIXTABLE_OBJECT*.fits')
 
             if create_sof:
-            scipost_sof = os.path.join(exp_list[exp_num][:-9], 'scipost.sof')
+                scipost_sof = os.path.join(exp_list[exp_num][:-9], 'scipost.sof')
                 if os.path.exists(scipost_sof):
                     os.remove(scipost_sof)
 
