@@ -1924,39 +1924,29 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             + str(exp_num + 1) + '/' + str(len(exp_list)))
             print(' ')
 
-            PIXTABLE_OBJECT_list = _get_filelist(self, exp_list[exp_num][:-9],\
-            'PIXTABLE_OBJECT*.fits')
+            PIXTABLE_OBJECT_list = _get_filelist(self, exp_list[exp_num][:-9], 'PIXTABLE_OBJECT*.fits')
 
             if create_sof:
+            scipost_sof = os.path.join(exp_list[exp_num][:-9], 'scipost.sof')
+                if os.path.exists(scipost_sof):
+                    os.remove(scipost_sof)
 
-                if os.path.exists(exp_list[exp_num][:-9] + '/scipost.sof'):
-                    os.remove(exp_list[exp_num][:-9] + '/scipost.sof')
-
-                f = open(exp_list[exp_num][:-9] + '/scipost.sof', 'w')
+                f = open(scipost_sof, 'w')
                 for i in range(len(PIXTABLE_OBJECT_list)):
-                    f.write(exp_list[exp_num][:-9]\
-                    + '/' + PIXTABLE_OBJECT_list[i] + ' PIXTABLE_OBJECT\n')
+                    f.write(os.path.join(exp_list[exp_num][:-9], PIXTABLE_OBJECT_list[i]) + ' PIXTABLE_OBJECT\n')
 
                 if not self.using_ESO_calibration:
-                    f.write(self.calibration_dir\
-                    + 'SCIENCE/LSF_PROFILE.fits LSF_PROFILE\n')
-                    f.write(self.calibration_dir\
-                            + 'ASTROMETRY_WCS_0001.fits ASTROMETRY_WCS\n')
+                    f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
+                    f.write(os.path.join(self.calibration_dir, 'ASTROMETRY_WCS_0001.fits') + ' ASTROMETRY_WCS\n')
                 if self.using_ESO_calibration:
-                    f.write(self.ESO_calibration_dir\
-                    + 'LSF_PROFILE.fits LSF_PROFILE\n')
-                    f.write(self.ESO_calibration_dir\
-                            + 'ASTROMETRY_WCS.fits ASTROMETRY_WCS\n')
+                    f.write(os.path.join(self.ESO_calibration_dir, 'LSF_PROFILE.fits') + ' LSF_PROFILE\n')
+                    f.write(os.path.join(self.ESO_calibration_dir, 'ASTROMETRY_WCS.fits') + ' ASTROMETRY_WCS\n')
 
-                f.write(self.working_dir\
-                + 'std/' + 'STD_RESPONSE_0001.fits STD_RESPONSE\n')
-                f.write(self.working_dir\
-                + 'std/' + 'STD_TELLURIC_0001.fits STD_TELLURIC\n')
+                f.write(os.path.join(self.working_dir, 'std', 'STD_RESPONSE_0001.fits') + ' STD_RESPONSE\n')
+                f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
                 if self.skysub:
-                    f.write(exp_list[exp_num][:-9]\
-                    + '/' + 'SKY_LINES.fits SKY_LINES\n')
-                    f.write(exp_list[exp_num][:-9]\
-                    + '/' + 'SKY_CONTINUUM.fits SKY_CONTINUUM\n')
+                    f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_LINES.fits') + ' SKY_LINES\n')
+                    f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits') + ' SKY_CONTINUUM\n')
                 # if self.mode == 'WFM-AO' or self.mode == 'WFM-NOAO':
                 #     f.write(self.static_calibration_dir\
                 #     + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
@@ -1964,19 +1954,14 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 #     f.write(self.static_calibration_dir\
                 #     + 'astrometry_wcs_nfm.fits ASTROMETRY_WCS\n')
                 if not self.autocalib == 'none':
-                    f.write(exp_list[exp_num][:-9]\
-                    + '/' + 'SKY_MASK.fits SKY_MASK\n')
+                    f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_MASK.fits') + ' SKY_MASK\n')
                 if self.autocalib == 'user':
-                    f.write(exp_list[exp_num][:-9]\
-                    + '/' + 'AUTOCAL_FACTORS.fits AUTOCAL_FACTORS\n')
+                    f.write(os.path.join(exp_list[exp_num][:-9], 'AUTOCAL_FACTORS.fits') + ' AUTOCAL_FACTORS\n')
 
-                f.write(self.static_calibration_dir\
-                + 'extinct_table.fits EXTINCT_TABLE\n')
-                f.write(self.static_calibration_dir\
-                + 'filter_list.fits FILTER_LIST\n')
+                f.write(os.path.join(self.static_calibration_dir, 'extinct_table.fits') + ' EXTINCT_TABLE\n')
+                f.write(os.path.join(self.static_calibration_dir, 'filter_list.fits') + ' FILTER_LIST\n')
                 if self.raman:
-                    f.write(self.static_calibration_dir\
-                    + 'raman_lines.fits RAMAN_LINES\n')
+                    f.write(os.path.join(self.static_calibration_dir, 'raman_lines.fits') + ' RAMAN_LINES\n')
 
                 f.close()
             if self.withrvcorr:
