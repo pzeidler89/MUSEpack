@@ -121,7 +121,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 08, 2024                    #####')
+        print('#####                    Mar 28, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -2074,6 +2074,7 @@ def _dither_collect(self, exp_list_SCI, OB):
     print(' ')
 
     if len(self.user_list) == 0:
+        print(len(exp_list_SCI))
         for expnum in range(len(exp_list_SCI)):
                 if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
                     unique_pointings = np.append(unique_pointings,\
