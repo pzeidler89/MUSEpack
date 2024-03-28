@@ -2184,7 +2184,7 @@ def _dither_collect(self, exp_list_SCI, OB):
 
 
                     for (origin_file, destination_file) in zip(origin_files, destination_files):
-                        print(origin_file + ' ==> 'destination_file)
+                        print(origin_file + ' ==> ' + destination_file)
                         shutil.copy(origin_file, destination_file)
 
             else:
