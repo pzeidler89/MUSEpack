@@ -374,6 +374,7 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
+                print(exp_list_SCI)
                 _dither_collect(self, exp_list_SCI, OB)
 
         if self.config['exp_align']['execute']:
@@ -2074,7 +2075,6 @@ def _dither_collect(self, exp_list_SCI, OB):
     print(' ')
 
     if len(self.user_list) == 0:
-        print(len(exp_list_SCI))
         for expnum in range(len(exp_list_SCI)):
                 if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
                     unique_pointings = np.append(unique_pointings,\
