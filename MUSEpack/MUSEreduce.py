@@ -2132,11 +2132,11 @@ def _dither_collect(self, exp_list_SCI, OB):
 
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
-
+        print(sec)
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
         if len(self.user_list) > 0:
-            exp_list = os.path.join(self.working_dir, self.user_list, '*SCI.list')
+            exp_list = os.path.join(self.working_dir, self.user_list + '_SCI.list')
 
         if self.dithering_multiple_OBs:
             if self.withrvcorr:
