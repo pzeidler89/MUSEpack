@@ -2136,7 +2136,7 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
         if len(self.user_list) > 0:
-            exp_list = os.path.join(self.working_dir, self.user_list, '_SCI.list')
+            exp_list = os.path.join(self.working_dir, self.user_list, '*SCI.list')
 
         if self.dithering_multiple_OBs:
             if self.withrvcorr:
@@ -2159,7 +2159,7 @@ def _dither_collect(self, exp_list_SCI, OB):
                 if exp_list[idx][-20:-12] == exp_list[idx2][-20:-12]:
                     ident_pos[idx2] = ident
                     ident += 1
-        print(exp_list)
+
         for exp_num in range(len(exp_list)):
             if self.withrvcorr:
                 if self.skysub:
