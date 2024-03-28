@@ -313,6 +313,7 @@ class musereduce:
                 sorted(glob.glob(os.path.join(self.working_dir, '*_TWI.list')))
 
             if self.using_specific_exposure_time:
+                print(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_SCI.list'))
 
                 exp_list_SCI =\
                 sorted(np.concatenate([glob.glob(os.path.join(self.working_dir, '*', str('{:04d}'.format(self.using_specific_exposure_time)), '*_SCI.list')),
