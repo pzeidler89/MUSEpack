@@ -332,7 +332,7 @@ class musereduce:
             print(' ')
             print('... reducing OB: ' + OB)
             print(' ')
-            print(exp_list_SCI)
+
             ### CALIBRATION PRE-PROCESSING ###
 
             if self.config['calibration']['execute']:
@@ -2159,7 +2159,7 @@ def _dither_collect(self, exp_list_SCI, OB):
                 if exp_list[idx][-20:-12] == exp_list[idx2][-20:-12]:
                     ident_pos[idx2] = ident
                     ident += 1
-
+        print(exp_list)
         for exp_num in range(len(exp_list)):
             if self.withrvcorr:
                 if self.skysub:
