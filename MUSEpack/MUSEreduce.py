@@ -2449,7 +2449,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     for i in range(len(pixtable_list)):
                         f.write(os.path.join(combining_exposure_dir_withsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
                     f.write(os.path.join(combining_exposure_dir_withsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
-                    f.write(os.path.join(self.static_calibration_dir,'filter_list.fits' + ' FILTER_LIST\n')
+                    f.write(os.path.join(self.static_calibration_dir,'filter_list.fits') + ' FILTER_LIST\n')
                     f.close()
                 if not self.debug:
                     _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
