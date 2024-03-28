@@ -2265,7 +2265,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         if not self.dithering_multiple_OBs:
             if self.withrvcorr:
                 combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(sec 'withsky_withrvcorr')
+                combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
             else:
                 combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
 
