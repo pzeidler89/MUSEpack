@@ -332,7 +332,7 @@ class musereduce:
             print(' ')
             print('... reducing OB: ' + OB)
             print(' ')
-
+            print(exp_list_SCI)
             ### CALIBRATION PRE-PROCESSING ###
 
             if self.config['calibration']['execute']:
