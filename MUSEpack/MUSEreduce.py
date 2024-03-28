@@ -2134,7 +2134,7 @@ def _dither_collect(self, exp_list_SCI, OB):
         sec = unique_pointings[unique_pointing_num]
         print(sec)
         if len(self.user_list) == 0:
-            exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
+            exp_list = glob.glob(sec + '*SCI.list')
         if len(self.user_list) > 0:
             exp_list = os.path.join(self.working_dir, self.user_list + '_SCI.list')
 
