@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
-__revision__ = '20240328'
+__revision__ = '20240329'
 
 import sys
 import shutil
@@ -44,7 +44,6 @@ class musereduce:
         with open(configfile, "r") as read_file:
             self.config = json.load(read_file)
 
-        self.withrvcorr = self.config['global']['withrvcorr']
         self.OB_list = np.array(self.config['global']['OB_list'])
         self.dithering_multiple_OBs =\
             self.config['global']['dither_multiple_OBs']
@@ -121,7 +120,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Mar 28, 2024                    #####')
+        print('#####                    Mar 29, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -159,17 +158,6 @@ class musereduce:
 
             print("")
         print('>>> Number of cores: ' + str(self.n_CPU) + ' cores')
-
-        if self.withrvcorr:
-            print('>>> bariocentric correction: on')
-
-            if self.skyfield == 'auto':
-                print('>>> Skyfield: "automatic" ')
-            if self.skyfield == 'object':
-                print('>>> Skyfield: "science exposure" ')
-        else:
-            print('>>> bariocentric correction: off')
-            print('>>> sky subtraction: off')
 
         print('>>> Observation mode: ' + self.mode)
 
@@ -1965,69 +1953,44 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     f.write(os.path.join(self.static_calibration_dir, 'raman_lines.fits') + ' RAMAN_LINES\n')
 
                 f.close()
-            if self.withrvcorr:
 
-                if self.skysub:
-                    print('with sky subtraction...')
-                if not self.skysub:
-                    print('without sky subtraction...')
+            if self.skysub:
+                print('with sky subtraction...')
+            if not self.skysub:
+                print('without sky subtraction...')
 
-                if not self.debug:
-                    _call_esorex(self, exp_list[exp_num][:-9],\
-                    '--log-file=scipost.log --log-level=debug'\
-                    + ' muse_scipost'\
-                    + ' --save=cube,skymodel,individual,raman,autocal'\
-                    + ' --skymethod=' + self.skymethod\
-                    + ' --autocalib=' + str(self.autocalib).lower()\
-                    + ' --filter=white',\
-                    sof, esorex_kwargs=esorex_kwargs)
+            if not self.debug:
+                _call_esorex(self, exp_list[exp_num][:-9],\
+                '--log-file=scipost.log --log-level=debug'\
+                + ' muse_scipost'\
+                + ' --save=cube,skymodel,individual,raman,autocal'\
+                + ' --skymethod=' + self.skymethod\
+                + ' --autocalib=' + str(self.autocalib).lower()\
+                + ' --filter=white',\
+                sof, esorex_kwargs=esorex_kwargs)
 
-                if self.skysub:
-
-                    os.chdir(exp_list[exp_num][:-9])
-                    if not self.debug:
-                        os.rename('DATACUBE_FINAL.fits',\
-                        'DATACUBE_FINAL_wosky.fits')
-                        os.rename('IMAGE_FOV_0001.fits',\
-                        'IMAGE_FOV_0001_wosky.fits')
-                        os.rename('PIXTABLE_REDUCED_0001.fits',\
-                        'PIXTABLE_REDUCED_0001_wosky.fits')
-                    os.chdir(self.rootpath)
-
-                if not self.skysub:
-
-                    os.chdir(exp_list[exp_num][:-9])
-                    if not self.debug:
-                        os.rename('DATACUBE_FINAL.fits',\
-                        'DATACUBE_FINAL_wsky.fits')
-                        os.rename('IMAGE_FOV_0001.fits',\
-                        'IMAGE_FOV_0001_wsky.fits')
-                        os.rename('PIXTABLE_REDUCED_0001.fits',\
-                        'PIXTABLE_REDUCED_0001_wsky.fits')
-                    os.chdir(self.rootpath)
-
-            else:
-
-                if self.raman:
-                    if not self.debug:
-                        _call_esorex(self, exp_list[exp_num][:-9],\
-                        '--log-file=scipost.log --log-level=debug'\
-                        + ' muse_scipost'\
-                        + ' --save=cube,skymodel,individual,raman,autocal'\
-                        + ' --skymethod=none' \
-                        + ' --filter=white'\
-                        + ' --autocalib=' + self.autocalib\
-                        + ' --rvcorr=none',\
-                        sof, esorex_kwargs=esorex_kwargs)
+            if self.skysub:
 
                 os.chdir(exp_list[exp_num][:-9])
                 if not self.debug:
                     os.rename('DATACUBE_FINAL.fits',\
-                    'DATACUBE_FINAL_wskynorvcorr.fits')
+                    'DATACUBE_FINAL_wosky.fits')
                     os.rename('IMAGE_FOV_0001.fits',\
-                    'IMAGE_FOV_0001_wskynorvcorr.fits')
+                    'IMAGE_FOV_0001_wosky.fits')
                     os.rename('PIXTABLE_REDUCED_0001.fits',\
-                    'PIXTABLE_REDUCED_0001_wskynorvcorr.fits')
+                    'PIXTABLE_REDUCED_0001_wosky.fits')
+                os.chdir(self.rootpath)
+
+            if not self.skysub:
+
+                os.chdir(exp_list[exp_num][:-9])
+                if not self.debug:
+                    os.rename('DATACUBE_FINAL.fits',\
+                    'DATACUBE_FINAL_wsky.fits')
+                    os.rename('IMAGE_FOV_0001.fits',\
+                    'IMAGE_FOV_0001_wsky.fits')
+                    os.rename('PIXTABLE_REDUCED_0001.fits',\
+                    'PIXTABLE_REDUCED_0001_wsky.fits')
                 os.chdir(self.rootpath)
 
 
@@ -2094,39 +2057,27 @@ def _dither_collect(self, exp_list_SCI, OB):
             exp_list = os.path.join(self.working_dir, self.user_list, '_SCI.list')
 
         if self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir\
-                    = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withoutrvcorr')
+            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
+            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsk')
 
         if not self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
+                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
+                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+
 
         if not os.path.exists(combining_exposure_dir_withoutsky):
             os.makedirs(combining_exposure_dir_withoutsky)
         if not os.path.exists(combining_exposure_dir_withsky):
             os.makedirs(combining_exposure_dir_withsky)
 
-        if self.withrvcorr:
-            files = glob.glob(os.path.join(combining_exposure_dir_withoutsky, '*FOV_0001*'))
-            if len(files) > 0:
-                for f in files:
-                    os.remove(f)
-            files = glob.glob(os.path.join(combining_exposure_dir_withsky, '*FOV_0001*'))
-            if len(files) > 0:
-                for f in files:
-                    os.remove(f)
-        if not self.withrvcorr:
-            files = glob.glob(os.path.join(combining_exposure_dir, '*FOV_0001*'))
-            if len(files) > 0:
-                for f in files:
-                    os.remove(f)
+        files = glob.glob(os.path.join(combining_exposure_dir_withoutsky, '*FOV_0001*'))
+        if len(files) > 0:
+            for f in files:
+                os.remove(f)
+        files = glob.glob(os.path.join(combining_exposure_dir_withsky, '*FOV_0001*'))
+        if len(files) > 0:
+            for f in files:
+                os.remove(f)
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2137,20 +2088,14 @@ def _dither_collect(self, exp_list_SCI, OB):
             exp_list = glob.glob(sec + '*SCI.list')
         if len(self.user_list) > 0:
             exp_list = os.path.join(self.working_dir, self.user_list + '_SCI.list')
-
+        print(exp_list)
         if self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withoutrvcorr')
+            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
+            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
 
         if not self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
+            combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
+            combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
 
         ident_pos = np.zeros(len(exp_list))
         for idx in range(len(exp_list)):
@@ -2161,36 +2106,31 @@ def _dither_collect(self, exp_list_SCI, OB):
                     ident += 1
 
         for exp_num in range(len(exp_list)):
-            if self.withrvcorr:
-                if self.skysub:
+            if self.skysub:
 
-                    origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wosky.fits'),
-                                    os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wosky.fits'),
-                                    os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wosky.fits')
-                                    ]
-                    destination_files = [os.path.join(combining_exposure_dir_withoutsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                         os.path.join(combining_exposure_dir_withoutsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                         os.path.join(combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
-                                         ]
-                if not self.skysub:
+                origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wosky.fits'),
+                                os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wosky.fits'),
+                                os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wosky.fits')
+                                ]
+                destination_files = [os.path.join(combining_exposure_dir_withoutsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                     os.path.join(combining_exposure_dir_withoutsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                     os.path.join(combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
+                                     ]
+            if not self.skysub:
 
-                    origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wsky.fits'),
-                                    os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wsky.fits'),
-                                    os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wsky.fits')
-                                    ]
-                    destination_files = [os.path.join(combining_exposure_dir_withsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                         os.path.join(combining_exposure_dir_withsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                         os.path.join(combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
-                                         ]
+                origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wsky.fits'),
+                                os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wsky.fits'),
+                                os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wsky.fits')
+                                ]
+                destination_files = [os.path.join(combining_exposure_dir_withsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                     os.path.join(combining_exposure_dir_withsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                     os.path.join(combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
+                                     ]
 
 
-                    for (origin_file, destination_file) in zip(origin_files, destination_files):
-                        print(origin_file + ' ==> ' + destination_file)
-                        shutil.copy(origin_file, destination_file)
-
-            else:
-
-                print("Need to remove the no RV corr option: WHO DOES THIS??")
+                for (origin_file, destination_file) in zip(origin_files, destination_files):
+                    print(origin_file + ' ==> ' + destination_file)
+                    shutil.copy(origin_file, destination_file)
 
 
 def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
@@ -2257,18 +2197,13 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             exp_list = os.path.join(self.working_dir, self.user_list, '_SCI.list')
 
         if self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, '/withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withoutrvcorr')
+            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
+            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, '/withsky')
 
         if not self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
+            combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
+            combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2281,66 +2216,46 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         sec = unique_pointings[unique_pointing_num]
 
         if self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                print(unique_pointings_ID)
-                if self.skysub:
-                    combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky_withrvcorr')
-                if not self.skysub:
-                    combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID, '/withsky_withoutrvcorr')
+            print(unique_pointings_ID)
+            if self.skysub:
+                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
+            if not self.skysub:
+                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
+
 
         if not self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                if self.skysub:
-                    combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                if not self.skysub:
-                    combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
-
-        if self.withrvcorr:
             if self.skysub:
-                exp_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'IMAGE_FOV_*.fits')
-                if create_sof:
-                    sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_align.sof')
-                    if os.path.exists(sof_file):
-                        os.remove(sof_file)
-
-                    f = open(sof_file, 'w')
-                    for i in range(len(exp_list)):
-                        f.write(os.path.join(combining_exposure_dir_withoutsky, exp_list[i]) + ' IMAGE_FOV\n')
-                    f.close()
-                if not self.debug:
-                    _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-
+                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
             if not self.skysub:
-                exp_list = _get_filelist(self, combining_exposure_dir_withsky, 'IMAGE_FOV_*.fits')
-                if create_sof:
-                    sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_align.sof')
+                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
 
-                    if os.path.exists(sof_file):
-                        os.remove(sof_file)
-                    f = open(sof_file, 'w')
-                    for i in range(len(exp_list)):
-                        f.write(os.path.join(combining_exposure_dir_withsky, exp_list[i]) + ' IMAGE_FOV\n')
-                    f.close()
-                if not self.debug:
-                    _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-
-        else:
-            exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*.fits')
+        if self.skysub:
+            exp_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'IMAGE_FOV_*.fits')
             if create_sof:
-                sof_file = os.path.join(combining_exposure_dir, 'exp_align.sof')
+                sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_align.sof')
+                if os.path.exists(sof_file):
+                    os.remove(sof_file)
+
+                f = open(sof_file, 'w')
+                for i in range(len(exp_list)):
+                    f.write(os.path.join(combining_exposure_dir_withoutsky, exp_list[i]) + ' IMAGE_FOV\n')
+                f.close()
+            if not self.debug:
+                _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+
+        if not self.skysub:
+            exp_list = _get_filelist(self, combining_exposure_dir_withsky, 'IMAGE_FOV_*.fits')
+            if create_sof:
+                sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_align.sof')
+
                 if os.path.exists(sof_file):
                     os.remove(sof_file)
                 f = open(sof_file, 'w')
                 for i in range(len(exp_list)):
-                    f.write(os.path.join(combining_exposure_dir, exp_list[i]) + ' IMAGE_FOV\n')
+                    f.write(os.path.join(combining_exposure_dir_withsky, exp_list[i]) + ' IMAGE_FOV\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-
+                _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
@@ -2405,66 +2320,44 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         sec = unique_pointings[unique_pointing_num]
 
         if self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                if self.skysub:
-                    combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky_withrvcorr')
-                if not self.skysub:
-                    combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withrvcorr')
-            else:
-                combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky_withoutrvcorr')
+            if self.skysub:
+                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
+            if not self.skysub:
+                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
 
         if not self.dithering_multiple_OBs:
-            if self.withrvcorr:
-                if self.skysub:
-                    combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky_withrvcorr')
-                if not self.skysub:
-                    combining_exposure_dir_withsky = os.path.join(sec, 'withsky_withrvcorr')
-
-            else:
-                combining_exposure_dir = os.path.join(sec, 'withsky_withoutrvcorr')
-
-        if self.withrvcorr:
             if self.skysub:
-                pixtable_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_*.fits')
-                if create_sof:
-                    sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_combine.sof')
-                    if os.path.exists(sof_file):
-                        os.remove(sof_file)
-                    f = open(sof_file, 'w')
-                    for i in range(len(pixtable_list)):
-                        f.write(os.path.join(combining_exposure_dir_withoutsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
-                    f.write(os.path.join(combining_exposure_dir_withoutsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
-                    f.write(os.path.join(self.static_calibration_dir, 'filter_list.fits') + ' FILTER_LIST\n')
-                    f.close()
-                if not self.debug:
-                    _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-
+                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
             if not self.skysub:
-                pixtable_list = _get_filelist(self, combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_*.fits')
-                if create_sof:
-                    sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_combine.sof')
-                    if os.path.exists(sof_file):
-                        os.remove(sof_file)
+                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
 
-                    f = open(sof_file, 'w')
-                    for i in range(len(pixtable_list)):
-                        f.write(os.path.join(combining_exposure_dir_withsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
-                    f.write(os.path.join(combining_exposure_dir_withsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
-                    f.write(os.path.join(self.static_calibration_dir,'filter_list.fits') + ' FILTER_LIST\n')
-                    f.close()
-                if not self.debug:
-                    _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-        else:
-            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
+        if self.skysub:
+            pixtable_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_*.fits')
             if create_sof:
-                sof_file = os.path.join(combining_exposure_dir, 'exp_combine.sof')
+                sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_combine.sof')
                 if os.path.exists(sof_file):
                     os.remove(sof_file)
                 f = open(sof_file, 'w')
                 for i in range(len(pixtable_list)):
-                    f.write(os.path.join(combining_exposure_dir, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
-                f.write(os.path.join(combining_exposure_dir, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
+                    f.write(os.path.join(combining_exposure_dir_withoutsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
+                f.write(os.path.join(combining_exposure_dir_withoutsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
                 f.write(os.path.join(self.static_calibration_dir, 'filter_list.fits') + ' FILTER_LIST\n')
                 f.close()
             if not self.debug:
-                _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+                _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+
+        if not self.skysub:
+            pixtable_list = _get_filelist(self, combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_*.fits')
+            if create_sof:
+                sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_combine.sof')
+                if os.path.exists(sof_file):
+                    os.remove(sof_file)
+
+                f = open(sof_file, 'w')
+                for i in range(len(pixtable_list)):
+                    f.write(os.path.join(combining_exposure_dir_withsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
+                f.write(os.path.join(combining_exposure_dir_withsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
+                f.write(os.path.join(self.static_calibration_dir,'filter_list.fits') + ' FILTER_LIST\n')
+                f.close()
+            if not self.debug:
+                _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
