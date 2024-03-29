@@ -25,9 +25,9 @@ copyright = '2019 - 2024, Peter Zeidler'
 author = 'Peter Zeidler'
 
 # The short X.Y version
-version = '1.3.0'
+version = '1.3.1'
 # The full version, including alpha/beta/rc tags
-release = '1.3.0dev20240305'
+release = '1.3.1dev20240329'
 
 
 # -- General configuration ---------------------------------------------------

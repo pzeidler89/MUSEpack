@@ -1,20 +1,19 @@
 {
   "global": {
     "pipeline_path": "path_to_pipeline/muse/2.8.9/",
-    "static_calib_path": null,
+    "rootpath": "path_to_data_folder",
+    "n_CPU": -1,
     "mode": "WFM-NOAO",
     "auto_sort_data": true,
     "auto_create_OB_list": true,
     "using_specific_exposure_time": false,
+    "using_ESO_calibration": true,
+    "renew_statics": false,
     "dither_multiple_OBs": false,
-    "n_CPU": -1,
-    "rootpath": "path_to_data_folder",
     "OB_list": []
   },
   "calibration":{
     "execute": true,
-    "using_ESO_calibration": true,
-    "renew_statics": false,
     "dark": false,
     "esorex_kwargs_bias": null,
     "esorex_kwargs_dark": null,

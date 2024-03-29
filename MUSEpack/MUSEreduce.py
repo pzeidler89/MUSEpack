@@ -59,9 +59,10 @@ class musereduce:
         self.n_CPU = self.config['global']['n_CPU']
 
         self.using_ESO_calibration =\
-        self.config['calibration']['using_ESO_calibration']
+        self.config['global']['using_ESO_calibration']
         self.dark = self.config['calibration']['dark']
-        self.renew_statics = self.config['calibration']['renew_statics']
+        self.renew_statics = self.config['global']['renew_statics']
+        self.renew_statics = self.config['global']['renew_statics']
 
         self.skyreject = self.config['sci_basic']['skyreject']
         if not 'skylines' in self.config['sci_basic']:
@@ -340,7 +341,6 @@ class musereduce:
             ### OBSERVATION PRE-PROCESSING ###
             if self.config['sci_basic']['execute']:
                 create_sof = self.config['sci_basic']['create_sof']
-                print(exp_list_SCI)
                 _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['sci_basic']['esorex_kwargs'])
 
             ### OBSERVATION POST-PROCESSING ###
@@ -362,7 +362,6 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
-                print(exp_list_SCI)
                 _dither_collect(self, exp_list_SCI, OB)
 
         if self.config['exp_align']['execute']:
