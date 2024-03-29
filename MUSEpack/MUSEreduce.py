@@ -1134,11 +1134,15 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     sof = ' lsf.sof'
 
     if create_sof:
+        sci_sof_file = os.path.join(self.calibration_dir, 'SCIENCE', 'lsf.sof')
+        twi_sof_file = os.path.join(self.calibration_dir, 'TWILIGHT', 'lsf.sof')
+        sci_sof_file_temp = os.path.join(self.calibration_dir, 'SCIENCE', 'lsf_temp.sof')
+        twi_sof_file_temp = os.path.join(self.calibration_dir, 'TWILIGHT', 'lsf_temp.sof')
 
-        if os.path.exists(self.calibration_dir + 'SCIENCE/lsf.sof'):
-            os.remove(self.calibration_dir + 'SCIENCE/lsf.sof')
-        if os.path.exists(self.calibration_dir + 'TWILIGHT/lsf.sof'):
-            os.remove(self.calibration_dir + 'TWILIGHT/lsf.sof')
+        if os.path.exists(sci_sof_file):
+            os.remove(sci_sof_file)
+        if os.path.exists(twi_sof_file):
+            os.remove(twi_sof_file)
 
         for exposure_ID in range(len(exp_list_SCI)):
             print('>>> processing exposure: ' + str(exposure_ID + 1)\
@@ -1151,76 +1155,59 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             raw_data_list_TWILIGHT = ascii.read(exp_list_TWI[exposure_ID],\
             format='no_header')
 
-            f = open(self.calibration_dir + 'SCIENCE/lsf_temp.sof', 'w')
+            f = open(sci_sof_file_temp, 'w')
             for i in range(len(raw_data_list[1][:])):
                 if raw_data_list[i][1] == 'ARC':
                     f.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
-            f.write(self.static_calibration_dir\
-            + 'line_catalog.fits LINE_CATALOG\n')
-            f.write(self.calibration_dir\
-            + 'SCIENCE/MASTER_BIAS.fits MASTER_BIAS\n')
-            f.write(self.calibration_dir\
-            + 'SCIENCE/TRACE_TABLE.fits TRACE_TABLE\n')
-            f.write(self.calibration_dir\
-            + 'SCIENCE/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
+            f.write(os.path.join(self.static_calibration_dir, 'line_catalog.fits') + ' LINE_CATALOG\n')
+            f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'MASTER_BIAS.fits') + ' MASTER_BIAS\n')
+            f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'TRACE_TABLE.fits') + ' TRACE_TABLE\n')
+            f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'WAVECAL_TABLE.fits') + ' WAVECAL_TABLE\n')
             if self.dark:
-                f.write(self.exposure_dir\
-                + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
-            f.write(self.calibration_dir\
-            + 'SCIENCE/MASTER_FLAT.fits MASTER_FLAT\n')
+                f.write(os.path.join(self.exposure_dir, 'DARK', 'MASTER_DARK.fits') + ' MASTER_DARK\n')
+            f.write(os.path.join(self.calibration_dir, 'SCIENCE', 'MASTER_FLAT.fits') + ' MASTER_FLAT\n')
             f.close()
 
-            if os.path.isfile(self.calibration_dir + 'SCIENCE/lsf.sof'):
-                assert filecmp.cmp(self.calibration_dir + 'SCIENCE/lsf.sof',\
-                self.calibration_dir + 'SCIENCE/lsf_temp.sof'),\
-                'CAUTION SCIENCE FILES ARE DIFFERENT: PLEASE CHECK'
-                os.remove(self.calibration_dir + 'SCIENCE/lsf_temp.sof')
+            if os.path.isfile(sci_sof_file):
+                assert filecmp.cmp(sci_sof_file, sci_sof_file_temp), 'CAUTION SCIENCE FILES ARE DIFFERENT: PLEASE CHECK'
+                os.remove(sci_sof_file_temp)
 
             else:
-                os.rename(self.calibration_dir + 'SCIENCE/lsf_temp.sof',\
-                self.calibration_dir + 'SCIENCE/lsf.sof')
+                os.rename(sci_sof_file_temp, sci_sof_file)
                 if not self.debug:
-                    _call_esorex(self, self.calibration_dir + 'SCIENCE/',\
+                    _call_esorex(self, os.path.join(self.calibration_dir, 'SCIENCE'),\
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
-            f = open(self.calibration_dir + 'TWILIGHT/lsf_temp.sof', 'w')
+            f = open(twi_sof_file_temp, 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
                 if raw_data_list_TWILIGHT[i][1] == 'ARC':
                     f.write(raw_data_list_TWILIGHT[i][0]\
                     + '  ' + raw_data_list_TWILIGHT[i][1] + '\n')
-            f.write(self.static_calibration_dir\
-            + 'line_catalog.fits LINE_CATALOG\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/MASTER_BIAS.fits MASTER_BIAS\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/TRACE_TABLE.fits TRACE_TABLE\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
+            f.write(os.path.join(self.static_calibration_dir, 'line_catalog.fits') + ' LINE_CATALOG\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'MASTER_BIAS.fits') + ' MASTER_BIAS\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'TRACE_TABLE.fits') + ' TRACE_TABLE\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'WAVECAL_TABLE.fits') + ' WAVECAL_TABLE\n')
             if self.dark:
-                f.write(self.exposure_dir\
-                + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/MASTER_FLAT.fits MASTER_FLAT\n')
+                f.write(os.path.join(self.exposure_dir, 'DARK', 'MASTER_DARK.fits') + ' MASTER_DARK\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'MASTER_FLAT.fits') + ' MASTER_FLAT\n')
             f.close()
 
-            if os.path.isfile(self.calibration_dir + 'TWILIGHT/lsf.sof'):
-                assert filecmp.cmp(self.calibration_dir + 'TWILIGHT/lsf.sof',\
-                self.calibration_dir + 'TWILIGHT/lsf_temp.sof'),\
+            if os.path.isfile(twi_sof_file):
+                assert filecmp.cmp(twi_sof_file, twi_sof_file_temp),\
                 'CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK'
-                os.remove(self.calibration_dir + 'TWILIGHT/lsf_temp.sof')
+                os.remove(twi_sof_file_temp)
 
             else:
-                os.rename(self.calibration_dir + 'TWILIGHT/lsf_temp.sof',\
-                self.calibration_dir + 'TWILIGHT/lsf.sof')
+                os.rename(twi_sof_file_temp, twi_sof_file)
                 if not self.debug:
-                    _call_esorex(self, self.calibration_dir + 'TWILIGHT/',\
+                    _call_esorex(self, os.path.join(self.calibration_dir, 'TWILIGHT'),\
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
         if not self.debug:
-            _call_esorex(self, self.calibration_dir + 'SCIENCE/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-            _call_esorex(self, self.calibration_dir + 'TWILIGHT/', esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, os.path.join(self.calibration_dir, 'SCIENCE'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            _call_esorex(self, os.path.join(self.calibration_dir, 'TWILIGHT'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 
 def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
@@ -1257,9 +1244,11 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
     sof = ' twilight.sof'
 
     if create_sof:
+        sof_file = os.path.join(self.calibration_dir, 'TWILIGHT', 'twilight.sof')
+        sof_file_temp = os.path.join(self.calibration_dir, 'TWILIGHT', 'twilight_temp.sof')
 
-        if os.path.exists(self.calibration_dir + 'TWILIGHT/twilight.sof'):
-            os.remove(self.calibration_dir + 'TWILIGHT/twilight.sof')
+        if os.path.exists(sof_file):
+            os.remove(sof_file)
 
         for exposure_ID in range(len(exp_list_SCI)):
             print('>>> processing exposure: ' + str(exposure_ID + 1)\
@@ -1291,7 +1280,7 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             choosen_illum = int(illum_index[np.argmin(np.abs(MJDsillum\
             - np.min(MJDskyflat)))])
 
-            f = open(self.calibration_dir + 'TWILIGHT/twilight_temp.sof', 'w')
+            f = open(sof_file_temp, 'w')
             for i in range(len(raw_data_list_TWILIGHT[1][:])):
                 if raw_data_list_TWILIGHT[i][1] == 'SKYFLAT':
                     f.write(raw_data_list_TWILIGHT[i][0]\
@@ -1299,39 +1288,27 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             f.write(raw_data_list_TWILIGHT[choosen_illum][0]\
             + '  ' + raw_data_list_TWILIGHT[choosen_illum][1] + '\n')
             if self.mode == 'WFM-AO' or self.mode == 'WFM-NOAO':
-                f.write(self.static_calibration_dir\
-                + 'geometry_table_wfm.fits GEOMETRY_TABLE\n')
+                f.write(os.path.join(self.static_calibration_dir, 'geometry_table_wfm.fits') +' GEOMETRY_TABLE\n')
             if self.mode == 'NFM-AO':
-                f.write(self.static_calibration_dir\
-                + 'geometry_table_wfm.fits GEOMETRY_TABLE\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/MASTER_BIAS.fits MASTER_BIAS\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/MASTER_FLAT.fits MASTER_FLAT\n')
+                f.write(os.path.join(self.static_calibration_dir, 'geometry_table_wfm.fits') +' GEOMETRY_TABLE\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'MASTER_BIAS.fits') +' MASTER_BIAS\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'MASTER_FLAT.fits') +' MASTER_FLAT\n')
             if self.dark:
-                f.write(self.exposure_dir\
-                + 'DARK/MASTER_DARK.fits MASTER_DARK\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/TRACE_TABLE.fits TRACE_TABLE\n')
-            f.write(self.calibration_dir\
-            + 'TWILIGHT/WAVECAL_TABLE.fits WAVECAL_TABLE\n')
+                f.write(os.path.join(self.exposure_dir, 'DARK', 'MASTER_DARK.fits') +' MASTER_DARK\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'TRACE_TABLE.fits') +' TRACE_TABLE\n')
+            f.write(os.path.join(self.calibration_dir, 'TWILIGHT', 'WAVECAL_TABLE.fits') +' WAVECAL_TABLE\n')
             if MJDsskyflat.all() < 57823.5:
-                f.write(self.static_calibration_dir\
-                + 'vignetting_mask.fits VIGNETTING_MASK\n')
+                f.write(os.path.join(self.static_calibration_dir, 'vignetting_mask.fits') +' VIGNETTING_MASK\n')
             f.close()
 
-            if os.path.isfile(self.calibration_dir + 'TWILIGHT/twilight.sof'):
-                assert filecmp.cmp(self.calibration_dir\
-                + 'TWILIGHT/twilight.sof',\
-                self.calibration_dir + 'TWILIGHT/twilight_temp.sof'),\
-                'CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK'
-                os.remove(self.calibration_dir + 'TWILIGHT/twilight_temp.sof')
+            if os.path.isfile(sof_file):
+                assert filecmp.cmp(sof_file, sof_file_temp), 'CAUTION TWILIGHT FILES ARE DIFFERENT: PLEASE CHECK'
+                os.remove(sof_file_temp)
 
             else:
-                os.rename(self.calibration_dir + 'TWILIGHT/twilight_temp.sof',\
-                self.calibration_dir + 'TWILIGHT/twilight.sof')
+                os.rename(sof_file_temp, sof_file)
                 if not self.debug:
-                    _call_esorex(self, self.calibration_dir + 'TWILIGHT',\
+                    _call_esorex(self, os.path.join(self.calibration_dir, 'TWILIGHT'),\
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
     if not create_sof:
