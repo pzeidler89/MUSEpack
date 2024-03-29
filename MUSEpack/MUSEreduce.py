@@ -2021,7 +2021,7 @@ def _dither_collect(self, exp_list_SCI, OB):
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
     if len(self.user_list) > 0:
-        unique_pointings = os.path.join(self.working_dir, np.array([self.user_list[0][:18]], dtype=object))
+        unique_pointings = os.path.join(self.working_dir, self.user_list[0][:18])
 
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
