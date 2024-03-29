@@ -2083,12 +2083,12 @@ def _dither_collect(self, exp_list_SCI, OB):
 
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
-        print(sec)
+
         if len(self.user_list) == 0:
             exp_list = glob.glob(sec + '*SCI.list')
         if len(self.user_list) > 0:
             exp_list = os.path.join(self.working_dir, self.user_list + '_SCI.list')
-        print(exp_list)
+
         if self.dithering_multiple_OBs:
             combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
             combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
@@ -2128,9 +2128,9 @@ def _dither_collect(self, exp_list_SCI, OB):
                                      ]
 
 
-                for (origin_file, destination_file) in zip(origin_files, destination_files):
-                    print(origin_file + ' ==> ' + destination_file)
-                    shutil.copy(origin_file, destination_file)
+            for (origin_file, destination_file) in zip(origin_files, destination_files):
+                print(origin_file + ' ==> ' + destination_file)
+                shutil.copy(origin_file, destination_file)
 
 
 def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):

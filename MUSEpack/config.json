@@ -3,7 +3,6 @@
     "pipeline_path": "path_to_pipeline/muse/2.8.9/",
     "static_calib_path": null,
     "mode": "WFM-NOAO",
-    "withrvcorr": true,
     "auto_sort_data": true,
     "auto_create_OB_list": true,
     "using_specific_exposure_time": false,
