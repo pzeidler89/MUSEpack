@@ -2163,7 +2163,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
     if len(self.user_list) > 0:
-        unique_pointings = os.path.join(self.working_dir, np.array([self.user_list[0][:18]], dtype=object))
+        unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
 
@@ -2173,7 +2173,9 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
         if len(self.user_list) > 0:
-            exp_list = os.path.join(self.working_dir, self.user_list, '_SCI.list')
+            exp_list = []
+            for user_list_element in self.user_list:
+                exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
 
         if self.dithering_multiple_OBs:
             combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
@@ -2286,7 +2288,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
     if len(self.user_list) > 0:
-        unique_pointings = os.path.join(self.working_dir, np.array([self.user_list[0][:18]], dtype=object))
+        unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
 
