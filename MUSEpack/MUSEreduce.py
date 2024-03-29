@@ -2022,7 +2022,7 @@ def _dither_collect(self, exp_list_SCI, OB):
 
     if len(self.user_list) > 0:
         unique_pointings = os.path.join(self.working_dir, self.user_list[0][:18])
-
+        print(unique_pointings)
     for unique_pointing_num in range(len(unique_pointings)):
         unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
@@ -2041,7 +2041,7 @@ def _dither_collect(self, exp_list_SCI, OB):
         if not self.dithering_multiple_OBs:
                 combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
                 combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
-
+        print(combining_exposure_dir_withoutsky)
 
         if not os.path.exists(combining_exposure_dir_withoutsky):
             os.makedirs(combining_exposure_dir_withoutsky)
