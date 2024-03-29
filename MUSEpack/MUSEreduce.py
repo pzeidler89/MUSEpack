@@ -2030,7 +2030,9 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
         if len(self.user_list) > 0:
-            exp_list = os.path.join(self.working_dir, self.user_list, '_SCI.list')
+            exp_list = []
+            for user_list_element in self.user_list:
+                exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
 
         if self.dithering_multiple_OBs:
             combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
