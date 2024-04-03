@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '1.3.1'
+__version__ = '2.0.0'
 
-__revision__ = '20240329'
+__revision__ = '20240403'
 
 import sys
 import shutil
@@ -364,13 +364,13 @@ class musereduce:
             if self.config['dither_collect']['execute']:
                 _dither_collect(self, exp_list_SCI, OB)
 
-        if self.config['exp_align']['execute']:
-            create_sof = self.config['exp_align']['create_sof']
-            _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
+            if self.config['exp_align']['execute']:
+                create_sof = self.config['exp_align']['create_sof']
+                _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
 
-        if self.config['exp_combine']['execute']:
-            create_sof = self.config['exp_combine']['create_sof']
-            _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+            if self.config['exp_combine']['execute']:
+                create_sof = self.config['exp_combine']['create_sof']
+                _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
 
         endtime = time.time()
         print('>>> Total execution time: ',\
