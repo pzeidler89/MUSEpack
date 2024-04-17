@@ -14,7 +14,8 @@
   },
   "cleanup": {
     "execute": false,
-    "include_std": false
+    "include_std": false,
+    "include_combined": false
   },
   "calibration":{
     "execute": true,

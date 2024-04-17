@@ -2,7 +2,7 @@
 
 __version__ = '2.0.0'
 
-__revision__ = '20240416'
+__revision__ = '20240417'
 
 import sys
 import shutil
@@ -118,7 +118,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Apr 16, 2024                    #####')
+        print('#####                    Apr 17, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -320,7 +320,7 @@ class musereduce:
             print(' ')
             print(' cleaning ...')
             if self.config['cleanup']['execute']:
-                _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'])
+                _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'], include_combined=self.config['cleanup']['include_combined'])
 
             print(' ')
             print('... reducing OB: ' + OB)
@@ -2347,7 +2347,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             if not self.debug:
                 _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
-def _cleanup(self, exp_list_SCI, include_std=False):
+def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
     '''
     This module calls cleans up interpediate products to save disk space
 
@@ -2359,6 +2359,9 @@ def _cleanup(self, exp_list_SCI, include_std=False):
     Kwargs:
          include_std: :obj:`bool`
             If :obj:`true` the standard star folder is also emptied
+
+        include_combined: :obj:`bool`
+            If :obj:`true` the combined cube folder is also emptied
 
     '''
 
@@ -2383,11 +2386,15 @@ def _cleanup(self, exp_list_SCI, include_std=False):
     if len(self.user_list) > 0:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
-
-    for unique_pointing in unique_pointings:
-        print("Removing: ", unique_pointing)
-        shutil.rmtree(unique_pointing)
+    if include_combined:
+        for unique_pointing in unique_pointings:
+            print("Removing: ", unique_pointing)
+            shutil.rmtree(unique_pointing)
     if include_std:
         std_star_dir = os.path.join(self.working_dir, 'std')
         print("Removing: ", std_star_dir)
         shutil.rmtree(std_star_dir)
+
+    for exp in exp_list:
+        print("Removing: ", exp[:-9])
+        shutil.rmtree(exp[:-9])
