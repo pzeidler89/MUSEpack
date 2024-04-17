@@ -2395,6 +2395,6 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
         print("Removing: ", std_star_dir)
         shutil.rmtree(std_star_dir)
 
-    for exp in exp_list:
+    for exp in exp_list_SCI:
         print("Removing: ", exp[:-9])
         shutil.rmtree(exp[:-9])
