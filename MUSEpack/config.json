@@ -10,7 +10,11 @@
     "using_ESO_calibration": true,
     "renew_statics": false,
     "dither_multiple_OBs": false,
-    "OB_list": []
+    "OB_list": [],
+  },
+  "cleanup": {
+    "execute": false,
+    "include_std": false
   },
   "calibration":{
     "execute": true,

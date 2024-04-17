@@ -2,7 +2,7 @@
 
 __version__ = '2.0.0'
 
-__revision__ = '20240403'
+__revision__ = '20240416'
 
 import sys
 import shutil
@@ -39,29 +39,27 @@ class musereduce:
 
     def __init__(self, configfile, debug=False):
 
+        # Reading in the configuration file
+
         if configfile == None:
-            configfile = os.path.join(os.path.dirname(__file__),"/config.json")
+            configfile = os.path.join(os.path.dirname(__file__),"config.json")
         with open(configfile, "r") as read_file:
             self.config = json.load(read_file)
 
+        # setting all the parameters from teh configuration file
+
         self.OB_list = np.array(self.config['global']['OB_list'])
-        self.dithering_multiple_OBs =\
-            self.config['global']['dither_multiple_OBs']
-        # if not self.dithering_multiple_OBs:
-        #     self.OB_list = np.array([self.dithername])
+        self.dithering_multiple_OBs = self.config['global']['dither_multiple_OBs']
         self.rootpath = self.config['global']['rootpath']
         self.mode = self.config['global']['mode']
         self.auto_sort_data = self.config['global']['auto_sort_data']
         self.auto_create_OB_list = self.config['global']['auto_create_OB_list']
-        self.using_specific_exposure_time =\
-        self.config['global']['using_specific_exposure_time']
+        self.using_specific_exposure_time = self.config['global']['using_specific_exposure_time']
 
         self.n_CPU = self.config['global']['n_CPU']
 
-        self.using_ESO_calibration =\
-        self.config['global']['using_ESO_calibration']
+        self.using_ESO_calibration = self.config['global']['using_ESO_calibration']
         self.dark = self.config['calibration']['dark']
-        self.renew_statics = self.config['global']['renew_statics']
         self.renew_statics = self.config['global']['renew_statics']
 
         self.skyreject = self.config['sci_basic']['skyreject']
@@ -87,8 +85,7 @@ class musereduce:
 
         self.weight = self.config['exp_combine']['weight']
 
-        self.user_list =\
-            np.array(self.config['dither_collect']['user_list'], dtype=object)
+        self.user_list = np.array(self.config['dither_collect']['user_list'], dtype=object)
 
         self.raw_data_dir = os.path.join(self.rootpath, 'raw/')
         self.reduced_dir = os.path.join(self.rootpath, 'reduced/')
@@ -121,7 +118,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Apr 04, 2024                    #####')
+        print('#####                    Apr 16, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -129,17 +126,19 @@ class musereduce:
 
         print('... Checking various necessary variables')
         assert sys.version_info > (3, 0), 'YOU ARE NOT USING PYTHON 3.x'
-        assert self.config['global']['pipeline_path'],\
-            'NO PIPELINE PATH DEFINED'
+        assert self.config['global']['pipeline_path'], 'NO PIPELINE PATH DEFINED'
         assert self.config['global']['rootpath'], 'NO ROOTPATH DEFINED'
-        # assert self.config['global']['OB_list'] and self.config['global']['auto_create_OB_list'], 'NO OBs given'
+
         if self.config['global']['auto_create_OB_list'] and not self.config['global']['OB_list']:
             print('The OB list is automatically created from the input raw folder')
+
         if self.config['global']['OB_list']:
             print('Input OB list is used')
+
         if self.dithering_multiple_OBs and len(self.user_list) > 0:
             print('Currently a user list cannot be provided with multiple OBs')
             sys.exit()
+
         self.static_calib_path = self.config.get('global', {}).get('static_calib_path', None)
         if not self.static_calib_path:
             self.static_calib_path = os.path.join(self.config['global']['pipeline_path'], 'calib/muse*/')
@@ -149,7 +148,12 @@ class musereduce:
         print('... Perfect, everything checks out')
         print('')
 
+        if self.config['cleanup']['execute']:
+            print('... Will cleanup folders first before starting other modules')
+            print('')
+
         print('... Settings for data reduction')
+
         if self.debug:
             print('##################################################')
             print('#####        RUNNING IN DEBUG MODE           #####')
@@ -158,8 +162,8 @@ class musereduce:
             print('##################################################')
 
             print("")
-        print('>>> Number of cores: ' + str(self.n_CPU) + ' cores')
 
+        print('>>> Number of cores: ' + str(self.n_CPU) + ' cores')
         print('>>> Observation mode: ' + self.mode)
 
         if self.config['calibration']['execute'] == True:
@@ -194,10 +198,9 @@ class musereduce:
         if len(self.OB_list) > 1:
             print('>>> Reducing more than one OB: ', str(len(self.OB_list)))
 
-        print(' ')
+        print('')
         print('... The following modules will be executed')
-        if self.config['calibration']['execute']\
-        and not self.using_ESO_calibration:
+        if self.config['calibration']['execute'] and not self.using_ESO_calibration:
             print('>>> BIAS')
             if self.dark:
                 print('>>> DARK')
@@ -229,8 +232,6 @@ class musereduce:
 
         if self.dithering_multiple_OBs:
             self.dithername = np.array(self.config['global']['OB_list'][0])
-        # if not os.path.exists(self.rootpath + 'reduced/'):
-        #     os.mkdir(self.rootpath + 'reduced/')
 
         print(' ')
         print('... Creating directories')
@@ -243,18 +244,16 @@ class musereduce:
                 if not os.path.exists(self.combining_OBs_dir):
                     os.mkdir(self.combining_OBs_dir)
             else:
-                self.working_dir = os.path.join(self.rootpath, 'reduced/', OB)
+                self.working_dir = os.path.join(self.rootpath, 'reduced', OB)
                 self.combining_OBs_dir = None
 
             self.calibration_dir = os.path.join(self.working_dir, 'calibrations')
             self.ESO_calibration_dir = os.path.join(self.working_dir, 'ESO_calibrations')
             self.static_calibration_dir = os.path.join(self.working_dir, 'static_calibration_files')
 
-            if self.renew_statics and\
-            os.path.exists(self.static_calibration_dir):
+            if self.renew_statics and os.path.exists(self.static_calibration_dir):
                 shutil.rmtree(self.static_calibration_dir)
-            if self.renew_statics and self.auto_sort_data and\
-                    os.path.exists(self.ESO_calibration_dir):
+            if self.renew_statics and self.auto_sort_data and os.path.exists(self.ESO_calibration_dir):
                 shutil.rmtree(self.ESO_calibration_dir)
             if not os.path.exists(self.working_dir):
                 os.mkdir(self.working_dir)
@@ -264,8 +263,7 @@ class musereduce:
                 os.mkdir(self.calibration_dir)
             if not os.path.exists(self.ESO_calibration_dir):
                 os.mkdir(self.ESO_calibration_dir)
-            if not os.path.exists(os.path.join(self.calibration_dir, 'DARK'))\
-            and self.dark:
+            if not os.path.exists(os.path.join(self.calibration_dir, 'DARK')) and self.dark:
                 os.mkdir(os.path.join(self.calibration_dir, 'DARK'))
 
             if not os.path.exists(os.path.join(self.calibration_dir, 'TWILIGHT')):
@@ -284,7 +282,8 @@ class musereduce:
             print('>>> Sorting the raw data')
             _sort_data(self)
         else:
-            print('>>> MANUAL INTERACTION NEEDED')
+            print('>>> raw data will not be sorted')
+            print('>>> MANUAL INTERACTION MAY BE NEEDED')
 
         for OB in self.OB_list:
             self.working_dir = os.path.join(self.reduced_dir, OB)
@@ -317,6 +316,11 @@ class musereduce:
                 exposure_dir = os.path.join(exposure[:-9])
                 if not os.path.exists(exposure_dir):
                     os.mkdir(exposure_dir)
+
+            print(' ')
+            print(' cleaning ...')
+            if self.config['cleanup']['execute']:
+                _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'])
 
             print(' ')
             print('... reducing OB: ' + OB)
@@ -2342,3 +2346,48 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 f.close()
             if not self.debug:
                 _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+
+def _cleanup(self, exp_list_SCI, include_std=False):
+    '''
+    This module calls cleans up interpediate products to save disk space
+
+    Args:
+        exp_list_SCI : :obj:`list`
+            The list of all associated science files including their category
+            read from the fits header
+
+    Kwargs:
+         include_std: :obj:`bool`
+            If :obj:`true` the standard star folder is also emptied
+
+    '''
+
+    print('... CLEANING UP THE FOLDERS')
+
+    unique_pointings = np.array([])
+    unique_tester = ' '
+
+    sci = np.zeros_like(exp_list_SCI, dtype=bool)
+    for idx, exposure in enumerate(exp_list_SCI):
+        if exposure[-8:-5] == 'SCI':
+            sci[idx] = True
+    exp_list_SCI = np.array(exp_list_SCI)[sci]
+
+    if len(self.user_list) == 0:
+        for expnum in range(len(exp_list_SCI)):
+                if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
+                    unique_pointings = np.append(unique_pointings,\
+                    exp_list_SCI[expnum][:-16])
+                    unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
+
+    if len(self.user_list) > 0:
+        unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
+
+
+    for unique_pointing in unique_pointings:
+        print("Removing: ", unique_pointing)
+        shutil.rmtree(unique_pointing)
+    if include_std:
+        std_star_dir = os.path.join(self.working_dir, 'std')
+        print("Removing: ", std_star_dir)
+        shutil.rmtree(std_star_dir)
