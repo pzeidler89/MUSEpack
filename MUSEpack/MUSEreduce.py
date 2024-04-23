@@ -118,7 +118,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Apr 17, 2024                    #####')
+        print('#####                    Apr 23, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -2044,7 +2044,7 @@ def _dither_collect(self, exp_list_SCI, OB):
             if self.user_list[0] == 'all':
                 exp_list = exp_list_SCI
 
-        if len(self.user_list) > 0:
+        if len(self.user_list) > 1:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
@@ -2083,7 +2083,7 @@ def _dither_collect(self, exp_list_SCI, OB):
             if self.user_list[0] == 'all':
                 exp_list = exp_list_SCI
 
-        if len(self.user_list) > 0:
+        if len(self.user_list) > 1:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
