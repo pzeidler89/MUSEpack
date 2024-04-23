@@ -2232,7 +2232,6 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             if not self.skysub:
                 combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
 
-
         if not self.dithering_multiple_OBs:
             if self.skysub:
                 combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
