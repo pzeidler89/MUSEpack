@@ -2182,7 +2182,11 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) > 0:
+    if len(self.user_list) == 1:
+        if self.user_list[0] == "all":
+            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+
+    if len(self.user_list) > 1:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2192,7 +2196,12 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
 
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
-        if len(self.user_list) > 0:
+
+        if len(self.user_list) == 1:
+            if self.user_list[0] == 'all':
+                exp_list = exp_list_SCI
+
+        if len(self.user_list) > 1:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
@@ -2307,7 +2316,11 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) > 0:
+    if len(self.user_list) == 1:
+        if self.user_list[0] == "all":
+            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+
+    if len(self.user_list) > 1:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2399,7 +2412,11 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) > 0:
+    if len(self.user_list) == 1:
+        if self.user_list[0] == "all":
+            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+
+    if len(self.user_list) > 1:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     if include_combined:
