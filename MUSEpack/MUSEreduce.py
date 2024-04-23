@@ -2,7 +2,7 @@
 
 __version__ = '2.0.0'
 
-__revision__ = '20240417'
+__revision__ = '20240423'
 
 import sys
 import shutil
@@ -85,7 +85,7 @@ class musereduce:
 
         self.weight = self.config['exp_combine']['weight']
 
-        self.user_list = np.array(self.config['dither_collect']['user_list'], dtype=object)
+        self.user_list = np.array(self.config['global']['exp_list'], dtype=object)
 
         self.raw_data_dir = os.path.join(self.rootpath, 'raw/')
         self.reduced_dir = os.path.join(self.rootpath, 'reduced/')
@@ -191,10 +191,12 @@ class musereduce:
             self.multOB_exp_counter = 0
         else:
             print('>>> All exposures per pointing are located in one OB')
-            if len(self.user_list) > 0:
+            if len(self.user_list) > 1:
                 print('>>> Dithering exposures input list:')
                 for li in self.user_list:
                     print(li)
+            if self.user_list[0] == 'all':
+                print('>>> Dithering all exposures within OB folder:')
         if len(self.OB_list) > 1:
             print('>>> Reducing more than one OB: ', str(len(self.OB_list)))
 
@@ -2024,7 +2026,10 @@ def _dither_collect(self, exp_list_SCI, OB):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) > 0:
+    if self.user_list[0] == "all":
+        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+
+    if len(self.user_list) > 1:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2033,6 +2038,10 @@ def _dither_collect(self, exp_list_SCI, OB):
 
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
+
+        if self.user_list[0] == 'all':
+            exp_list = exp_list_SCI
+
         if len(self.user_list) > 0:
             exp_list = []
             for user_list_element in self.user_list:
@@ -2067,6 +2076,10 @@ def _dither_collect(self, exp_list_SCI, OB):
 
         if len(self.user_list) == 0:
             exp_list = glob.glob(sec + '*SCI.list')
+
+        if self.user_list[0] == 'all':
+            exp_list = exp_list_SCI
+
         if len(self.user_list) > 0:
             exp_list = []
             for user_list_element in self.user_list:

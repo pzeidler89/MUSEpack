@@ -11,6 +11,7 @@
     "renew_statics": false,
     "dither_multiple_OBs": false,
     "OB_list": [],
+    "exp_list": []
   },
   "cleanup": {
     "execute": false,
@@ -60,8 +61,7 @@
     "create_sof": true
   },
   "dither_collect":{
-    "execute": true,
-    "user_list": []
+    "execute": true
   },
   "exp_align":{
     "execute": true,
