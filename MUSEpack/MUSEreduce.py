@@ -195,8 +195,9 @@ class musereduce:
                 print('>>> Dithering exposures input list:')
                 for li in self.user_list:
                     print(li)
-            if self.user_list[0] == 'all':
-                print('>>> Dithering all exposures within OB folder:')
+            if len(self.user_list) == 1:
+                if self.user_list[0] == 'all':
+                    print('>>> Dithering all exposures within OB folder:')
         if len(self.OB_list) > 1:
             print('>>> Reducing more than one OB: ', str(len(self.OB_list)))
 
@@ -2025,9 +2026,9 @@ def _dither_collect(self, exp_list_SCI, OB):
                     unique_pointings = np.append(unique_pointings,\
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
-
-    if self.user_list[0] == "all":
-        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+    if len(self.user_list) == 1:
+        if self.user_list[0] == "all":
+            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
 
     if len(self.user_list) > 1:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
@@ -2039,8 +2040,9 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
 
-        if self.user_list[0] == 'all':
-            exp_list = exp_list_SCI
+        if len(self.user_list) == 1:
+            if self.user_list[0] == 'all':
+                exp_list = exp_list_SCI
 
         if len(self.user_list) > 0:
             exp_list = []
@@ -2077,8 +2079,9 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(sec + '*SCI.list')
 
-        if self.user_list[0] == 'all':
-            exp_list = exp_list_SCI
+        if len(self.user_list) == 1:
+            if self.user_list[0] == 'all':
+                exp_list = exp_list_SCI
 
         if len(self.user_list) > 0:
             exp_list = []
