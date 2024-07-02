@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
-__revision__ = '20240304'
+__revision__ = '20240702'
 
 import sys
 import os
@@ -24,7 +24,7 @@ import montage_wrapper as montage
 from MUSEpack.utils import ABtoVega
 
 def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
-            output_file=None, out_frame=None, in_frame=None,
+            output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             correctiontype='shift'):
 
@@ -46,6 +46,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
         output_file : :obj:`str` (optional, default: input file name +_cor)
             outputfile name
+
+        output_path : :obj:`str` (optional, default: current directory)
+            output path. If not provided the I/O folder is identical
 
         output_frame : :obj:`str` (optional, default : input frame)
             coordinate frame of the output cube in case one want to
@@ -256,10 +259,16 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         if correct_flux and not np.isnan(fscale[0]):
             cube[1].data *= fscale[0]
 
-    if output_file == None:
-        cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)
+    if output_path == None:
+        if output_file == None:
+            cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)
+        else:
+            cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
     else:
-        cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
+        if output_file == None:
+            cube.writeto(os.path.join(output_path, input_fits + '_cor.fits'), overwrite=True)
+        else:
+            cube.writeto(os.path.join(output_path, output_file ), overwrite=True)
 
 
 def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
