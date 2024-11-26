@@ -1387,6 +1387,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         illum_index = np.array([])
 
         for i in range(len(raw_data_list[1][:])):
+            print(raw_data_list[i][1])
             if raw_data_list[i][1] == 'OBJECT' or raw_data_list[i][1] == 'SKY':
                 objecthdu = fits.open(raw_data_list[i][0])
                 MJDobject = objecthdu[0].header['MJD-OBS']
@@ -1398,6 +1399,8 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 MJDillum = illumhdu[0].header['MJD-OBS']
                 MJDsillum = np.append(MJDsillum, MJDillum)
                 illum_index = np.append(illum_index, i)
+                print((MJDsillum)
+                print(MJDobject)
         print(MJDsillum - MJDobject)
         choosen_illum_object = int(illum_index[np.argmin(np.abs(MJDsillum\
         - MJDobject))])
