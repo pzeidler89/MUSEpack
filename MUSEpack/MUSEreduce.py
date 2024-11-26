@@ -1399,7 +1399,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 MJDillum = illumhdu[0].header['MJD-OBS']
                 MJDsillum = np.append(MJDsillum, MJDillum)
                 illum_index = np.append(illum_index, i)
-                print((MJDsillum)
+                print(MJDsillum)
                 print(MJDobject)
         print(MJDsillum - MJDobject)
         choosen_illum_object = int(illum_index[np.argmin(np.abs(MJDsillum\
