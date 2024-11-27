@@ -2,7 +2,7 @@
 
 __version__ = '2.0.0'
 
-__revision__ = '20240423'
+__revision__ = '20241127'
 
 import sys
 import shutil
@@ -118,7 +118,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Apr 23, 2024                    #####')
+        print('#####                    Nov 27, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1385,9 +1385,8 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
         MJDsillum = np.array([])
         illum_index = np.array([])
-        print(raw_data_list)
+
         for i in range(len(raw_data_list)):
-            print(raw_data_list[i][1])
             if raw_data_list[i][1] == 'OBJECT' or raw_data_list[i][1] == 'SKY':
                 objecthdu = fits.open(raw_data_list[i][0])
                 MJDobject = objecthdu[0].header['MJD-OBS']
@@ -1401,7 +1400,6 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 illum_index = np.append(illum_index, i)
                 print(MJDsillum)
                 print(MJDobject)
-        print(MJDsillum - MJDobject)
         choosen_illum_object = int(illum_index[np.argmin(np.abs(MJDsillum\
         - MJDobject))])
         choosen_illum_std = int(illum_index[np.argmin(np.abs(MJDsillum\
