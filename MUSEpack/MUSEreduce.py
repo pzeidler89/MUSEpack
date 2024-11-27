@@ -1386,7 +1386,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         MJDsillum = np.array([])
         illum_index = np.array([])
         print(raw_data_list)
-        for i in range(len(raw_data_list[1][:])):
+        for i in range(len(raw_data_list)):
             print(raw_data_list[i][1])
             if raw_data_list[i][1] == 'OBJECT' or raw_data_list[i][1] == 'SKY':
                 objecthdu = fits.open(raw_data_list[i][0])
