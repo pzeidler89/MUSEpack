@@ -736,7 +736,7 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
                 format='no_header')
 
             f_science = open(sci_bias_sof_temp, 'w')
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'BIAS':
                     f_science.write(raw_data_list[i][0] + '  '\
                     + raw_data_list[i][1] + '\n')
@@ -744,14 +744,14 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
 
             if self.dark:
                 f_dark = open(dar_bias_sof_temp, 'w')
-                for i in range(len(raw_data_list_DARK[1][:])):
+                for i in range(len(raw_data_list_DARK)):
                     if raw_data_list_DARK[i][1] == 'BIAS':
                         f_dark.write(raw_data_list_DARK[i][0] + '  '\
                         + raw_data_list_DARK[i][1] + '\n')
                 f_dark.close()
 
             f_twilight = open(twi_bias_sof_temp, 'w')
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'BIAS':
                     f_twilight.write(raw_data_list_TWILIGHT[i][0] + '  '\
                     + raw_data_list_TWILIGHT[i][1] + '\n')
@@ -858,7 +858,7 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
 
             f = open(dar_dark_sof_temp, 'w')
 
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'DARK':
                     f.write(self.raw_data_list[i][0] + '  '\
                     + raw_data_list[i][1] + '\n')
@@ -944,7 +944,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             format='no_header')
 
             f = open(sci_flat_sof_temp, 'w')
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'FLAT':
                     f.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
@@ -965,7 +965,7 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                     _call_esorex(self, os.path.join(self.calibration_dir, 'SCIENCE'), esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(twi_flat_sof_temp, 'w')
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'FLAT':
                     f.write(raw_data_list_TWILIGHT[i][0]\
                     + '  ' + raw_data_list_TWILIGHT[i][1] + '\n')
@@ -1051,7 +1051,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             format='no_header')
 
             f = open(sci_wav_sof_temp, 'w')
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'ARC':
                     f.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
@@ -1075,7 +1075,7 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(twi_wav_sof_temp, 'w')
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'ARC':
                     f.write(raw_data_list_TWILIGHT[i][0]\
                     + '  ' + raw_data_list_TWILIGHT[i][1] + '\n')
@@ -1163,7 +1163,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             format='no_header')
 
             f = open(sci_sof_file_temp, 'w')
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'ARC':
                     f.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
@@ -1187,7 +1187,7 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
                     esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
             f = open(twi_sof_file_temp, 'w')
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'ARC':
                     f.write(raw_data_list_TWILIGHT[i][0]\
                     + '  ' + raw_data_list_TWILIGHT[i][1] + '\n')
@@ -1272,7 +1272,7 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             MJDsskyflat = np.array([])
             illum_index = np.array([])
 
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'SKYFLAT':
                     skyflathdu = fits.open(raw_data_list_TWILIGHT[i][0])
                     MJDskyflat = skyflathdu[0].header['MJD-OBS']
@@ -1288,7 +1288,7 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             - np.min(MJDskyflat)))])
 
             f = open(sof_file_temp, 'w')
-            for i in range(len(raw_data_list_TWILIGHT[1][:])):
+            for i in range(len(raw_data_list_TWILIGHT)):
                 if raw_data_list_TWILIGHT[i][1] == 'SKYFLAT':
                     f.write(raw_data_list_TWILIGHT[i][0]\
                     + '  ' + raw_data_list_TWILIGHT[i][1] + '\n')
@@ -1407,7 +1407,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
         f_std = open(sci_basic_std_sof_temp, 'w')
 
-        for i in range(len(raw_data_list[1][:])):
+        for i in range(len(raw_data_list)):
             if raw_data_list[i][1] == 'STD':
                 f_std.write(raw_data_list[i][0]\
                 + '  ' + raw_data_list[i][1] + '\n')
@@ -1449,7 +1449,7 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 os.remove(sci_basic_obj_sof)
             f_object = open(sci_basic_obj_sof, 'w')
 
-            for i in range(len(raw_data_list[1][:])):
+            for i in range(len(raw_data_list)):
                 if raw_data_list[i][1] == 'OBJECT':
                     f_object.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
