@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
-__revision__ = '20241127'
+__revision__ = '20241129'
 
 import sys
 import shutil
@@ -71,6 +71,10 @@ class musereduce:
             self.reduce_std = True
         else:
             self.reduce_std = self.config['sci_basic']['execute_std']
+        if not 'execute_sci' in self.config['sci_basic']:
+            self.reduce_sci = True
+        else:
+            self.reduce_sci = self.config['sci_basic']['execute_sci']
 
         self.skyfield = self.config['sky']['sky_field']
         self.skyfraction = self.config['sky']['fraction']
@@ -118,7 +122,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Nov 27, 2024                    #####')
+        print('#####                    Nov 29, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -213,6 +217,8 @@ class musereduce:
             print('>>> TWILIGHT')
         if self.config['sci_basic']['execute']:
             print('>>> SCIBASIC')
+            if not self.reduce_sci:
+                print('    Caution SCIBASIC will not be executed on SCI exposure!!')
             if not self.reduce_std:
                 print('    Caution SCIBASIC will not be executed on STD star!!')
         if self.config['std_flux']['execute']:
@@ -1487,7 +1493,8 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             f_object.close()
 
         if not self.debug:
-            _call_esorex(self, exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            if self.reduce_sci:
+                _call_esorex(self, exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
         if os.path.isfile(sci_basic_std_sof):
             assert filecmp.cmp(sci_basic_std_sof, sci_basic_std_sof_temp),\
             'CAUTION DIFFERENT STD STARS FOR VARIOUS FIELDS: PLEASE CHECK'
