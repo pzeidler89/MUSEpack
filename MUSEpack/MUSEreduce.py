@@ -1953,7 +1953,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 _call_esorex(self, exp_list[exp_num][:-9],\
                 '--log-file=scipost.log --log-level=debug'\
                 + ' muse_scipost'\
-                + ' --save=cube,skymodel,raman,autocal'\
+                + ' --save=cube,skymodel,individual,raman,autocal'\
                 + ' --skymethod=' + self.skymethod\
                 + ' --autocalib=' + str(self.autocalib).lower()\
                 + ' --filter=white',\
