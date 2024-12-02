@@ -2383,7 +2383,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
 def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
     '''
-    This module calls cleans up interpediate products to save disk space
+    This module calls cleans up intermediate products to save disk space
 
     Args:
         exp_list_SCI : :obj:`list`
