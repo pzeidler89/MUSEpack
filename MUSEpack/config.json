@@ -16,7 +16,8 @@
   "cleanup": {
     "execute": false,
     "include_std": false,
-    "include_combined": false
+    "include_combined": false,
+    "include_calibrations": false
   },
   "calibration":{
     "execute": true,

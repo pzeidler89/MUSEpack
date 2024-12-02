@@ -2431,7 +2431,8 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False, incl
     if include_std:
         std_star_dir = os.path.join(self.working_dir, 'std')
         print("Removing: ", std_star_dir)
-        shutil.rmtree(std_star_dir)
+        if os.path.exists(std_star_dir):
+            shutil.rmtree(std_star_dir)
 
     if include_calibrations:
         eso_calib_dir = os.path.join(self.working_dir, 'ESO_calibrations')
@@ -2439,14 +2440,18 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False, incl
         static_calib_dir = os.path.join(self.working_dir, 'static_calibration_files')
 
         print("Removing: ", eso_calib_dir)
-        shutil.rmtree(eso_calib_dir)
+        if os.path.exists(eso_calib_dir):
+            shutil.rmtree(eso_calib_dir)
 
         print("Removing: ", calib_dir)
-        shutil.rmtree(calib_dir)
+        if os.path.exists(calib_dir):
+            shutil.rmtree(calib_dir)
 
         print("Removing: ", static_calib_dir)
-        shutil.rmtree(static_calib_dir)
+        if os.path.exists(static_calib_dir):
+            shutil.rmtree(static_calib_dir)
 
     for exp in exp_list_SCI:
         print("Removing: ", exp[:-9])
-        shutil.rmtree(exp[:-9])
+        if os.path.exists(exp[:-9]):
+            shutil.rmtree(exp[:-9])
