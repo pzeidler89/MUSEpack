@@ -2381,7 +2381,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             if not self.debug:
                 _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
-def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
+def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False, include_calibrations=False):
     '''
     This module calls cleans up intermediate products to save disk space
 
@@ -2432,6 +2432,20 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False):
         std_star_dir = os.path.join(self.working_dir, 'std')
         print("Removing: ", std_star_dir)
         shutil.rmtree(std_star_dir)
+
+    if include_calibrations:
+        eso_calib_dir = os.path.join(self.working_dir, 'ESO_calibrations')
+        calib_dir = os.path.join(self.working_dir, 'calibrations')
+        static_calib_dir = os.path.join(self.working_dir, 'static_calibration_files')
+
+        print("Removing: ", eso_calib_dir)
+        shutil.rmtree(eso_calib_dir)
+
+        print("Removing: ", calib_dir)
+        shutil.rmtree(calib_dir)
+
+        print("Removing: ", static_calib_dir)
+        shutil.rmtree(static_calib_dir)
 
     for exp in exp_list_SCI:
         print("Removing: ", exp[:-9])
