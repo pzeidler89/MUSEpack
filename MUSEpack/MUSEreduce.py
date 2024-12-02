@@ -329,7 +329,8 @@ class musereduce:
             print(' ')
             print(' cleaning ...')
             if self.config['cleanup']['execute']:
-                _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'], include_combined=self.config['cleanup']['include_combined'])
+                _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'], include_combined=self.config['cleanup']['include_combined'],
+                         include_combined=self.config['cleanup']['include_calibrations'])
 
             print(' ')
             print('... reducing OB: ' + OB)
