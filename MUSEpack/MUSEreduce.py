@@ -2,7 +2,7 @@
 
 __version__ = '2.0.1'
 
-__revision__ = '20241129'
+__revision__ = '20241202'
 
 import sys
 import shutil
@@ -122,7 +122,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Nov 29, 2024                    #####')
+        print('#####                    Dec 02, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1952,7 +1952,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 _call_esorex(self, exp_list[exp_num][:-9],\
                 '--log-file=scipost.log --log-level=debug'\
                 + ' muse_scipost'\
-                + ' --save=cube,skymodel,individual,raman,autocal'\
+                + ' --save=cube,skymodel,raman,autocal'\
                 + ' --skymethod=' + self.skymethod\
                 + ' --autocalib=' + str(self.autocalib).lower()\
                 + ' --filter=white',\
