@@ -6,6 +6,7 @@
     "mode": "WFM-NOAO",
     "auto_sort_data": true,
     "auto_create_OB_list": true,
+    "combine_per_exptime": false,
     "using_specific_exposure_time": false,
     "using_ESO_calibration": true,
     "renew_statics": false,
@@ -63,8 +64,7 @@
     "create_sof": true
   },
   "dither_collect":{
-    "execute": true,
-    "combine_per_exptime": false
+    "execute": true
   },
   "exp_align":{
     "execute": true,

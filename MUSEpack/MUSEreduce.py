@@ -54,6 +54,7 @@ class musereduce:
         self.mode = self.config['global']['mode']
         self.auto_sort_data = self.config['global']['auto_sort_data']
         self.auto_create_OB_list = self.config['global']['auto_create_OB_list']
+        self.combine_per_exptime = self.config['global']['combine_per_exptime']
         self.using_specific_exposure_time = self.config['global']['using_specific_exposure_time']
 
         self.n_CPU = self.config['global']['n_CPU']
@@ -376,7 +377,7 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
-                _dither_collect(self, exp_list_SCI, OB)
+                _dither_collect(self, exp_list_SCI, OB, combine_per_exptime=self.combine_per_exptime)
 
             if self.config['exp_align']['execute']:
                 create_sof = self.config['exp_align']['create_sof']
