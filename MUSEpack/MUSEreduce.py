@@ -2039,7 +2039,7 @@ def _dither_collect(self, exp_list_SCI, OB):
                 if unique_tester.find(exp_list_SCI[expnum][20:-16]) == -1:
                     unique_pointings = np.append(unique_pointings,\
                     exp_list_SCI[expnum][:-16])
-                    unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
+                    unique_tester = unique_tester + exp_list_SCI[expnum][20:-16]
                 print(unique_pointings)
     if len(self.user_list) == 1:
         if self.user_list[0] == "all":
