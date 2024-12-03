@@ -377,7 +377,7 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
-                _dither_collect(self, exp_list_SCI, OB, combine_per_exptime=self.combine_per_exptime)
+                _dither_collect(self, exp_list_SCI, OB)
 
             if self.config['exp_align']['execute']:
                 create_sof = self.config['exp_align']['create_sof']
@@ -1985,7 +1985,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 os.chdir(self.rootpath)
 
 
-def _dither_collect(self, exp_list_SCI, OB, combine_per_exptime=False):
+def _dither_collect(self, exp_list_SCI, OB):
 
     '''
     This module collects the individual dither exposures for one OB to be
@@ -2030,16 +2030,16 @@ def _dither_collect(self, exp_list_SCI, OB, combine_per_exptime=False):
 
     if len(self.user_list) == 0:
         for expnum in range(len(exp_list_SCI)):
-            if not combine_per_exptime:
+            if not self.combine_per_exptime:
                 if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
                     unique_pointings = np.append(unique_pointings,\
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
-            else:
+            if self.combine_per_exptime:
                 if unique_tester.find(exp_list_SCI[expnum][20:-16]) == -1:
                     unique_pointings = np.append(unique_pointings,\
-                    exp_list_SCI[expnum][20:-16])
-                    unique_tester = unique_tester + exp_list_SCI[expnum][20:-16]
+                    exp_list_SCI[expnum][:-16])
+                    unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
     if len(self.user_list) == 1:
         if self.user_list[0] == "all":
             unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
