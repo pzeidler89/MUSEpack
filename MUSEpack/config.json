@@ -63,7 +63,8 @@
     "create_sof": true
   },
   "dither_collect":{
-    "execute": true
+    "execute": true,
+    "combine_per_exptime": false
   },
   "exp_align":{
     "execute": true,
