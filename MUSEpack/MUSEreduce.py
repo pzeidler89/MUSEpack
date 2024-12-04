@@ -472,7 +472,7 @@ def _create_ob_folders(self):
         print('Currently a user list cannot be provided with multiple OBs !!!')
         sys.exit()
 
-    if self.config['global']['auto_create_OB_folder']:
+    if self.config['global']['auto_create_OB_folders']:
         print('   >>> The OB folders are automatically created from the input OB list. This deletes the current folders')
 
         for unique_ob in self.config['global']['OB_list']:
