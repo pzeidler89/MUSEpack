@@ -116,6 +116,7 @@ class musereduce:
 
         startime = time.time()
 
+        print('')
         print(' ')
         print('##############################################################')
         print('#####                                                    #####')
@@ -127,6 +128,8 @@ class musereduce:
                 #####')
         print('#####                                                    #####')
         print('##############################################################')
+        print('')
+        print('')
 
         print('... Checking various necessary variables')
         assert sys.version_info > (3, 0), 'YOU ARE NOT USING PYTHON 3.x'
@@ -147,8 +150,8 @@ class musereduce:
         if not self.static_calib_path:
             self.static_calib_path = os.path.join(self.config['global']['pipeline_path'], 'calib/muse*/')
             print('No specific static calibration path defined')
-        print('>>> Static Calibration path: ' + self.static_calib_path)
-
+        print('   >>> Static Calibration path: ' + self.static_calib_path)
+        print('')
         print('... Perfect, everything checks out')
         print('')
 
@@ -167,76 +170,79 @@ class musereduce:
 
             print("")
 
-        print('>>> Number of cores: ' + str(self.n_CPU) + ' cores')
-        print('>>> Observation mode: ' + self.mode)
+        print('   >>> Number of cores: ' + str(self.n_CPU) + ' cores')
+        print('   >>> Observation mode: ' + self.mode)
 
         if self.config['calibration']['execute'] == True:
             if self.using_ESO_calibration:
-                print('>>> Using ESO calibration files')
+                print('   >>> Using ESO calibration files')
                 if self.config['calibration']['esorex_kwargs_bias'] or self.config['calibration']['esorex_kwargs_dark'] or\
                         self.config['calibration']['esorex_kwargs_flat'] or self.config['calibration']['esorex_kwargs_wavecal'] or\
                         self.config['calibration']['esorex_kwargs_lsf'] or self.config['calibration']['esorex_kwargs_twilight']:
                     print('WARNING: KWARGS ARE SET BUT ESO CALIBRATIONS ARE USED')
             else:
-                print('>>> Using self-processed calibration files')
+                print('   >>> Using self-processed calibration files')
                 if self.dark:
-                    print('>>> DARK will be reduced and used')
+                    print('   >>> DARK will be reduced and used')
                 if not self.dark:
-                    print('>>> DARK will not be reduced and used')
+                    print('   >>> DARK will not be reduced and used')
         if self.dark:
-            print('>>> DARK will be used: ' + str(self.dark))
+            print('   >>> DARK will be used: ' + str(self.dark))
 
         if self.raman:
-            print('>>> Removal of Raman lines: ' + str(self.raman))
+            print('   >>> Removal of Raman lines: ' + str(self.raman))
 
         if self.dithering_multiple_OBs:
-            print('>>> Exposures per pointing are spread over multiple OBs')
+            print('   >>> Exposures per pointing are spread over multiple OBs')
             print('==> The pointing name is: ' + self.dithername)
             self.multOB_exp_counter = 0
         else:
-            print('>>> All exposures per pointing are located in one OB')
+            print('   >>> All exposures per pointing are located in one OB')
             if len(self.user_list) > 1:
-                print('>>> Dithering exposures input list:')
+                print('   >>> Dithering exposures input list:')
                 for li in self.user_list:
                     print(li)
             if len(self.user_list) == 1:
                 if self.user_list[0] == 'all':
-                    print('>>> Dithering all exposures within OB folder:')
+                    print('   >>> Dithering all exposures within OB folder:')
         if len(self.OB_list) > 1:
-            print('>>> Reducing more than one OB: ', str(len(self.OB_list)))
+            print('   >>> Reducing more than one OB: ', str(len(self.OB_list)))
 
         print('')
         print('... The following modules will be executed')
         if self.config['calibration']['execute'] and not self.using_ESO_calibration:
-            print('>>> BIAS')
+            print('   >>> BIAS')
             if self.dark:
-                print('>>> DARK')
-            print('>>> FLAT')
-            print('>>> WAVECAL')
-            print('>>> LSF')
-            print('>>> TWILIGHT')
+                print('   >>> DARK')
+            print('   >>> FLAT')
+            print('   >>> WAVECAL')
+            print('   >>> LSF')
+            print('   >>> TWILIGHT')
         if self.config['sci_basic']['execute']:
-            print('>>> SCIBASIC')
+            print('   >>> SCIBASIC')
             if not self.reduce_sci:
                 print('    Caution SCIBASIC will not be executed on SCI exposure!!')
             if not self.reduce_std:
                 print('    Caution SCIBASIC will not be executed on STD star!!')
         if self.config['std_flux']['execute']:
-            print('>>> STANDARD')
+            print('   >>> STANDARD')
         if self.config['sky']['execute']:
-            print('>>> CREATE_SKY')
+            print('   >>> CREATE_SKY')
         if self.config['sci_post']['execute']:
-            print('>>> SCI_POST')
+            print('   >>> SCI_POST')
         if self.config['exp_align']['execute']:
-            print('>>> EXP_ALIGN')
+            print('   >>> EXP_ALIGN')
         if self.config['exp_combine']['execute']:
-            print('>>> EXP_COMBINE')
+            print('   >>> EXP_COMBINE')
             print(' ')
 
+        print('')
+        print('##############################################################')
         print('#####  All parameters set: Starting the data reduction   #####')
-
+        print('##############################################################')
+        print('')
         if self.auto_create_OB_list:
-            print('>>> Creating OB list')
+            print('   >>> Creating OB list')
             _create_ob_folders(self)
 
         if self.dithering_multiple_OBs:
@@ -284,15 +290,15 @@ class musereduce:
             os.mkdir(self.static_calibration_dir)
             for itername in glob.glob(os.path.join(self.static_calib_path, '*.*')):
                 shutil.copy(itername, os.path.join(self.static_calibration_dir, '.'))
-
+        print('')
         print('... Sorting the data')
 
         if self.auto_sort_data:
-            print('>>> Sorting the raw data')
+            print('   >>> Sorting the raw data')
             _sort_data(self)
         else:
-            print('>>> raw data will not be sorted')
-            print('>>> MANUAL INTERACTION MAY BE NEEDED')
+            print('   >>> raw data will not be sorted')
+            print('   >>> MANUAL INTERACTION MAY BE NEEDED')
 
         for OB in self.OB_list:
             self.working_dir = os.path.join(self.reduced_dir, OB)
@@ -325,9 +331,10 @@ class musereduce:
                 if not os.path.exists(exposure_dir):
                     os.mkdir(exposure_dir)
 
-            print(' ')
-            print(' cleaning ...')
+
             if self.config['cleanup']['execute']:
+                print(' ')
+                print('... cleaning')
                 _cleanup(self, exp_list_SCI, include_std=self.config['cleanup']['include_std'], include_combined=self.config['cleanup']['include_combined'],
                          include_calibrations=self.config['cleanup']['include_calibrations'])
 
@@ -386,7 +393,7 @@ class musereduce:
                 _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
 
         endtime = time.time()
-        print('>>> Total execution time: ',\
+        print('   >>> Total execution time: ',\
         timedelta(seconds=endtime - startime))
 
 
@@ -462,6 +469,9 @@ def _create_ob_folders(self):
                 obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
 
     self.OB_list = np.sort(np.unique(obs_name))
+    print("   >>> The OB list:")
+    for OBs ins self.OB_list:
+        print(OBs)
     for unique_ob in self.config['global']['OB_list']:
         print("OB folder: ", unique_ob)
         if os.path.exists(os.path.join(self.working_dir, unique_ob)):
@@ -728,9 +738,9 @@ def _bias(self, exp_list_SCI, exp_list_DAR, exp_list_TWI, create_sof, esorex_kwa
 
         for exposure_ID in range(len(exp_list_SCI)):
 
-            print('>>> processing exposure: ' + str(exposure_ID + 1) + '/'\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1) + '/'\
                 + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -854,9 +864,9 @@ def _dark(self, exp_list_SCI, exp_list_DAR, create_sof, esorex_kwargs=None):
             os.remove(dar_dark_sof)
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(exposure_ID + 1) + '/'\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1) + '/'\
             + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_DAR[exposure_ID],\
@@ -939,9 +949,9 @@ def _flat(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             os.remove(twi_flat_sof)
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(exposure_ID + 1)\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1)\
             + '/' + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -1046,9 +1056,9 @@ def _wavecal(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             os.remove(twi_wav_sof)
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(exposure_ID + 1)\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1)\
             + '/' + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -1158,9 +1168,9 @@ def _lsf(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             os.remove(twi_sof_file)
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(exposure_ID + 1)\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1)\
             + '/' + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -1264,9 +1274,9 @@ def _twilight(self, exp_list_SCI, exp_list_TWI, create_sof, esorex_kwargs=None):
             os.remove(sof_file)
 
         for exposure_ID in range(len(exp_list_SCI)):
-            print('>>> processing exposure: ' + str(exposure_ID + 1)\
+            print('   >>> processing exposure: ' + str(exposure_ID + 1)\
             + '/' + str(len(exp_list_SCI)))
-            print('>>> processing: ' + exp_list_SCI[exposure_ID])
+            print('   >>> processing: ' + exp_list_SCI[exposure_ID])
             print(' ')
 
             raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -1380,9 +1390,9 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         os.remove(sci_basic_std_sof)
 
     for exposure_ID in range(len(exp_list_SCI)):
-        print('>>> processing exposure: '\
+        print('   >>> processing exposure: '\
         + str(exposure_ID + 1) + '/' + str(len(exp_list_SCI)))
-        print('>>> processing: ' + exp_list_SCI[exposure_ID])
+        print('   >>> processing: ' + exp_list_SCI[exposure_ID])
         print(' ')
 
         raw_data_list = ascii.read(exp_list_SCI[exposure_ID],\
@@ -1595,9 +1605,9 @@ def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         exp_list_SCI_sky = np.array(exp_list_SCI)
 
     for exposure_ID in range(len(exp_list_SCI_sky)):
-        print('>>> processing exposure: '\
+        print('   >>> processing exposure: '\
         + str(exposure_ID + 1) + '/' + str(len(exp_list_SCI_sky)))
-        print('>>> processing: ' + exp_list_SCI_sky[exposure_ID])
+        print('   >>> processing: ' + exp_list_SCI_sky[exposure_ID])
         print(' ')
 
         raw_data_list = ascii.read(exp_list_SCI_sky[exposure_ID],\
@@ -1708,9 +1718,9 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         exp_list_SCI_sky = np.array(exp_list_SCI)
 
     for exposure_ID in range(len(exp_list_SCI_sky)):
-        print('>>> processing exposure: ' + str(exposure_ID + 1)\
+        print('   >>> processing exposure: ' + str(exposure_ID + 1)\
         + '/' + str(len(exp_list_SCI_sky)))
-        print('>>> processing: ' + exp_list_SCI_sky[exposure_ID])
+        print('   >>> processing: ' + exp_list_SCI_sky[exposure_ID])
         print(' ')
 
         raw_data_list = ascii.read(exp_list_SCI_sky[exposure_ID],\
@@ -1887,7 +1897,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
     for unique_pointing_num in range(len(unique_pointings)):
 
         print(' ')
-        print('>>> processing pointing: '
+        print('   >>> processing pointing: '
         + str(unique_pointing_num + 1) + '/' + str(len(unique_pointings)))
         print(' ')
 
@@ -1898,7 +1908,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         for exp_num in range(len(exp_list)):
 
             print(' ')
-            print('>>> processing exposure: '\
+            print('   >>> processing exposure: '\
             + str(exp_num + 1) + '/' + str(len(exp_list)))
             print(' ')
 
@@ -1958,31 +1968,6 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 + ' --filter=white',\
                 sof, esorex_kwargs=esorex_kwargs)
 
-            if self.skysub:
-
-                os.chdir(exp_list[exp_num][:-9])
-                if not self.debug:
-                    os.rename('DATACUBE_FINAL.fits',\
-                    'DATACUBE_FINAL_wosky.fits')
-                    os.rename('IMAGE_FOV_0001.fits',\
-                    'IMAGE_FOV_0001_wosky.fits')
-                    os.rename('PIXTABLE_REDUCED_0001.fits',\
-                    'PIXTABLE_REDUCED_0001_wosky.fits')
-                os.chdir(self.rootpath)
-
-            if not self.skysub:
-
-                os.chdir(exp_list[exp_num][:-9])
-                if not self.debug:
-                    os.rename('DATACUBE_FINAL.fits',\
-                    'DATACUBE_FINAL_wsky.fits')
-                    os.rename('IMAGE_FOV_0001.fits',\
-                    'IMAGE_FOV_0001_wsky.fits')
-                    os.rename('PIXTABLE_REDUCED_0001.fits',\
-                    'PIXTABLE_REDUCED_0001_wsky.fits')
-                os.chdir(self.rootpath)
-
-
 def _dither_collect(self, exp_list_SCI, OB):
 
     '''
@@ -2020,7 +2005,7 @@ def _dither_collect(self, exp_list_SCI, OB):
     exp_list_SCI = np.array(exp_list_SCI)[sci]
 
     print(' ')
-    print('>>> Copying files:')
+    print('   >>> Copying files:')
     print(' ')
 
     if len(self.user_list) == 0:
@@ -2054,23 +2039,15 @@ def _dither_collect(self, exp_list_SCI, OB):
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
 
         if self.dithering_multiple_OBs:
-            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
-            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsk')
+            combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID)
 
         if not self.dithering_multiple_OBs:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+            combining_exposure_dir = os.path.join(sec)
 
-        if not os.path.exists(combining_exposure_dir_withoutsky):
-            os.makedirs(combining_exposure_dir_withoutsky)
-        if not os.path.exists(combining_exposure_dir_withsky):
-            os.makedirs(combining_exposure_dir_withsky)
+        if not os.path.exists(combining_exposure_dir):
+            os.makedirs(combining_exposure_dir)
 
-        files = glob.glob(os.path.join(combining_exposure_dir_withoutsky, '*FOV_0001*'))
-        if len(files) > 0:
-            for f in files:
-                os.remove(f)
-        files = glob.glob(os.path.join(combining_exposure_dir_withsky, '*FOV_0001*'))
+        files = glob.glob(os.path.join(combining_exposure_dir, '*FOV_0001*'))
         if len(files) > 0:
             for f in files:
                 os.remove(f)
@@ -2093,12 +2070,10 @@ def _dither_collect(self, exp_list_SCI, OB):
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
 
         if self.dithering_multiple_OBs:
-            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
-            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
+            combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID)
 
         if not self.dithering_multiple_OBs:
-            combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
-            combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+            combining_exposure_dir = os.path.join(sec)
 
         ident_pos = np.zeros(len(exp_list))
         for idx in range(len(exp_list)):
@@ -2109,27 +2084,15 @@ def _dither_collect(self, exp_list_SCI, OB):
                     ident += 1
 
         for exp_num in range(len(exp_list)):
-            if self.skysub:
 
-                origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wosky.fits'),
-                                os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wosky.fits'),
-                                os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wosky.fits')
-                                ]
-                destination_files = [os.path.join(combining_exposure_dir_withoutsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                     os.path.join(combining_exposure_dir_withoutsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                     os.path.join(combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
-                                     ]
-            if not self.skysub:
-
-                origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL_wsky.fits'),
-                                os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001_wsky.fits'),
-                                os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001_wsky.fits')
-                                ]
-                destination_files = [os.path.join(combining_exposure_dir_withsky, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                     os.path.join(combining_exposure_dir_withsky, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                     os.path.join(combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
-                                     ]
-
+            origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
+                            os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001.fits'),
+                            os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001.fits')
+                            ]
+            destination_files = [os.path.join(combining_exposure_dir, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                 os.path.join(combining_exposure_dir, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                 os.path.join(combining_exposure_dir, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
+                                 ]
 
             for (origin_file, destination_file) in zip(origin_files, destination_files):
                 print(origin_file + ' ==> ' + destination_file)
@@ -2211,18 +2174,17 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
 
         if self.dithering_multiple_OBs:
-            combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
-            combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, '/withsky')
+            combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID)
 
         if not self.dithering_multiple_OBs:
-            combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
-            combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+            combining_exposure_dir = os.path.join(sec)
+
 
 
     for unique_pointing_num in range(len(unique_pointings)):
 
         print(' ')
-        print('>>> processing pointing: ' + str(unique_pointing_num + 1)\
+        print('   >>> processing pointing: ' + str(unique_pointing_num + 1)\
         + '/' + str(len(unique_pointings)))
         print(' ')
 
@@ -2231,44 +2193,24 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
 
         if self.dithering_multiple_OBs:
             print(unique_pointings_ID)
-            if self.skysub:
-                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
-            if not self.skysub:
-                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
+            combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID)
 
         if not self.dithering_multiple_OBs:
-            if self.skysub:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
-            if not self.skysub:
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+            combining_exposure_dir = os.path.join(sec)
 
-        if self.skysub:
-            exp_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'IMAGE_FOV_*.fits')
-            if create_sof:
-                sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_align.sof')
-                if os.path.exists(sof_file):
-                    os.remove(sof_file)
 
-                f = open(sof_file, 'w')
-                for i in range(len(exp_list)):
-                    f.write(os.path.join(combining_exposure_dir_withoutsky, exp_list[i]) + ' IMAGE_FOV\n')
-                f.close()
-            if not self.debug:
-                _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+        exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*.fits')
+        if create_sof:
+            sof_file = os.path.join(combining_exposure_dir, 'exp_align.sof')
+            if os.path.exists(sof_file):
+                os.remove(sof_file)
 
-        if not self.skysub:
-            exp_list = _get_filelist(self, combining_exposure_dir_withsky, 'IMAGE_FOV_*.fits')
-            if create_sof:
-                sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_align.sof')
-
-                if os.path.exists(sof_file):
-                    os.remove(sof_file)
-                f = open(sof_file, 'w')
-                for i in range(len(exp_list)):
-                    f.write(os.path.join(combining_exposure_dir_withsky, exp_list[i]) + ' IMAGE_FOV\n')
-                f.close()
-            if not self.debug:
-                _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+            f = open(sof_file, 'w')
+            for i in range(len(exp_list)):
+                f.write(os.path.join(combining_exposure_dir, exp_list[i]) + ' IMAGE_FOV\n')
+            f.close()
+        if not self.debug:
+            _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
@@ -2329,7 +2271,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
     for unique_pointing_num in range(len(unique_pointings)):
 
         print(' ')
-        print('>>> processing pointing: ' + str(unique_pointing_num + 1)\
+        print('   >>> processing pointing: ' + str(unique_pointing_num + 1)\
         + '/' + str(len(unique_pointings)))
         print(' ')
 
@@ -2337,47 +2279,24 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         sec = unique_pointings[unique_pointing_num]
 
         if self.dithering_multiple_OBs:
-            if self.skysub:
-                combining_exposure_dir_withoutsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withoutsky')
-            if not self.skysub:
-                combining_exposure_dir_withsky = os.path.join(self.combining_OBs_dir, unique_pointings_ID, 'withsky')
+            combining_exposure_dir = os.path.join(self.combining_OBs_dir, unique_pointings_ID)
 
         if not self.dithering_multiple_OBs:
-            if self.skysub:
-                combining_exposure_dir_withoutsky = os.path.join(sec, 'withoutsky')
-            if not self.skysub:
-                combining_exposure_dir_withsky = os.path.join(sec, 'withsky')
+            combining_exposure_dir = os.path.join(sec)
 
-        if self.skysub:
-            pixtable_list = _get_filelist(self, combining_exposure_dir_withoutsky, 'PIXTABLE_REDUCED_*.fits')
-            if create_sof:
-                sof_file = os.path.join(combining_exposure_dir_withoutsky, 'exp_combine.sof')
-                if os.path.exists(sof_file):
-                    os.remove(sof_file)
-                f = open(sof_file, 'w')
-                for i in range(len(pixtable_list)):
-                    f.write(os.path.join(combining_exposure_dir_withoutsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
-                f.write(os.path.join(combining_exposure_dir_withoutsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
-                f.write(os.path.join(self.static_calibration_dir, 'filter_list.fits') + ' FILTER_LIST\n')
-                f.close()
-            if not self.debug:
-                _call_esorex(self, combining_exposure_dir_withoutsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
-
-        if not self.skysub:
-            pixtable_list = _get_filelist(self, combining_exposure_dir_withsky, 'PIXTABLE_REDUCED_*.fits')
-            if create_sof:
-                sof_file = os.path.join(combining_exposure_dir_withsky, 'exp_combine.sof')
-                if os.path.exists(sof_file):
-                    os.remove(sof_file)
-
-                f = open(sof_file, 'w')
-                for i in range(len(pixtable_list)):
-                    f.write(os.path.join(combining_exposure_dir_withsky, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
-                f.write(os.path.join(combining_exposure_dir_withsky, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
-                f.write(os.path.join(self.static_calibration_dir,'filter_list.fits') + ' FILTER_LIST\n')
-                f.close()
-            if not self.debug:
-                _call_esorex(self, combining_exposure_dir_withsky, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
+        pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
+        if create_sof:
+            sof_file = os.path.join(combining_exposure_dir, 'exp_combine.sof')
+            if os.path.exists(sof_file):
+                os.remove(sof_file)
+            f = open(sof_file, 'w')
+            for i in range(len(pixtable_list)):
+                f.write(os.path.join(combining_exposure_dir, pixtable_list[i]) + ' PIXTABLE_REDUCED\n')
+            f.write(os.path.join(combining_exposure_dir, 'OFFSET_LIST.fits') + ' OFFSET_LIST\n')
+            f.write(os.path.join(self.static_calibration_dir, 'filter_list.fits') + ' FILTER_LIST\n')
+            f.close()
+        if not self.debug:
+            _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
 def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False, include_calibrations=False):
     '''
