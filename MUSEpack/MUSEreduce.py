@@ -296,7 +296,6 @@ class musereduce:
 
         for OB in self.OB_list:
             self.working_dir = os.path.join(self.reduced_dir, OB)
-            print(self.working_dir)
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
                 np.concatenate([glob.glob(os.path.join(self.working_dir, '*_SCI.list')),\
