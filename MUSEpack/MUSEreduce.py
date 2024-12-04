@@ -470,7 +470,7 @@ def _create_ob_folders(self):
 
     self.OB_list = np.sort(np.unique(obs_name))
     print("   >>> The OB list:")
-    for OBs ins self.OB_list:
+    for OBs in self.OB_list:
         print(OBs)
     for unique_ob in self.config['global']['OB_list']:
         print("OB folder: ", unique_ob)
