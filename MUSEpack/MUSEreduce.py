@@ -2,7 +2,7 @@
 
 __version__ = '2.0.1'
 
-__revision__ = '20241203'
+__revision__ = '20241204'
 
 import sys
 import shutil
@@ -54,7 +54,6 @@ class musereduce:
         self.mode = self.config['global']['mode']
         self.auto_sort_data = self.config['global']['auto_sort_data']
         self.auto_create_OB_list = self.config['global']['auto_create_OB_list']
-        self.combine_per_exptime = self.config['global']['combine_per_exptime']
         self.using_specific_exposure_time = self.config['global']['using_specific_exposure_time']
 
         self.n_CPU = self.config['global']['n_CPU']
@@ -123,7 +122,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Dec 03, 2024                    #####')
+        print('#####                    Dec 04, 2024                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -2007,9 +2006,6 @@ def _dither_collect(self, exp_list_SCI, OB):
             The specific ``OB`` to be reduced.
 
     Kwargs:
-          combine_per_exptime: :obj:`bool`
-            :obj:`True`: All exposure with the aexposure time within an OB will
-            be combined into the same folder
 
     '''
 
@@ -2030,18 +2026,11 @@ def _dither_collect(self, exp_list_SCI, OB):
 
     if len(self.user_list) == 0:
         for expnum in range(len(exp_list_SCI)):
-            if not self.combine_per_exptime:
-                if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
-                    unique_pointings = np.append(unique_pointings,\
-                    exp_list_SCI[expnum][:-16])
-                    unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
-            if self.combine_per_exptime:
-                if unique_tester.find(exp_list_SCI[expnum][-20:-16]) == -1:
-                    unique_pointings = np.append(unique_pointings,\
-                    exp_list_SCI[expnum][:-16])
-                    unique_tester = unique_tester + exp_list_SCI[expnum][-20:-16]
-                    print(unique_tester)
-                print(unique_pointings)
+            if unique_tester.find(exp_list_SCI[expnum][:-16]) == -1:
+                unique_pointings = np.append(unique_pointings,\
+                exp_list_SCI[expnum][:-16])
+                unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
+
     if len(self.user_list) == 1:
         if self.user_list[0] == "all":
             unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
