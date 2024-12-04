@@ -53,7 +53,7 @@ class musereduce:
         self.rootpath = self.config['global']['rootpath']
         self.mode = self.config['global']['mode']
         self.auto_sort_data = self.config['global']['auto_sort_data']
-        self.auto_create_OB_list = self.config['global']['auto_create_OB_list']
+        self.auto_create_OB_folders = self.config['global']['auto_create_OB_folders']
         self.using_specific_exposure_time = self.config['global']['using_specific_exposure_time']
 
         self.n_CPU = self.config['global']['n_CPU']
@@ -136,16 +136,6 @@ class musereduce:
         assert self.config['global']['pipeline_path'], 'NO PIPELINE PATH DEFINED'
         assert self.config['global']['rootpath'], 'NO ROOTPATH DEFINED'
 
-        if self.config['global']['auto_create_OB_list'] and not self.config['global']['OB_list']:
-            print('The OB list is automatically created from the input raw folder')
-
-        if self.config['global']['OB_list']:
-            print('Input OB list is used')
-
-        if self.dithering_multiple_OBs and len(self.user_list) > 0:
-            print('Currently a user list cannot be provided with multiple OBs')
-            sys.exit()
-
         self.static_calib_path = self.config.get('global', {}).get('static_calib_path', None)
         if not self.static_calib_path:
             self.static_calib_path = os.path.join(self.config['global']['pipeline_path'], 'calib/muse*/')
@@ -205,8 +195,6 @@ class musereduce:
             if len(self.user_list) == 1:
                 if self.user_list[0] == 'all':
                     print('   >>> Dithering all exposures within OB folder:')
-        if len(self.OB_list) > 1:
-            print('   >>> Reducing more than one OB: ', str(len(self.OB_list)))
 
         print('')
         print('... The following modules will be executed')
@@ -241,9 +229,9 @@ class musereduce:
         print('#####  All parameters set: Starting the data reduction   #####')
         print('##############################################################')
         print('')
-        if self.auto_create_OB_list:
-            print('   >>> Creating OB list')
-            _create_ob_folders(self)
+
+        print('   >>> Creating OB list')
+        _create_ob_folders(self)
 
         if self.dithering_multiple_OBs:
             self.dithername = np.array(self.config['global']['OB_list'][0])
@@ -454,29 +442,44 @@ def _create_ob_folders(self):
     This module creates the neccessary OB folders, from the raw data
 
     '''
-    file_list = _get_filelist(self, self.raw_data_dir, '*.fits*')
-    obs_name = np.array([])
 
-    for files in file_list:
+    if self.config['global']['OB_list']:
+        print('   >>> Input OB list is used')
 
-        hdu = fits.open(os.path.join(self.raw_data_dir, files))
-        dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
+    else:
+        print('   >>> The OB list is automatically created from the input raw folder')
+        file_list = _get_filelist(self, self.raw_data_dir, '*.fits*')
+        obs_name = np.array([])
 
-        if dprcatg_exist:
-            dprcatg = (hdu[0].header['HIERARCH ESO DPR CATG'])
+        for files in file_list:
 
-            if dprcatg == 'SCIENCE':
-                obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
+            hdu = fits.open(os.path.join(self.raw_data_dir, files))
+            dprcatg_exist = hdu[0].header.get('HIERARCH ESO DPR CATG', False)
 
-    self.OB_list = np.sort(np.unique(obs_name))
+            if dprcatg_exist:
+                dprcatg = (hdu[0].header['HIERARCH ESO DPR CATG'])
+
+                if dprcatg == 'SCIENCE':
+                    obs_name = np.append(obs_name, hdu[0].header['HIERARCH ESO OBS NAME'])
+
+        self.OB_list = np.sort(np.unique(obs_name))
+
     print("   >>> The OB list:")
     for OBs in self.OB_list:
         print(OBs)
-    for unique_ob in self.config['global']['OB_list']:
-        print("OB folder: ", unique_ob)
-        if os.path.exists(os.path.join(self.working_dir, unique_ob)):
-            shutil.rmtree(os.path.join(self.working_dir, unique_ob))
-        os.mkdir(os.path.join(self.working_dir, unique_ob))
+
+    if self.dithering_multiple_OBs and len(self.user_list) > 0:
+        print('Currently a user list cannot be provided with multiple OBs !!!')
+        sys.exit()
+
+    if self.config['global']['auto_create_OB_folder']:
+        print('   >>> The OB folders are automatically created from the input OB list. This deletes the current folders')
+
+        for unique_ob in self.config['global']['OB_list']:
+            print("OB folder: ", unique_ob)
+            if os.path.exists(os.path.join(self.working_dir, unique_ob)):
+                shutil.rmtree(os.path.join(self.working_dir, unique_ob))
+            os.mkdir(os.path.join(self.working_dir, unique_ob))
 
 def _sort_data(self):
 
