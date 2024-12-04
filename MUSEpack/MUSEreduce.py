@@ -466,7 +466,7 @@ def _create_ob_folders(self):
 
     print("   >>> The OB list:")
     for OBs in self.OB_list:
-        print(OBs)
+        print('       ', OBs)
 
     if self.dithering_multiple_OBs and len(self.user_list) > 0:
         print('Currently a user list cannot be provided with multiple OBs !!!')
