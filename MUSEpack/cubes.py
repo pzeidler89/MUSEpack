@@ -395,7 +395,7 @@ def linemaps(input_fits, path=None, elements=None, wavelengths=None):
         wavelengths = [6562.80, 6716.47, 5006.84, 6583.41]
         elements = ['Ha', 'SII_6716', 'OIII_5007', 'NII_6583']
 
-    if elements != None and wavelengths == None:
+    if elements != None and wavelengths.any() == None:
         print('Error: element but no wavelength given')
         sys.exit()
 
