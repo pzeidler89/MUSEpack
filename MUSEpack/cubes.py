@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.1.5'
+__version__ = '0.2.0'
 
-__revision__ = '20240702'
+__revision__ = '20241213'
 
 import sys
 import os
@@ -26,6 +26,7 @@ from MUSEpack.utils import ABtoVega
 def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
+            hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
             correctiontype='shift'):
 
     '''
@@ -71,7 +72,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             If the input file is a ESO OFFSET-LIST.fits file:
             The fluxes will be scaled based on the 'FLUX_SCALE' entries.
 
-        spec_folder : :obj:`str` (optional, default: ``spectra``)
+        spec_folder : :obj:`str` (optional, default: ``stars``)
             The folder name, in which the the extracted stellar spectra are
             stored. This is only needed if correct_flux=:obj:`True` and the
             corrections are based on a .prm file
@@ -79,6 +80,19 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         spec_path : :obj:`str` (optional, default: current directory)
             I/O path of the ``spec_folder``. This keyword is only need if
             the corrections are based on a .prm file
+
+        hst_filter : :obj:`list' (optional, default: ['ACS', 'F814W'])
+            The HST filter used when convolving the spectra to measure the
+            fluxes. It is used with STSYNPHOT to obtain the correct zeropoint
+            conversion.
+
+        AB_zpt : :obj:`float` (optional, default: None)
+            AB zeropoint for any filter that is not part of SYNPHOT. If provided
+            the Vega_zpt must be provided as well. hst_filter will be overwritten
+
+        Vega_zpt : :obj:`float` (optional, default: None)
+            Vega zeropoint for any filter that is not part of SYNPHOT. If provided
+            the AB_zpt must be provided as well. hst_filter will be overwritten
 
         correctiontype : :obj:`str` (optional, default: ``shift``)
             the type of distortion correction
@@ -201,7 +215,15 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
         #### flux correction
         if correct_flux and len(cube) == 3:
-            aboffset = ABtoVega('ACS','F814W')
+
+            if AB_zpt == None and Vega_zpt == None:
+                print('AB zeropoint and Vega zeropoint provided. hst_filter will'
+                      'be overwritten')
+
+                aboffset = Vega_zpt - AB_zpt
+            else:
+                print('HST zeropoints used with STSYNPHOT')
+                aboffset = ABtoVega(hst_filter[0], hst_filter[1])
 
             speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
 
@@ -213,10 +235,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                 spec_hdu = fits.open(temp_sp)
                 spec_head = spec_hdu[0].header
 
-                if 'SPECTRUM MAG F814W' in list(spec_head.keys()):
-                    muse_mag = np.append(muse_mag,\
-                    spec_head['HIERARCH SPECTRUM MAG F814W'] + 50. + aboffset)
-                    cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
+                muse_mag = np.append(muse_mag,\
+                spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset)
+                cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
 
             del_mag = np.array(cat_mag) - np.array(muse_mag)
             clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)

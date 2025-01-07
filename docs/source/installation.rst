@@ -12,6 +12,8 @@ To fully run all modules the following **non-standard** modules need to be insta
 * `pyspeckit`_
 * `ppxf`_
 * `pysynphot`_
+* `stsynphot`_
+* `mosaic_wrapper`_
 
 .. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
 .. _ppxf: http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf
