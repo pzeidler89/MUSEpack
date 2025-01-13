@@ -27,7 +27,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
-            correctiontype='shift'):
+            correctiontype='shift', save_output=True):
 
     '''
     Args:
@@ -71,6 +71,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             spectra.
             If the input file is a ESO OFFSET-LIST.fits file:
             The fluxes will be scaled based on the 'FLUX_SCALE' entries.
+
+        save_output : :obj:`bool` (optional, default: :obj:`Truee`)
+            If set :obj:`False` the corrected cube will not be saved. This can
+            be used to just obtain the correction factors
 
         spec_folder : :obj:`str` (optional, default: ``stars``)
             The folder name, in which the the extracted stellar spectra are
@@ -216,11 +220,17 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         #### flux correction
         if correct_flux and len(cube) == 3:
 
-            if AB_zpt == None and Vega_zpt == None:
+            if AB_zpt != None and Vega_zpt != None:
                 print('AB zeropoint and Vega zeropoint provided. hst_filter will'
-                      'be overwritten')
+                      ' be overwritten')
 
                 aboffset = Vega_zpt - AB_zpt
+            elif AB_zpt != None and Vega_zpt == None:
+                print('both AB zeropoint and Vega zeropoint must be provided.')
+                sys.exit()
+            elif AB_zpt == None and Vega_zpt != None:
+                print('both AB zeropoint and Vega zeropoint must be provided.')
+                sys.exit()
             else:
                 print('HST zeropoints used with STSYNPHOT')
                 aboffset = ABtoVega(hst_filter[0], hst_filter[1])
@@ -228,36 +238,45 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
 
             cat_mag = []
-            muse_mag = []
+            del_mag = []
 
             for i, temp_sp in enumerate(speclist):
 
                 spec_hdu = fits.open(temp_sp)
                 spec_head = spec_hdu[0].header
+                qltflag = spec_head['HIERARCH SPECTRUM QLTFLAG']
+                snrspec = spec_head['HIERARCH SPECTRUM FITSNR']
 
-                muse_mag = np.append(muse_mag,\
-                spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset)
-                cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
+                if not ((qltflag & 4) | (qltflag & 8) | (snrspec <= 0)):
+                    del_mag = np.append(del_mag,\
+                    spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset)
+                    cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
+                    print(del_mag[-1], snrspec, qltflag)
 
-            del_mag = np.array(cat_mag) - np.array(muse_mag)
-            clippend_del_mag = sigma_clip(del_mag, sigma=3, cenfunc = np.ma.median)
+            clippend_del_mag = sigma_clip(-del_mag, sigma=2, cenfunc = np.ma.median)
             fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
 
-            print('The magnitude difference catalog - MUSE [mag]: ',\
+            print('The magnitude difference:')
+            print('cat - MUSE [mag] = ',\
             '{:.2f}'.format(np.ma.median(clippend_del_mag)))
-            print('The flux multiplicator f_catalog / f_MUSE: ',\
+            print('sigma cat - MUSE [mag] = ',\
+            '{:.2f}'.format(np.ma.std(clippend_del_mag)))
+            print('The flux multiplicator: f_catalog / f_MUSE = ',\
             '{:.2f}'.format(fmultipl))
+            print('number of sources = ',\
+            '{:.2f}'.format(clippend_del_mag.count()))
 
             cube['DATA'].data *= fmultipl
             cube['STAT'].data *= fmultipl ** 2
 
-            if output_file == None:
-                offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
-                offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
+            if save_output == True:
+                if output_file == None:
+                    offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
+                    offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
 
-            else:
-                shutil.copyfile(offset_path + '/' + offset_input,\
-                offset_path + '/' + output_file)
+                else:
+                    shutil.copyfile(offset_path + '/' + offset_input,\
+                    offset_path + '/' + output_file)
 
     if offset_type == 'eso':
 
@@ -280,16 +299,17 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         if correct_flux and not np.isnan(fscale[0]):
             cube[1].data *= fscale[0]
 
-    if output_path == None:
-        if output_file == None:
-            cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)
+    if save_output==True:
+        if output_path == None:
+            if output_file == None:
+                cube.writeto(path + '/' + input_fits + '_cor.fits', overwrite=True)
+            else:
+                cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
         else:
-            cube.writeto(path + '/' + output_file + '.fits', overwrite=True)
-    else:
-        if output_file == None:
-            cube.writeto(os.path.join(output_path, input_fits + '_cor.fits'), overwrite=True)
-        else:
-            cube.writeto(os.path.join(output_path, output_file ), overwrite=True)
+            if output_file == None:
+                cube.writeto(os.path.join(output_path, input_fits + '_cor.fits'), overwrite=True)
+            else:
+                cube.writeto(os.path.join(output_path, output_file ), overwrite=True)
 
 
 def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,

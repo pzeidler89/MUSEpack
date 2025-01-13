@@ -2,7 +2,7 @@
 
 __version__ = '2.0.1'
 
-__revision__ = '20250107'
+__revision__ = '20250113'
 
 import sys
 import shutil
@@ -473,13 +473,15 @@ def _create_ob_folders(self):
         sys.exit()
 
     if self.config['global']['auto_create_OB_folders']:
-        print('   >>> The OB folders are automatically created from the input OB list. This deletes the current folders')
+        print('   >>> The OB folders are automatically created from the input OB list.')
 
         for unique_ob in self.config['global']['OB_list']:
-            print("OB folder: ", unique_ob)
             if os.path.exists(os.path.join(self.working_dir, unique_ob)):
-                shutil.rmtree(os.path.join(self.working_dir, unique_ob))
-            os.mkdir(os.path.join(self.working_dir, unique_ob))
+                print("OB folder ", unique_ob, " already exists.")
+                # shutil.rmtree(os.path.join(self.working_dir, unique_ob))
+            else:
+                print("Creating OB folder: ", unique_ob)
+                os.mkdir(os.path.join(self.working_dir, unique_ob))
 
 def _sort_data(self):
 

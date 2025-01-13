@@ -144,7 +144,7 @@ def initial_guesses(self, lines, blends=None, linestrength=100.,\
 def update_parinfo(self, guesses, llimits, line_idx, blends,
                    parinfo, autoadjust, fwhm_block):
 
-    '''
+    r"""
     Updates the parinfo file, created by pyspeckit.
 
     Args:
@@ -158,7 +158,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
         line_idx : :obj:`str`
             Name of the primary line
 
-       blends : :obj:`ascii`-file or :obj:`None`
+        blends : :obj:`ascii`-file or :obj:`None`
            A file with primary lines that contain blends to provide a maximum
            amplitude ratio of the primary and the blend to prevent that the
            blend becomes the dominant line in the fit.
@@ -183,7 +183,7 @@ def update_parinfo(self, guesses, llimits, line_idx, blends,
             :obj:`False`: The minimum fwhm of the voigt profiles of the fitted
             lines is zero
 
-    '''
+    """
 
     if self.rv_sys == 0.:
         lprime = self.cat.loc[line_idx, 'l_lab']
