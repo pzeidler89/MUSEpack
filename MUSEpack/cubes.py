@@ -2,7 +2,7 @@
 
 __version__ = '0.2.0'
 
-__revision__ = '20241213'
+__revision__ = '20241214'
 
 import sys
 import os
@@ -27,7 +27,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
-            correctiontype='shift', save_output=True):
+            correctiontype='shift', save_output=True, debug=False):
 
     '''
     Args:
@@ -72,7 +72,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             If the input file is a ESO OFFSET-LIST.fits file:
             The fluxes will be scaled based on the 'FLUX_SCALE' entries.
 
-        save_output : :obj:`bool` (optional, default: :obj:`Truee`)
+        save_output : :obj:`bool` (optional, default: :obj:`True`)
             If set :obj:`False` the corrected cube will not be saved. This can
             be used to just obtain the correction factors
 
@@ -105,6 +105,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             .prm file
 
             ``shift``: shift in XY only.
+
+        debug : :obj:`bool` (optional, default: :obj:`False`)
+            If set :obj:`True` tadditional information will be printed
 
     '''
 
@@ -240,6 +243,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             cat_mag = []
             del_mag = []
 
+            if debug == True:
+                print("printing individual stars")
+                print(' dmag ', 'S/N', 'QFlag')
+
             for i, temp_sp in enumerate(speclist):
 
                 spec_hdu = fits.open(temp_sp)
@@ -251,7 +258,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                     del_mag = np.append(del_mag,\
                     spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset)
                     cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
-                    print(del_mag[-1], snrspec, qltflag)
+                    if debug == True:
+                        print('{:.2f}'.format(del_mag[-1]), '{:3.1f}'.format(snrspec), '{:.0f}'.format(qltflag))
 
             clippend_del_mag = sigma_clip(-del_mag, sigma=2, cenfunc = np.ma.median)
             fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))

@@ -477,7 +477,7 @@ def _create_ob_folders(self):
 
         for unique_ob in self.config['global']['OB_list']:
             if os.path.exists(os.path.join(self.working_dir, unique_ob)):
-                print("OB folder ", unique_ob, " already exists.")
+                print("   >>> OB folder ", unique_ob, " already exists. Nothing to do here!")
                 # shutil.rmtree(os.path.join(self.working_dir, unique_ob))
             else:
                 print("Creating OB folder: ", unique_ob)
