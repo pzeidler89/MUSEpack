@@ -2,7 +2,7 @@
 
 __version__ = '0.2.0'
 
-__revision__ = '20241214'
+__revision__ = '20241215'
 
 import sys
 import os
@@ -27,7 +27,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
-            correctiontype='shift', save_output=True, debug=False):
+            correctiontype='shift', save_output=True, debug=False, spec_snr=5.0):
 
     '''
     Args:
@@ -108,6 +108,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
         debug : :obj:`bool` (optional, default: :obj:`False`)
             If set :obj:`True` tadditional information will be printed
+
+        spec_snr : :obj:`float` (optional, default: 5.0)
+            the S/R limit when a spectra is used to calculate the flux correction.
+            This limit might need to be lowered for low S/R obsverations
 
     '''
 
@@ -226,7 +230,6 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             if AB_zpt != None and Vega_zpt != None:
                 print('AB zeropoint and Vega zeropoint provided. hst_filter will'
                       ' be overwritten')
-
                 aboffset = Vega_zpt - AB_zpt
             elif AB_zpt != None and Vega_zpt == None:
                 print('both AB zeropoint and Vega zeropoint must be provided.')
@@ -240,39 +243,66 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
             speclist = glob.glob(spec_path + '/' + spec_folder + '/specid*')
 
-            cat_mag = []
-            del_mag = []
-
-            if debug == True:
-                print("printing individual stars")
-                print(' dmag ', 'S/N', 'QFlag')
+            flux_cor_tab = Table()
+            cat_mag_list = []
+            del_mag_list = []
+            qltflag_list = []
+            snrspec_list = []
+            starid_list = []
 
             for i, temp_sp in enumerate(speclist):
 
                 spec_hdu = fits.open(temp_sp)
                 spec_head = spec_hdu[0].header
+
                 qltflag = spec_head['HIERARCH SPECTRUM QLTFLAG']
                 snrspec = spec_head['HIERARCH SPECTRUM FITSNR']
 
-                if not ((qltflag & 4) | (qltflag & 8) | (snrspec <= 0)):
-                    del_mag = np.append(del_mag,\
-                    spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset)
-                    cat_mag = np.append(cat_mag, spec_head['HIERARCH STAR MAG'])
-                    if debug == True:
-                        print('{:.2f}'.format(del_mag[-1]), '{:3.1f}'.format(snrspec), '{:.0f}'.format(qltflag))
+                if not ((qltflag & 4) | (qltflag & 8) | (qltflag & 2) | (snrspec <= spec_snr)):
+                    del_mag_list = np.append(del_mag_list,\
+                    -(spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset))
+                    cat_mag_list = np.append(cat_mag_list, spec_head['HIERARCH STAR MAG'])
+                    qltflag_list = np.append(qltflag_list, qltflag)
+                    snrspec_list = np.append(snrspec_list, snrspec)
+                    starid_list = np.append(starid_list, spec_head['HIERARCH STAR ID'])
 
-            clippend_del_mag = sigma_clip(-del_mag, sigma=2, cenfunc = np.ma.median)
+                muse_mag_list = np.array(cat_mag_list) - np.array(del_mag_list)
+
+            flux_cor_tab = Table([starid_list, muse_mag_list, cat_mag_list, del_mag_list, snrspec_list, qltflag_list],
+                                 names=('spec_id', 'muse_mag', 'cat_mag', 'dmag', 'spec_snr', 'DQ'))
+            flux_cor_tab['spec_id'].info.format = '5.0f'
+            flux_cor_tab['muse_mag'].info.format = '5.2f'
+            flux_cor_tab['cat_mag'].info.format = '5.2f'
+            flux_cor_tab['dmag'].info.format = '5.2f'
+            flux_cor_tab['spec_snr'].info.format = '5.1f'
+            flux_cor_tab['DQ'].info.format = '3.0f'
+
+            clippend_del_mag = sigma_clip(del_mag_list, sigma=2, cenfunc = np.ma.median)
             fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
 
+            flux_cor_tab.add_column(np.ma.getmask(clippend_del_mag), name='masked')
+            flux_cor_tab.write(os.path.join(output_path, 'flux_cor_info.tab'), format='ascii.rst', overwrite=True)
+
+            if debug == True:
+                print(flux_cor_tab)
+                print()
+
             print('The magnitude difference:')
-            print('cat - MUSE [mag] = ',\
+            print('cat - MUSE [mag]: ',\
             '{:.2f}'.format(np.ma.median(clippend_del_mag)))
-            print('sigma cat - MUSE [mag] = ',\
+            print('sigma cat - MUSE [mag]: ',\
             '{:.2f}'.format(np.ma.std(clippend_del_mag)))
-            print('The flux multiplicator: f_catalog / f_MUSE = ',\
+            print('The flux multiplicator [f_catalog / f_MUSE]: ',\
             '{:.2f}'.format(fmultipl))
-            print('number of sources = ',\
-            '{:.2f}'.format(clippend_del_mag.count()))
+            print('number of sources: ',\
+            '{:.0f}'.format(clippend_del_mag.count()))
+
+            with open(os.path.join(output_path, 'flux_cor_info.tab'),"a+") as f:
+                f.write("\n")
+                f.write('cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.median(clippend_del_mag)) + '\n')
+                f.write('sigma cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.std(clippend_del_mag)) + '\n')
+                f.write('The flux multiplicator [f_catalog / f_MUSE]: ' + '{:.2f}'.format(fmultipl) + '\n')
+                f.write('N sources: ' + '{:.0f}'.format(clippend_del_mag.count()))
 
             cube['DATA'].data *= fmultipl
             cube['STAT'].data *= fmultipl ** 2
