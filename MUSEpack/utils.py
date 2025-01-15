@@ -449,3 +449,10 @@ def _gaussian(x, mu, A, sigma):
 def _lorentzian(x, mu, A, gamma):
     returnfunction = A * gamma / np.pi / ((x - mu) ** 2 + gamma ** 2)
     return returnfunction
+
+
+def _any_bit_in_number(arr, num):
+    for elem in arr:
+        if elem & num:  # Check if any bit is shared
+            return False
+    return True

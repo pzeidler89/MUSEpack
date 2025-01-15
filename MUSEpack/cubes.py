@@ -22,12 +22,14 @@ import montage_wrapper as montage
 
 ''' internal modules'''
 from MUSEpack.utils import ABtoVega
+from MUSEpack.utils import _any_bit_in_number
 
 def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             output_file=None, output_path=None, out_frame=None, in_frame=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
-            correctiontype='shift', save_output=True, debug=False, spec_snr=5.0):
+            correctiontype='shift', save_output=True, debug=False, spec_snr=5.0,
+            dqs = [2,4,8]):
 
     '''
     Args:
@@ -112,6 +114,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         spec_snr : :obj:`float` (optional, default: 5.0)
             the S/R limit when a spectra is used to calculate the flux correction.
             This limit might need to be lowered for low S/R obsverations
+
+        dqs : :obj:`list` (optional, default: [2,4,8])
+            list of DQ flags where source as dicarted.
 
     '''
 
@@ -258,7 +263,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                 qltflag = spec_head['HIERARCH SPECTRUM QLTFLAG']
                 snrspec = spec_head['HIERARCH SPECTRUM FITSNR']
 
-                if not ((qltflag & 4) | (qltflag & 8) | (qltflag & 2) | (snrspec <= spec_snr)):
+                if (_any_bit_in_number(dqs, qltflag) & (snrspec > spec_snr)):
+
                     del_mag_list = np.append(del_mag_list,\
                     -(spec_head['HIERARCH SPECTRUM MAG DELTA'] + 50. + aboffset))
                     cat_mag_list = np.append(cat_mag_list, spec_head['HIERARCH STAR MAG'])
@@ -267,6 +273,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                     starid_list = np.append(starid_list, spec_head['HIERARCH STAR ID'])
 
                 muse_mag_list = np.array(cat_mag_list) - np.array(del_mag_list)
+            if len (del_mag_list) == 0:
+                print()
+                sys.exit('No sources were slected. Please adjust SNR or make sure any sources are in the Cube'.upper())
 
             flux_cor_tab = Table([starid_list, muse_mag_list, cat_mag_list, del_mag_list, snrspec_list, qltflag_list],
                                  names=('spec_id', 'muse_mag', 'cat_mag', 'dmag', 'spec_snr', 'DQ'))
