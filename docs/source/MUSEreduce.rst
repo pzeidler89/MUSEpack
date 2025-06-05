@@ -439,3 +439,5 @@ History
     :class:`MUSEreduce.musereduce` keyword *static_calib_path* was addded to *config.json* in ``global`` so a different pipline static calibration path can be defined. This is might be neeeded if ESORex was installed using MacPorts. If nothing is given this defaults to the standard linux installation.
 .. versionadded:: 2.0.1
     :class:`MUSEreduce.musereduce` A major overhaul on the routine, which makes it more efficient and faster while saving memory. SOme changes in teh folder structure and keywords makes this version incompatiple with versions 1.x.x.
+.. versionadded:: 2.0.2
+    bugfixes

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
-__revision__ = '20250113'
+__revision__ = '20250604'
 
 import sys
 import shutil
@@ -123,7 +123,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jan 13, 2025                    #####')
+        print('#####                    Jun 04, 2025                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -184,8 +184,8 @@ class musereduce:
 
         if self.dithering_multiple_OBs:
             print('   >>> Exposures per pointing are spread over multiple OBs')
-            print('==> The pointing name is: ' + self.dithername)
             self.multOB_exp_counter = 0
+            self.multOB_unique_pointings_ID = None
         else:
             print('   >>> All exposures per pointing are located in one OB')
             if len(self.user_list) > 1:
@@ -234,7 +234,8 @@ class musereduce:
         _create_ob_folders(self)
 
         if self.dithering_multiple_OBs:
-            self.dithername = np.array(self.config['global']['OB_list'][0])
+            self.dithername = self.OB_list[0]
+            print('==> The pointing name is: ' + self.dithername)
 
         print(' ')
         print('... Creating directories')
@@ -242,7 +243,7 @@ class musereduce:
 
             if self.dithering_multiple_OBs:
 
-                self.working_dir = os.path.join(self.rootpath, 'reduced', self.dithername, OB)
+                self.working_dir = os.path.join(self.rootpath, 'reduced', OB)
                 self.combining_OBs_dir = os.path.join(self.rootpath, 'reduced', self.dithername)
                 if not os.path.exists(self.combining_OBs_dir):
                     os.mkdir(self.combining_OBs_dir)
@@ -372,14 +373,29 @@ class musereduce:
             if self.config['dither_collect']['execute']:
                 _dither_collect(self, exp_list_SCI, OB)
 
-            if self.config['exp_align']['execute']:
-                create_sof = self.config['exp_align']['create_sof']
-                _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
+            if self.dithering_multiple_OBs:
+                if self.multOB_exp_counter == 0:
+                    if self.config['exp_align']['execute']:
+                        create_sof = self.config['exp_align']['create_sof']
+                        _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
 
-            if self.config['exp_combine']['execute']:
-                create_sof = self.config['exp_combine']['create_sof']
-                _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+                    if self.config['exp_combine']['execute']:
+                        create_sof = self.config['exp_combine']['create_sof']
+                        _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+            else:
+                if self.config['exp_align']['execute']:
+                    create_sof = self.config['exp_align']['create_sof']
+                    _exp_align(self, exp_list_SCI, create_sof, OB,
+                               esorex_kwargs=self.config['exp_align']['esorex_kwargs'])
 
+                if self.config['exp_combine']['execute']:
+                    create_sof = self.config['exp_combine']['create_sof']
+                    _exp_combine(self, exp_list_SCI, create_sof,
+                                 esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+
+
+            if self.dithering_multiple_OBs:
+                self.multOB_exp_counter += 1
         endtime = time.time()
         print('   >>> Total execution time: ',\
         timedelta(seconds=endtime - startime))
@@ -445,6 +461,7 @@ def _create_ob_folders(self):
 
     if self.config['global']['OB_list']:
         print('   >>> Input OB list is used')
+        self.OB_list = self.config['global']['OB_list']
 
     else:
         print('   >>> The OB list is automatically created from the input raw folder')
@@ -468,7 +485,7 @@ def _create_ob_folders(self):
     for OBs in self.OB_list:
         print('       ', OBs)
 
-    if self.dithering_multiple_OBs and len(self.user_list) > 0:
+    if self.dithering_multiple_OBs and len(self.user_list) > 0 and self.user_list != "all":
         print('Currently a user list cannot be provided with multiple OBs !!!')
         sys.exit()
 
@@ -1663,8 +1680,9 @@ def _sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 '--log-file=sky.log --log-level=debug'\
                 + ' muse_create_sky'\
                 + ' --fraction=' + str(self.skyfraction)\
-                + ' --ignore=' + str(self.skyignore)\
-                + ' sky.sof', esorex_kwargs=esorex_kwargs)
+                + ' --ignore=' + str(self.skyignore),\
+                sof, esorex_kwargs=esorex_kwargs)
+
 
     if self.skyfield == 'auto' and (sky == True).any():
         skydate = np.ones_like(exp_list_SCI_sky, dtype=float)
@@ -2028,7 +2046,13 @@ def _dither_collect(self, exp_list_SCI, OB):
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
-        unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+        if self.dithering_multiple_OBs:
+            if self.multOB_exp_counter == 0:
+                self.multOB_unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+            unique_pointings_ID = self.multOB_unique_pointings_ID
+        else:
+            unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+
         sec = unique_pointings[unique_pointing_num]
 
         if len(self.user_list) == 0:
@@ -2059,7 +2083,11 @@ def _dither_collect(self, exp_list_SCI, OB):
 
     for unique_pointing_num in range(len(unique_pointings)):
 
-        unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+        if self.dithering_multiple_OBs:
+            unique_pointings_ID = self.multOB_unique_pointings_ID
+        else:
+            unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+
         sec = unique_pointings[unique_pointing_num]
 
         if len(self.user_list) == 0:
@@ -2162,8 +2190,14 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
+        for unique_pointing_num in range(len(unique_pointings)):
+            if self.dithering_multiple_OBs:
+                if self.multOB_exp_counter == 0:
+                    self.multOB_unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+                unique_pointings_ID = self.multOB_unique_pointings_ID
+            else:
+                unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
 
-        unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
 
         if len(self.user_list) == 0:
@@ -2184,8 +2218,6 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         if not self.dithering_multiple_OBs:
             combining_exposure_dir = os.path.join(sec)
 
-
-
     for unique_pointing_num in range(len(unique_pointings)):
 
         print(' ')
@@ -2193,7 +2225,11 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         + '/' + str(len(unique_pointings)))
         print(' ')
 
-        unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+        for unique_pointing_num in range(len(unique_pointings)):
+            if self.dithering_multiple_OBs:
+                unique_pointings_ID = self.multOB_unique_pointings_ID
+            else:
+                unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
 
         if self.dithering_multiple_OBs:
@@ -2280,7 +2316,13 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         + '/' + str(len(unique_pointings)))
         print(' ')
 
-        unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+        for unique_pointing_num in range(len(unique_pointings)):
+            if self.dithering_multiple_OBs:
+                if self.multOB_exp_counter == 0:
+                    self.multOB_unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
+                unique_pointings_ID = self.multOB_unique_pointings_ID
+            else:
+                unique_pointings_ID = unique_pointings[unique_pointing_num][-18:]
         sec = unique_pointings[unique_pointing_num]
 
         if self.dithering_multiple_OBs:

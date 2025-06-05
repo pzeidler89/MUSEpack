@@ -1,9 +1,9 @@
  #!/usr/bin/env python
 
 
-__version__ = '0.1.4'
+__version__ = '0.2'
 
-__revision__ = '20210128'
+__revision__ = '20250605'
 
 import sys
 import os
@@ -22,10 +22,9 @@ from astropy.stats import median_absolute_deviation as MAD
 import pandas as pd
 import time
 import logging
-from pysynphot import observation
-from pysynphot import spectrum
-from pysynphot import ObsBandpass
-from pysynphot import BlackBody
+import stsynphot as stsyn
+import synphot as syn
+
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
 from scipy.special import wofz
@@ -324,12 +323,16 @@ def voigt_funct(x_array, x_cen, amplitude, sigma, gamma):
 
 
 def spec_res_downgrade(l_in, spec_in, l_out):
-    templ_spec = spectrum.ArraySourceSpectrum(wave=l_in, flux=spec_in)
-    white_filter = spectrum.ArraySpectralElement(l_out,\
-    np.ones(len(l_out)), waveunits='angstrom')
-    convolved_spec = observation.Observation(templ_spec,\
-    white_filter, binset=l_out, force='taper').binflux
+    templ_spec = syn.SourceSpectrum(syn.Empirical1D, points=l_in, lookup_table=spec_in, keep_neg=True)
+    white_filter = syn.SpectralElement(syn.models.Empirical1D, points=templ_spec.waveset,
+                                      lookup_table=np.ones(len(templ_spec.waveset)), keep_neg=True)
+    obs_convolved = syn.Observation(templ_spec, white_filter, force='taper', binset=l_out)
+    obs_convolved = obs_convolved.as_spectrum(binned=True)
 
+    convolved_spec = syn.Spectrum1D(spectral_axis=obs_convolved.waveset,
+                                flux=syn.units.convert_flux(obs_convolved.waveset,
+                                                  fluxes=obs_convolved(obs_convolved.waveset),
+                                                  out_flux_unit='angstrom'))
     return convolved_spec
 
 
@@ -402,19 +405,15 @@ def continuum_deviation(self, l_in, f_in, baseline, contorder):
 
 def ABtoVega(instrument, bandpass):
 
-    bp = ObsBandpass(str(instrument) + ',wfc1,'\
-    + str(bandpass) + ',mjd#57754')
-    spec_bb = BlackBody(10000)
-    spec_bb_norm = spec_bb.renorm(1, 'counts', bp)
-    obs = observation.Observation(spec_bb_norm, bp)
-
-    # Get photometric calibration information.
-    photflam = obs.effstim('flam')
+    bp = stsyn.band(str(instrument) + ',wfc1,' + str(bandpass) + ',mjd#57754')
+    obs = Observation(stsyn.Vega, bp, binset=bp.binset)
+    photflam = bp.unit_response(stsyn.conf.area)
     photplam = bp.pivot()
 
-    zp_vega = obs.effstim('vegamag')
-    zp_st = obs.effstim('stmag')
-    zp_ab = obs.effstim('abmag')
+    zp_vega = -obs.effstim(flux_unit='obmag', area=stsyn.conf.area)
+    zp_ab = (-2.5 * np.log10(photflam.value) - 21.1
+             - 5 * np.log10(photplam.value) + 18.6921)
+    zp_st = -2.5 * np.log10(photflam.value) - 21.1
 
     difference = zp_vega - zp_ab
 

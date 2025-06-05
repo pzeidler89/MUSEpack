@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
-__revision__ = '20241215'
+__revision__ = '20250605'
 
 import sys
 import os
@@ -231,6 +231,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
 
         #### flux correction
         if correct_flux and len(cube) == 3:
+
+            print('using spec path: ' + spec_path)
 
             if AB_zpt != None and Vega_zpt != None:
                 print('AB zeropoint and Vega zeropoint provided. hst_filter will'

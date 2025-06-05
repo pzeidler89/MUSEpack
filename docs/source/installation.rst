@@ -11,7 +11,7 @@ To fully run all modules the following **non-standard** modules need to be insta
 
 * `pyspeckit`_
 * `ppxf`_
-* `pysynphot`_
+* `synphot`_
 * `stsynphot`_
 * `mosaic_wrapper`_
 

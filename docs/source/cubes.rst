@@ -23,3 +23,6 @@ History
 
 .. versionadded:: 0.2.0
     :func:`cubes.wcs_cor` can now also be used with any zeropoints of any filter. This is especially important if we match to Gaia DR3 directly
+
+.. versionadded:: 0.2.0
+    minor bugfixes

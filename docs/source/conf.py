@@ -25,9 +25,9 @@ copyright = '2019 - 2024, Peter Zeidler'
 author = 'Peter Zeidler'
 
 # The short X.Y version
-version = '1.4.0'
+version = '2.0.2'
 # The full version, including alpha/beta/rc tags
-release = '1.3.1dev20241213'
+release = '2.0.2dev20250604'
 
 
 # -- General configuration ---------------------------------------------------
@@ -56,7 +56,7 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'pysynphot', 'stsynphot', 'ppxf', 'spectral_cube', 'lmfit']
+autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'synphot', 'stsynphot', 'ppxf', 'spectral_cube', 'lmfit']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
