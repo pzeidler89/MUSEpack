@@ -3,7 +3,7 @@
 
 __version__ = '0.2'
 
-__revision__ = '20250605'
+__revision__ = '20250606'
 
 import sys
 import os
@@ -24,6 +24,7 @@ import time
 import logging
 import stsynphot as stsyn
 import synphot as syn
+from specutils import Spectrum1D
 
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
