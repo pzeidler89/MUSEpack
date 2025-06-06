@@ -1,7 +1,7 @@
  #!/usr/bin/env python
 
 
-__version__ = '0.2'
+__version__ = '0.2.1'
 
 __revision__ = '20250606'
 
@@ -328,13 +328,12 @@ def spec_res_downgrade(l_in, spec_in, l_out):
     white_filter = syn.SpectralElement(syn.models.Empirical1D, points=templ_spec.waveset,
                                       lookup_table=np.ones(len(templ_spec.waveset)), keep_neg=True)
     obs_convolved = syn.Observation(templ_spec, white_filter, force='taper', binset=l_out)
-    obs_convolved = obs_convolved.as_spectrum(binned=True)
-
-    convolved_spec = Spectrum1D(spectral_axis=obs_convolved.waveset,
-                                flux=syn.units.convert_flux(obs_convolved.waveset,
-                                                  fluxes=obs_convolved(obs_convolved.waveset),
-                                                  out_flux_unit='angstrom'))
-    return convolved_spec
+    convolved_spec = obs_convolved.as_spectrum(binned=True)
+    #
+    # convolved_spec = Spectrum1D(spectral_axis=obs_convolved.waveset,
+    #                             flux=syn.units.convert_flux(obs_convolved.waveset,
+    #                                               fluxes=obs_convolved(obs_convolved.waveset)))
+    return convolved_spec(convolved_spec.waveset).value
 
 
 def line_clipping(self, x, line_significants, sigma=3):
@@ -407,11 +406,11 @@ def continuum_deviation(self, l_in, f_in, baseline, contorder):
 def ABtoVega(instrument, bandpass):
 
     bp = stsyn.band(str(instrument) + ',wfc1,' + str(bandpass) + ',mjd#57754')
-    obs = Observation(stsyn.Vega, bp, binset=bp.binset)
+    obs = syn.Observation(stsyn.Vega, bp, binset=bp.binset)
     photflam = bp.unit_response(stsyn.conf.area)
     photplam = bp.pivot()
 
-    zp_vega = -obs.effstim(flux_unit='obmag', area=stsyn.conf.area)
+    zp_vega = (-1) * obs.effstim(flux_unit='obmag', area=stsyn.conf.area).value
     zp_ab = (-2.5 * np.log10(photflam.value) - 21.1
              - 5 * np.log10(photplam.value) + 18.6921)
     zp_st = -2.5 * np.log10(photflam.value) - 21.1
