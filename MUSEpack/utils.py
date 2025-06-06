@@ -330,7 +330,7 @@ def spec_res_downgrade(l_in, spec_in, l_out):
     obs_convolved = syn.Observation(templ_spec, white_filter, force='taper', binset=l_out)
     obs_convolved = obs_convolved.as_spectrum(binned=True)
 
-    convolved_spec = syn.Spectrum1D(spectral_axis=obs_convolved.waveset,
+    convolved_spec = Spectrum1D(spectral_axis=obs_convolved.waveset,
                                 flux=syn.units.convert_flux(obs_convolved.waveset,
                                                   fluxes=obs_convolved(obs_convolved.waveset),
                                                   out_flux_unit='angstrom'))
