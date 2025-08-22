@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
-__revision__ = '20250604'
+__revision__ = '20250818'
 
 import sys
 import shutil
@@ -123,7 +123,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jun 04, 2025                    #####')
+        print('#####                    Aug 18, 2025                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -135,6 +135,22 @@ class musereduce:
         assert sys.version_info > (3, 0), 'YOU ARE NOT USING PYTHON 3.x'
         assert self.config['global']['pipeline_path'], 'NO PIPELINE PATH DEFINED'
         assert self.config['global']['rootpath'], 'NO ROOTPATH DEFINED'
+
+        if self.config['sky']['modified'] == True:
+            self.skymethod = 'subtract-model'
+            print("")
+            print("WARNING: modified sky is used")
+            print("... setting the skymethod to: ",self.skymethod)
+            print("")
+            try:
+                self.modified_continuum = self.config['sky']['modified_continuum']
+                print("... setting the modified continuum to: ", self.modified_continuum)
+            except KeyError:
+                print("")
+                print("WARNING: modified_continuum not provided in config file !!!")
+                print("... setting the modified continuum to default [True]")
+                print("")
+                self.modified_continuum = True
 
         self.static_calib_path = self.config.get('global', {}).get('static_calib_path', None)
         if not self.static_calib_path:
@@ -216,6 +232,8 @@ class musereduce:
             print('   >>> STANDARD')
         if self.config['sky']['execute']:
             print('   >>> CREATE_SKY')
+            if self.config['sky']['modified']:
+                print('   ... modified execution')
         if self.config['sci_post']['execute']:
             print('   >>> SCI_POST')
         if self.config['exp_align']['execute']:
@@ -1820,8 +1838,10 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
 
             f.write(os.path.join(self.working_dir, 'std', 'STD_RESPONSE_0001.fits') + ' STD_RESPONSE\n')
             f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
-            f.write(os.path.join(exposure_dir, 'SKY_CONTINUUM_zero.fits') + ' SKY_CONTINUUM\n')
-
+            if self.modified_continuum:
+                f.write(os.path.join(exposure_dir, 'SKY_CONTINUUM_zero.fits') + ' SKY_CONTINUUM\n')
+            else:
+                f.write(os.path.join(exposure_dir, 'SKY_CONTINUUM.fits') + ' SKY_CONTINUUM\n')
             f.write(os.path.join(self.static_calibration_dir, 'extinct_table.fits') + ' EXTINCT_TABLE\n')
             f.write(os.path.join(self.static_calibration_dir, 'sky_lines.fits') + ' SKY_LINES\n')
 
@@ -1845,8 +1865,9 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 sof, esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
-        print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
-        shutil.copy('SKY_CONTINUUM_zero.fits', 'SKY_CONTINUUM.fits')
+        # if self.modified_continuum:
+        #     print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
+        #     shutil.copy('SKY_CONTINUUM_zero.fits', 'SKY_CONTINUUM.fits')
         hdu = fits.open('SKY_LINES.fits', checksum=True)
         data = hdu[1].data
 
@@ -1957,7 +1978,10 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 f.write(os.path.join(self.working_dir, 'std', 'STD_TELLURIC_0001.fits') + ' STD_TELLURIC\n')
                 if self.skysub:
                     f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_LINES.fits') + ' SKY_LINES\n')
-                    f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits') + ' SKY_CONTINUUM\n')
+                    if self.modified_continuum:
+                        f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM_zero.fits') + ' SKY_CONTINUUM\n')
+                    else:
+                        f.write(os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits') + ' SKY_CONTINUUM\n')
                 # if self.mode == 'WFM-AO' or self.mode == 'WFM-NOAO':
                 #     f.write(self.static_calibration_dir\
                 #     + 'astrometry_wcs_wfm.fits ASTROMETRY_WCS\n')
