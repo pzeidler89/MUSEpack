@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
-__revision__ = '20250605'
+__revision__ = '20250826'
 
 import sys
 import os
@@ -496,7 +496,7 @@ def linemaps(input_fits, path=None, elements=None, wavelengths=None):
     for wavelength, element in zip(wavelengths, elements):
         slab = cube.spectral_slab((wavelength - 3) * u.AA,\
         (wavelength + 3) * u.AA).sum(axis=0)
-        slab.hdu.writeto(path + '/' + element + '.fits', overwrite=True)
+        slab.hdu.writeto(path + '/' + element + '_' +input_fits, overwrite=True)
 
     shutil.rmtree(path + 'temp/')
 
