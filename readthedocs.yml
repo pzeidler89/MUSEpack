@@ -26,6 +26,5 @@ formats: all
 python:
   install:
     - requirements: docs/requirements.txt
-
-environment:
-  - PYTHON_VERSION: "3.12"
+  environment:
+    - PYTHON_VERSION: "3.12"
