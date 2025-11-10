@@ -53,9 +53,9 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
         output_path : :obj:`str` (optional, default: current directory)
             output path. If not provided the I/O folder is identical
 
-        output_frame : :obj:`str` (optional, default : input frame)
+        output_frame : :obj:`str` (optional, default: input frame)
             coordinate frame of the output cube in case one want to
-            change. Is always set to default : input frame if corrections
+            change. Is always set to default input frame if corrections
             are not based on a .prm file 
 
         in_frame : :obj:`str` (optional, default: input frame)

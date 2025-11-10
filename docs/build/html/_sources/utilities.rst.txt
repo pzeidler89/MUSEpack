@@ -36,3 +36,6 @@ History
 
 .. versionadded:: 0.1.4
    adding `rv_sys`, to compensate for larger systematic RV shifts or redshifts for the line and RV fitter. The :mod:`util.lambda_rv_shift` was introduced
+
+.. versionadded:: 0.2.0
+    replaced :mod:`pysynphot` (discontinued) with :mod:`synphot` and :mod:`stsynphot`

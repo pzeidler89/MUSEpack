@@ -27,7 +27,7 @@ author = 'Peter Zeidler'
 # The short X.Y version
 version = '2.0.2'
 # The full version, including alpha/beta/rc tags
-release = '2.0.2dev20250604'
+release = '2.0.2dev20251110'
 
 
 # -- General configuration ---------------------------------------------------
@@ -49,14 +49,13 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinxjsondomain',
     'sphinx-jsonschema'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'synphot', 'stsynphot', 'ppxf', 'spectral_cube', 'lmfit']
+autodoc_mock_imports = ['numpy', 'astropy', 'pyspeckit', 'matplotlib', 'pandas', 'scipy', 'synphot', 'stsynphot', 'ppxf', 'spectral_cube', 'lmfit', 'specutils']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -98,7 +97,6 @@ html_theme_options = {
     'canonical_url': '',
     'analytics_id': 'UA-XXXXXXX-1',  #  Provided by Google in your dashboard
     'logo_only': False,
-    'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': True,
     # 'vcs_pageview_mode': 'blob',

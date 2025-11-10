@@ -1,94 +1,45 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html4" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>utils &mdash; MUSEpack 1.1.1dev20210128 documentation</title>
-  
+  <title>utils &mdash; MUSEpack 2.0.2dev20251110 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=8b57a23b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../index.html" class="icon icon-home"> MUSEpack
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            MUSEpack
           </a>
-
-          
-            
-            
-              <div class="version">
-                1.1.2
-              </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">1. Installing MUSEpack</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#additional-python-packages">1.1. Additional python packages</a></li>
@@ -96,27 +47,67 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../MUSEreduce.html">2. MUSEreduce</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce.musereduce"><code class="docutils literal notranslate"><span class="pre">musereduce</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce.musereduce.execute"><code class="docutils literal notranslate"><span class="pre">musereduce.execute()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-basic-folder-structure">2.1. The basic folder structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#the-config-file">2.2. The config file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-methods">2.3. Utility methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#utility-methods">2.3. Utility methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._get_filelist"><code class="docutils literal notranslate"><span class="pre">_get_filelist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._call_esorex"><code class="docutils literal notranslate"><span class="pre">_call_esorex()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._create_ob_folders"><code class="docutils literal notranslate"><span class="pre">_create_ob_folders()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._sort_data"><code class="docutils literal notranslate"><span class="pre">_sort_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._bias"><code class="docutils literal notranslate"><span class="pre">_bias()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._dark"><code class="docutils literal notranslate"><span class="pre">_dark()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._flat"><code class="docutils literal notranslate"><span class="pre">_flat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._wavecal"><code class="docutils literal notranslate"><span class="pre">_wavecal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._lsf"><code class="docutils literal notranslate"><span class="pre">_lsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._twilight"><code class="docutils literal notranslate"><span class="pre">_twilight()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._science_pre"><code class="docutils literal notranslate"><span class="pre">_science_pre()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._std_flux"><code class="docutils literal notranslate"><span class="pre">_std_flux()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._sky"><code class="docutils literal notranslate"><span class="pre">_sky()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._modified_sky"><code class="docutils literal notranslate"><span class="pre">_modified_sky()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._scipost"><code class="docutils literal notranslate"><span class="pre">_scipost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._dither_collect"><code class="docutils literal notranslate"><span class="pre">_dither_collect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._exp_align"><code class="docutils literal notranslate"><span class="pre">_exp_align()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._exp_combine"><code class="docutils literal notranslate"><span class="pre">_exp_combine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../MUSEreduce.html#MUSEreduce._cleanup"><code class="docutils literal notranslate"><span class="pre">_cleanup()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../MUSEreduce.html#history">2.4. History</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../radialvelocities.html">3. Spectral line fitting and radial velocity measurements</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#spectral-line-fitter">3.1. Spectral line fitter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#line_fitter.line_fitter"><code class="docutils literal notranslate"><span class="pre">line_fitter()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#id2">3.2. Radial Velocities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#the-radial-velocity-fitter">3.2.1. The radial velocity fitter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../radialvelocities.html#radial_velocities.RV_spectrum"><code class="docutils literal notranslate"><span class="pre">RV_spectrum</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../radialvelocities.html#monte-carlo-radial-velocity-determination">3.2.2. Monte Carlo radial velocity determination</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../radialvelocities.html#ppxf_MC.ppxf_MC"><code class="docutils literal notranslate"><span class="pre">ppxf_MC()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../radialvelocities.html#history">3.3. History</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cubes.html">4. Cubes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#cubes.linemaps"><code class="docutils literal notranslate"><span class="pre">linemaps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#cubes.mosaics"><code class="docutils literal notranslate"><span class="pre">mosaics()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#cubes.pampelmuse_cat"><code class="docutils literal notranslate"><span class="pre">pampelmuse_cat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cubes.html#cubes.wcs_cor"><code class="docutils literal notranslate"><span class="pre">wcs_cor()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../cubes.html#history">4.1. History</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities.html">5. Utility module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#utils.initial_guesses"><code class="docutils literal notranslate"><span class="pre">initial_guesses()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities.html#utils.update_parinfo"><code class="docutils literal notranslate"><span class="pre">update_parinfo()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utilities.html#history">5.1. History</a></li>
 </ul>
 </li>
@@ -130,117 +121,80 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Credits:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Credits:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Disclaimer:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Disclaimer:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../disclaimer.html">Disclaimer</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">MUSEpack</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content style-external-links">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-          <li><a href="index.html">Module code</a> &raquo;</li>
-        
-      <li>utils</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for utils</h1><div class="highlight"><pre>
 <span></span> <span class="c1">#!/usr/bin/env python</span>
 
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1.4&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.2.1&#39;</span>
 
-<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20210128&#39;</span>
+<span class="n">__revision__</span> <span class="o">=</span> <span class="s1">&#39;20250606&#39;</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">pyspeckit</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Column</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">median_absolute_deviation</span> <span class="k">as</span> <span class="n">MAD</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="kn">import</span> <span class="n">observation</span>
-<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="kn">import</span> <span class="n">spectrum</span>
-<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="kn">import</span> <span class="n">ObsBandpass</span>
-<span class="kn">from</span> <span class="nn">pysynphot</span> <span class="kn">import</span> <span class="n">BlackBody</span>
-<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
-<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">find_peaks</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">wofz</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span> <span class="k">as</span> <span class="n">inter_comb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyspeckit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">ascii</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">median_absolute_deviation</span> <span class="k">as</span> <span class="n">MAD</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stsynphot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stsyn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">synphot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">syn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">specutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum1D</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_peaks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">wofz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span> <span class="k">as</span> <span class="n">inter_comb</span>
 
 
-<div class="viewcode-block" id="initial_guesses"><a class="viewcode-back" href="../utilities.html#utils.initial_guesses">[docs]</a><span class="k">def</span> <span class="nf">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">blends</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestrength</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>\
+<div class="viewcode-block" id="initial_guesses">
+<a class="viewcode-back" href="../utilities.html#utils.initial_guesses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">blends</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestrength</span><span class="o">=</span><span class="mf">100.</span><span class="p">,</span>\
                     <span class="n">llimits</span><span class="o">=</span><span class="p">[</span><span class="mf">2.</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mf">2.</span><span class="p">]):</span>
 
-    <span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Creates the initial guesses for the line fitter</span>
 
 <span class="sd">    Args:</span>
@@ -346,10 +300,13 @@
     <span class="k">return</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">limited</span></div>
 
 
-<div class="viewcode-block" id="update_parinfo"><a class="viewcode-back" href="../utilities.html#utils.update_parinfo">[docs]</a><span class="k">def</span> <span class="nf">update_parinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">llimits</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span>
+
+<div class="viewcode-block" id="update_parinfo">
+<a class="viewcode-back" href="../utilities.html#utils.update_parinfo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_parinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">llimits</span><span class="p">,</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">blends</span><span class="p">,</span>
                    <span class="n">parinfo</span><span class="p">,</span> <span class="n">autoadjust</span><span class="p">,</span> <span class="n">fwhm_block</span><span class="p">):</span>
 
-    <span class="sd">&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Updates the parinfo file, created by pyspeckit.</span>
 
 <span class="sd">    Args:</span>
@@ -363,7 +320,7 @@
 <span class="sd">        line_idx : :obj:`str`</span>
 <span class="sd">            Name of the primary line</span>
 
-<span class="sd">       blends : :obj:`ascii`-file or :obj:`None`</span>
+<span class="sd">        blends : :obj:`ascii`-file or :obj:`None`</span>
 <span class="sd">           A file with primary lines that contain blends to provide a maximum</span>
 <span class="sd">           amplitude ratio of the primary and the blend to prevent that the</span>
 <span class="sd">           blend becomes the dominant line in the fit.</span>
@@ -388,7 +345,7 @@
 <span class="sd">            :obj:`False`: The minimum fwhm of the voigt profiles of the fitted</span>
 <span class="sd">            lines is zero</span>
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
         <span class="n">lprime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">line_idx</span><span class="p">,</span> <span class="s1">&#39;l_lab&#39;</span><span class="p">]</span>
@@ -481,14 +438,15 @@
     <span class="k">return</span> <span class="n">parinfo</span></div>
 
 
-<span class="k">def</span> <span class="nf">plotcolor</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plotcolor</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="n">colarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Lime&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Magenta&#39;</span><span class="p">,</span> <span class="s1">&#39;Olive&#39;</span><span class="p">,</span> <span class="s1">&#39;Maroon&#39;</span><span class="p">,</span>
     <span class="s1">&#39;indigo&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;Cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;Yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;Silver&#39;</span><span class="p">])</span>
     <span class="n">colselect</span> <span class="o">=</span> <span class="n">colarray</span><span class="p">[</span><span class="n">n</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colarray</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">colselect</span>
 
 
-<span class="k">def</span> <span class="nf">baseline_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specfit</span><span class="p">,</span> <span class="n">poly_order</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">baseline_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specfit</span><span class="p">,</span> <span class="n">poly_order</span><span class="p">):</span>
     <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">poly_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -497,7 +455,7 @@
     <span class="k">return</span> <span class="n">baseline</span>
 
 
-<span class="k">def</span> <span class="nf">voigt_FWHM</span><span class="p">(</span><span class="n">sigma_g</span><span class="p">,</span> <span class="n">gamma_l</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">voigt_FWHM</span><span class="p">(</span><span class="n">sigma_g</span><span class="p">,</span> <span class="n">gamma_l</span><span class="p">):</span>
     <span class="c1">#calculating the FWHM of the voigt, gauss, and lorentz profile</span>
     <span class="n">c_0</span> <span class="o">=</span> <span class="mf">2.0056</span>
     <span class="n">c_1</span> <span class="o">=</span> <span class="mf">1.0593</span>
@@ -515,7 +473,7 @@
     <span class="k">return</span> <span class="n">fwhm_g</span><span class="p">,</span> <span class="n">fwhm_l</span><span class="p">,</span> <span class="n">fwhm_v</span>
 
 
-<span class="k">def</span> <span class="nf">voigt_funct</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">x_cen</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">voigt_funct</span><span class="p">(</span><span class="n">x_array</span><span class="p">,</span> <span class="n">x_cen</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">gamma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">z</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_array</span> <span class="o">-</span> <span class="n">x_cen</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">))</span>
@@ -528,17 +486,20 @@
     <span class="k">return</span> <span class="n">y_arr</span>
 
 
-<span class="k">def</span> <span class="nf">spec_res_downgrade</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">spec_in</span><span class="p">,</span> <span class="n">l_out</span><span class="p">):</span>
-    <span class="n">templ_spec</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">ArraySourceSpectrum</span><span class="p">(</span><span class="n">wave</span><span class="o">=</span><span class="n">l_in</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">spec_in</span><span class="p">)</span>
-    <span class="n">white_filter</span> <span class="o">=</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">ArraySpectralElement</span><span class="p">(</span><span class="n">l_out</span><span class="p">,</span>\
-    <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l_out</span><span class="p">)),</span> <span class="n">waveunits</span><span class="o">=</span><span class="s1">&#39;angstrom&#39;</span><span class="p">)</span>
-    <span class="n">convolved_spec</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">templ_spec</span><span class="p">,</span>\
-    <span class="n">white_filter</span><span class="p">,</span> <span class="n">binset</span><span class="o">=</span><span class="n">l_out</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="s1">&#39;taper&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">binflux</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spec_res_downgrade</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">spec_in</span><span class="p">,</span> <span class="n">l_out</span><span class="p">):</span>
+    <span class="n">templ_spec</span> <span class="o">=</span> <span class="n">syn</span><span class="o">.</span><span class="n">SourceSpectrum</span><span class="p">(</span><span class="n">syn</span><span class="o">.</span><span class="n">Empirical1D</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">l_in</span><span class="p">,</span> <span class="n">lookup_table</span><span class="o">=</span><span class="n">spec_in</span><span class="p">,</span> <span class="n">keep_neg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">white_filter</span> <span class="o">=</span> <span class="n">syn</span><span class="o">.</span><span class="n">SpectralElement</span><span class="p">(</span><span class="n">syn</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Empirical1D</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">templ_spec</span><span class="o">.</span><span class="n">waveset</span><span class="p">,</span>
+                                      <span class="n">lookup_table</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">templ_spec</span><span class="o">.</span><span class="n">waveset</span><span class="p">)),</span> <span class="n">keep_neg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">obs_convolved</span> <span class="o">=</span> <span class="n">syn</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">templ_spec</span><span class="p">,</span> <span class="n">white_filter</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="s1">&#39;taper&#39;</span><span class="p">,</span> <span class="n">binset</span><span class="o">=</span><span class="n">l_out</span><span class="p">)</span>
+    <span class="n">convolved_spec</span> <span class="o">=</span> <span class="n">obs_convolved</span><span class="o">.</span><span class="n">as_spectrum</span><span class="p">(</span><span class="n">binned</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1"># convolved_spec = Spectrum1D(spectral_axis=obs_convolved.waveset,</span>
+    <span class="c1">#                             flux=syn.units.convert_flux(obs_convolved.waveset,</span>
+    <span class="c1">#                                               fluxes=obs_convolved(obs_convolved.waveset)))</span>
+    <span class="k">return</span> <span class="n">convolved_spec</span><span class="p">(</span><span class="n">convolved_spec</span><span class="o">.</span><span class="n">waveset</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 
-    <span class="k">return</span> <span class="n">convolved_spec</span>
 
-
-<span class="k">def</span> <span class="nf">line_clipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">line_significants</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">line_clipping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">line_significants</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">ind_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span>\
@@ -570,7 +531,7 @@
     <span class="k">return</span> <span class="n">x_masked</span>
 
 
-<span class="k">def</span> <span class="nf">clipped_MAD</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clipped_MAD</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
@@ -579,7 +540,7 @@
     <span class="k">return</span> <span class="n">mad</span>
 
 
-<span class="k">def</span> <span class="nf">continuum_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_in</span><span class="p">,</span> <span class="n">f_in</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">contorder</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">continuum_deviation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_in</span><span class="p">,</span> <span class="n">f_in</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">contorder</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linetype</span> <span class="o">==</span> <span class="s1">&#39;absorption&#39;</span><span class="p">:</span>
         <span class="n">peaks</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">f_in</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -605,36 +566,32 @@
     <span class="k">return</span> <span class="n">cont_dev</span>
 
 
-<span class="k">def</span> <span class="nf">ABtoVega</span><span class="p">(</span><span class="n">instrument</span><span class="p">,</span> <span class="n">bandpass</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ABtoVega</span><span class="p">(</span><span class="n">instrument</span><span class="p">,</span> <span class="n">bandpass</span><span class="p">):</span>
 
-    <span class="n">bp</span> <span class="o">=</span> <span class="n">ObsBandpass</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">instrument</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,wfc1,&#39;</span>\
-    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bandpass</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,mjd#57754&#39;</span><span class="p">)</span>
-    <span class="n">spec_bb</span> <span class="o">=</span> <span class="n">BlackBody</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-    <span class="n">spec_bb_norm</span> <span class="o">=</span> <span class="n">spec_bb</span><span class="o">.</span><span class="n">renorm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;counts&#39;</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">spec_bb_norm</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
-
-    <span class="c1"># Get photometric calibration information.</span>
-    <span class="n">photflam</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;flam&#39;</span><span class="p">)</span>
+    <span class="n">bp</span> <span class="o">=</span> <span class="n">stsyn</span><span class="o">.</span><span class="n">band</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">instrument</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,wfc1,&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bandpass</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,mjd#57754&#39;</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">syn</span><span class="o">.</span><span class="n">Observation</span><span class="p">(</span><span class="n">stsyn</span><span class="o">.</span><span class="n">Vega</span><span class="p">,</span> <span class="n">bp</span><span class="p">,</span> <span class="n">binset</span><span class="o">=</span><span class="n">bp</span><span class="o">.</span><span class="n">binset</span><span class="p">)</span>
+    <span class="n">photflam</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">unit_response</span><span class="p">(</span><span class="n">stsyn</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
     <span class="n">photplam</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">pivot</span><span class="p">()</span>
 
-    <span class="n">zp_vega</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;vegamag&#39;</span><span class="p">)</span>
-    <span class="n">zp_st</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;stmag&#39;</span><span class="p">)</span>
-    <span class="n">zp_ab</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="s1">&#39;abmag&#39;</span><span class="p">)</span>
+    <span class="n">zp_vega</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">obs</span><span class="o">.</span><span class="n">effstim</span><span class="p">(</span><span class="n">flux_unit</span><span class="o">=</span><span class="s1">&#39;obmag&#39;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">stsyn</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">zp_ab</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">photflam</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mf">21.1</span>
+             <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">photplam</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="mf">18.6921</span><span class="p">)</span>
+    <span class="n">zp_st</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">photflam</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mf">21.1</span>
 
     <span class="n">difference</span> <span class="o">=</span> <span class="n">zp_vega</span> <span class="o">-</span> <span class="n">zp_ab</span>
 
     <span class="k">return</span> <span class="n">difference</span>
 
 
-<span class="k">def</span> <span class="nf">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lambda_rv_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="p">):</span>
     <span class="n">lambda_new</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span> <span class="o">*</span> <span class="n">lam</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;km/s&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rv_sys</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">lambda_new</span> <span class="o">=</span> <span class="n">lam</span>
     <span class="k">return</span> <span class="n">lambda_new</span>
 
 
-<span class="k">def</span> <span class="nf">_lambda_shift</span><span class="p">(</span><span class="n">dlin</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">lout</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_lambda_shift</span><span class="p">(</span><span class="n">dlin</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">lout</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">       This functions shifts the wavelength limits if the central wavelength</span>
 <span class="sd">       is shifted. This assures that lambda never runs out of bounds</span>
 
@@ -644,72 +601,61 @@
     <span class="k">return</span> <span class="n">dlout</span>
 
 
-<span class="k">def</span> <span class="nf">_gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
     <span class="n">prefact</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">exponetial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">returnfunction</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">exponetial</span>
     <span class="k">return</span> <span class="n">returnfunction</span>
 
 
-<span class="k">def</span> <span class="nf">_lorentzian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_lorentzian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
     <span class="n">returnfunction</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">returnfunction</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_any_bit_in_number</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elem</span> <span class="o">&amp;</span> <span class="n">num</span><span class="p">:</span>  <span class="c1"># Check if any bit is shared</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019 - 2021, Peter Zeidler.
-
-    </p>
+    <p>&#169; Copyright 2019 - 2025, Peter Zeidler.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'UA-XXXXXXX-1', 'auto');
-    
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>

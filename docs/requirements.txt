@@ -1,5 +1,5 @@
 sphinx
-sphinx-jsondomain
+sphinx-jsonschema
 astropy
 pyspeckit
 spectral_cube

@@ -42,7 +42,7 @@ The :obj:`json` configuration file is needed to run :class:`MUSEreduce.musereduc
 The file :download:`config file <../../MUSEpack/config.json>` is structured the following. If keywords are directly controlling toggles of the `MUSE data reduction pipeline`_ their naming is identical.
 
 
-.. json:object:: config
+.. jsonschema:object:: config
 
    :property global: global parameters affecting the data reduction process
    :proptype global: :json:object:`global`

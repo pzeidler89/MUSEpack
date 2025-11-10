@@ -11,7 +11,9 @@ To fully run all modules the following **non-standard** modules need to be insta
 
 * `pyspeckit`_
 * `ppxf`_
-* `pysynphot`_
+* `synphot`_
+* `stsynphot`_
+* `mosaic_wrapper`_
 
 .. _pyspeckit: https://pyspeckit.readthedocs.io/en/latest/index.html
 .. _ppxf: http://www-astro.physics.ox.ac.uk/~mxc/software/#ppxf
@@ -21,5 +23,5 @@ To fully run all modules the following **non-standard** modules need to be insta
 Additional 3rd party software
 -----------------------------
 
-To properly run :class:`MUSEreduce.musereduce` the ESO's MUSE data reduction pipeline v2.8.1 has to be installed. The latest version including the manual and further instructions can be found under: https://www.eso.org/sci/software/pipelines/muse/.
+To properly run :class:`MUSEreduce.musereduce` the ESO's MUSE data reduction pipeline v2.8.9 has to be installed. The latest version including the manual and further instructions can be found under: https://www.eso.org/sci/software/pipelines/muse/.
 
