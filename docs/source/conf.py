@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../../MUSEpack'))
 # -- Project information -----------------------------------------------------
 
 project = 'MUSEpack'
-copyright = '2019 - 2024, Peter Zeidler'
+copyright = '2019 - 2025, Peter Zeidler'
 author = 'Peter Zeidler'
 
 # The short X.Y version

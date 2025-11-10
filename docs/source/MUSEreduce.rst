@@ -15,14 +15,14 @@ To run :class:`MUSEreduce.musereduce` all of the raw data must be stored in a fo
 The basic folder structure
 --------------------------
 
-If ``auto_sort_data`` = :obj:`True` in the config file and :class:`MUSEreduce.musereduce` is executed, the basic folder structure is created in the ``rootpath``. The raw data will be automatically sorted according to the xml asocciation file information. As example, we consider that three OBs were observed: OB1a, OB1b, and OB2. OB1a and OB1b are two dither positions (with rotation angles of 5 and 95 deg and an exposure time of 2800s) of the same pointing OB1, while OB2 consists of three dither postions observed in one OB (with rotation angles of 10, 100, and 190 deg and an exposure time of 220s). The folder structure looks the following:
+If ``auto_sort_data`` = :obj:`True` in the config file and :class:`MUSEreduce.musereduce` is executed, the basic folder structure is created in the ``rootpath``. The raw data will be automatically sorted according to the xml asocciation file information. As example, we consider that three OBs were observed: WFM-AO-NGC6530---tile-1, WFM-AO-NGC6530---tile-2, and WFM-AO-NGC6530---tile-3. Within each OB are multiple observations with rotation angles of 0, 90, and 180 deg and exposure times of 5 and 860s. The folder structure looks the following:
 
 .. image:: images/folder_struct.png
 
-Each *master* OB (`OB1`, `OB2`) has its own folder in the `reduced` folder. Pointing `OB1` consists of the two OBs `OB1a` and `OB1b`. Each OB has the following folders:
+Each OB has its own folder in the `reduced` folder with the following nomenclature:
 
- * Each individual exposure (e.g., `091315-402023_2800_005_00`) following the structure: **RADEC_EXPTIME_ROTANGLE_COUNTER**. **RADEC** are the coordinates in sexagesimal, **EXPTIME** is the exposure time in seconds and the **ROTANGLE** is the rotation angle in degrees. The **COUNTER** is needed if there are two exposures with the same configuration.
- * Each individual pointing (e.g., `091315-402023_2800`) following the structure: **RADEC_EXPTIME**.
+ * Each individual exposure (e.g., `180431-242316_0005_180_00`) following the structure: **RADEC_EXPTIME_ROTANGLE_COUNTER**. **RADEC** are the coordinates in sexagesimal, **EXPTIME** is the exposure time in seconds and the **ROTANGLE** is the rotation angle in degrees. The **COUNTER** is needed if there are two exposures with the same configuration.
+ * Each individual pointing per exposure time (e.g., `180431-242316_0860`) following the structure: **RADEC_EXPTIME**.
  * The `calibrations` contain `DARK`, `TWILIGHT`, and `SCIENCE`, in case the calibration files are created from the raw calibration files provided by ESO Therefore, the calibration steps must be executed.
  * The `ESO_calibrations` is the folder, into which the reduced calibration files delivered by ESO (if available) are copied.
  * The `static_calibration_files`, is the folder, into which the statics (part of the `MUSE data reduction pipeline`_ installation) are copied.

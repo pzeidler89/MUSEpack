@@ -1,4 +1,4 @@
-# MUSEpack
+# MUSEpack v.2.0.2
 
 *MUSEpack* is a python package written to support the data analyzes from Integral Field Units, specifically tailored to use datasets of the Multi Unit Spectroscopic Explorer (`MUSE`) mounted at UT4 of the VLT (`Bacon et al. 2010`).
 
