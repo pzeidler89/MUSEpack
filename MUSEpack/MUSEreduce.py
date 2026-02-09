@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
-__revision__ = '20250818'
+__revision__ = '20260209'
 
 import sys
 import shutil
@@ -123,7 +123,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Aug 18, 2025                    #####')
+        print('#####                    Feb 09, 2026                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -603,6 +603,17 @@ def _sort_data(self):
                 rot_angles_ident[idx2] = ident
                 ident += 1
 
+    xmlraw_superstring_dict = {}
+
+    xmlraw2raw_filelist = np.sort(glob.glob(os.path.join(self.raw_data_dir,'*_raw2raw.xml')))
+    xmlraw2master_filelist = np.sort(glob.glob(os.path.join(self.raw_data_dir,'*_raw2master.xml')))
+
+    for xmlraw2raw_file, xmlraw2master_file in zip(xmlraw2raw_filelist, xmlraw2master_filelist):
+        xmlraw2raw = xml.iterparser.xml_readlines(xmlraw2raw_file)
+        xmlraw2master = xml.iterparser.xml_readlines(xmlraw2master_file)
+
+        xmlraw_superstring_dict[xmlraw2raw_file.split('/')[-1]] = '\t'.join(xmlraw2raw) + '\t'.join(xmlraw2master)
+
     for sci_file_idx in range(len(science_files)):
 
         hdu = fits.open(os.path.join(self.raw_data_dir, science_files[sci_file_idx]))[0]
@@ -612,13 +623,17 @@ def _sort_data(self):
         ROT = hdu.header['HIERARCH ESO INS DROT POSANG']
         DATE = hdu.header['MJD-OBS']
 
-        xmlraw2raw = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-8] + '_raw2raw.xml'))
-        xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-8] + '_raw2master.xml'))
+        # xmlraw2raw = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-8] + '_raw2raw.xml'))
+        # xmlraw2master = xml.iterparser.xml_readlines(os.path.join(self.raw_data_dir,science_files[sci_file_idx][:-8] + '_raw2master.xml'))
 
-        xmlraw2raw_string = '\t'.join(xmlraw2raw)
-        xmlraw2master_string = '\t'.join(xmlraw2master)
+        for xml_key, xml_item in xmlraw_superstring_dict.items():
+            if science_files[sci_file_idx][:-8] in xml_item:
+                xmlraw_superstring = xml_item
 
-        xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
+        # xmlraw2raw_string = '\t'.join(xmlraw2raw)
+        # xmlraw2master_string = '\t'.join(xmlraw2master)
+        #
+        # xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
 
         working_dir_temp = os.path.join(self.reduced_dir, OB_ids[sci_file_idx])
 
