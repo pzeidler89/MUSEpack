@@ -1469,10 +1469,14 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 MJDillum = illumhdu[0].header['MJD-OBS']
                 MJDsillum = np.append(MJDsillum, MJDillum)
                 illum_index = np.append(illum_index, i)
-        choosen_illum_object = int(illum_index[np.argmin(np.abs(MJDsillum\
-        - MJDobject))])
-        choosen_illum_std = int(illum_index[np.argmin(np.abs(MJDsillum\
-        - MJDstd))])
+        if len(MJDsillum) == 0:
+            print("WARNING: No ILLUM exposure was given !!!")
+            choosen_illum_object = None
+        else:
+            choosen_illum_object = int(illum_index[np.argmin(np.abs(MJDsillum\
+            - MJDobject))])
+            choosen_illum_std = int(illum_index[np.argmin(np.abs(MJDsillum\
+            - MJDstd))])
 
         f_std = open(sci_basic_std_sof_temp, 'w')
 
@@ -1481,8 +1485,9 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 f_std.write(raw_data_list[i][0]\
                 + '  ' + raw_data_list[i][1] + '\n')
 
-        f_std.write(raw_data_list[choosen_illum_std][0]\
-        + '  ' + raw_data_list[choosen_illum_std][1] + '\n')
+        if choosen_illum_object:
+            f_std.write(raw_data_list[choosen_illum_std][0]\
+            + '  ' + raw_data_list[choosen_illum_std][1] + '\n')
 
         if not self.using_ESO_calibration:
             f_std.write(os.path.join(self.calibration_dir, 'SCIENCE', 'MASTER_BIAS.fits') + ' MASTER_BIAS\n')
@@ -1525,9 +1530,9 @@ def _science_pre(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 if raw_data_list[i][1] == 'SKY':
                     f_object.write(raw_data_list[i][0]\
                     + '  ' + raw_data_list[i][1] + '\n')
-
-            f_object.write(raw_data_list[choosen_illum_object][0]\
-            + '  ' + raw_data_list[choosen_illum_object][1] + '\n')
+            if choosen_illum_object:
+                f_object.write(raw_data_list[choosen_illum_object][0]\
+                + '  ' + raw_data_list[choosen_illum_object][1] + '\n')
 
             if not self.using_ESO_calibration:
                 f_object.write(os.path.join(self.calibration_dir, 'SCIENCE','MASTER_BIAS.fits') + ' MASTER_BIAS\n')
