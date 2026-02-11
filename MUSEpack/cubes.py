@@ -2,7 +2,7 @@
 
 __version__ = '0.2.2'
 
-__revision__ = '20250826'
+__revision__ = '20260210'
 
 import sys
 import os
@@ -292,6 +292,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
 
             flux_cor_tab.add_column(np.ma.getmask(clippend_del_mag), name='masked')
+            flux_cor_tab.sort('spec_id')
             flux_cor_tab.write(os.path.join(output_path, 'flux_cor_info.tab'), format='ascii.rst', overwrite=True)
 
             if debug == True:

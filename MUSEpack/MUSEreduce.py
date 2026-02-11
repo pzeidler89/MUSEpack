@@ -2,7 +2,7 @@
 
 __version__ = '2.0.4'
 
-__revision__ = '20260209'
+__revision__ = '20260210'
 
 import sys
 import shutil
@@ -123,7 +123,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Feb 09, 2026                    #####')
+        print('#####                    Feb 11, 2026                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -1833,6 +1833,9 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 sof, esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
+        print('create temporary backup of the SKY_CONTINUUM.fits ==> SKY_CONTINUUM_temp.fits')
+        shutil.copy('SKY_CONTINUUM.fits', 'SKY_CONTINUUM_temp.fits')
+
         sky_cont_hdu = fits.open('SKY_CONTINUUM.fits', checksum=True)
         sky_cont = sky_cont_hdu[1].data
         for i in range(len(sky_cont)):
@@ -1885,9 +1888,10 @@ def _modified_sky(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                 sof, esorex_kwargs=esorex_kwargs)
 
         os.chdir(exposure_dir)
-        # if self.modified_continuum:
-        #     print('SKY_CONTINUUM_zero.fits ==> SKY_CONTINUUM.fits')
-        #     shutil.copy('SKY_CONTINUUM_zero.fits', 'SKY_CONTINUUM.fits')
+        if self.modified_continuum:
+            print('SKY_CONTINUUM_temp.fits ==> SKY_CONTINUUM.fits')
+            shutil.copy('SKY_CONTINUUM_temp.fits', 'SKY_CONTINUUM.fits')
+            os.remove('SKY_CONTINUUM_temp.fits')
         hdu = fits.open('SKY_LINES.fits', checksum=True)
         data = hdu[1].data
 
