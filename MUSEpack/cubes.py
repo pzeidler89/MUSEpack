@@ -29,7 +29,7 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             correct_flux=False, spec_folder='stars', spec_path=None,
             hst_filter=['ACS', 'F814W'], AB_zpt=None, Vega_zpt=None,
             correctiontype='shift', save_output=True, debug=False, spec_snr=5.0,
-            dqs = [2,4,8]):
+            dqs = [2,4,8], man_multiplyer=None):
 
     '''
     Args:
@@ -289,7 +289,10 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             flux_cor_tab['DQ'].info.format = '3.0f'
 
             clippend_del_mag = sigma_clip(del_mag_list, sigma=2, cenfunc = np.ma.median)
-            fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
+            if man_multiplyer == None:
+                fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
+            else:
+                fmultipl = man_multiplyer
 
             flux_cor_tab.add_column(np.ma.getmask(clippend_del_mag), name='masked')
             flux_cor_tab.sort('spec_id')
@@ -304,6 +307,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
             '{:.2f}'.format(np.ma.median(clippend_del_mag)))
             print('sigma cat - MUSE [mag]: ',\
             '{:.2f}'.format(np.ma.std(clippend_del_mag)))
+            if man_multiplyer != None:
+                print("WARNING: using manual multiplyer")
             print('The flux multiplicator [f_catalog / f_MUSE]: ',\
             '{:.2f}'.format(fmultipl))
             print('number of sources: ',\
@@ -313,6 +318,8 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                 f.write("\n")
                 f.write('cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.median(clippend_del_mag)) + '\n')
                 f.write('sigma cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.std(clippend_del_mag)) + '\n')
+                if man_multiplyer != None:
+                    f.write(("WARNING: using manual multiplyer \n")
                 f.write('The flux multiplicator [f_catalog / f_MUSE]: ' + '{:.2f}'.format(fmultipl) + '\n')
                 f.write('N sources: ' + '{:.0f}'.format(clippend_del_mag.count()))
 
@@ -457,7 +464,7 @@ def pampelmuse_cat(ra, dec, mag, filter, idx=None, path=None,
     regf.close()
 
 
-def linemaps(input_fits, path=None, elements=None, wavelengths=None):
+def linemaps(input_fits, path=None, elements=None, wavelengths=None, dlambda=3):
     '''
     This module is intended to create linemaps of specified lines/elements
 
@@ -475,6 +482,10 @@ def linemaps(input_fits, path=None, elements=None, wavelengths=None):
         wavelength : :obj:`list` (optional)
             list of wavelength for givene elements, optional,
             must be given if `elements` is given
+
+        dlambda : :obj:`float` (optional, default: 3)
+            plus/minus lambda range in Angstrom around line centroid to construct
+            the linemap
 
     '''
 
@@ -494,15 +505,16 @@ def linemaps(input_fits, path=None, elements=None, wavelengths=None):
         os.mkdir(path + 'temp/')
 
     cube = SpectralCube.read(path + '/' + input_fits, hdu=1, format='fits')
+    cube.allow_huge_operations = True
     for wavelength, element in zip(wavelengths, elements):
-        slab = cube.spectral_slab((wavelength - 3) * u.AA,\
-        (wavelength + 3) * u.AA).sum(axis=0)
+        slab = cube.spectral_slab((wavelength - dlambda) * u.AA,\
+        (wavelength + dlambda) * u.AA).sum(axis=0)
         slab.hdu.writeto(path + '/' + element + '_' +input_fits, overwrite=True)
 
     shutil.rmtree(path + 'temp/')
 
 
-def mosaics(input_list, name, path=None):
+def mosaics(input_list, name, path=None, background_match=True):
 
     '''
     This module is intended to create mosaics of specified lines/elements.
@@ -519,6 +531,10 @@ def mosaics(input_list, name, path=None):
         path: :obj:`str` (optional, default: current directory)
             I/O path
 
+        background_match: :obj:`bool` (optional, default: `true`)
+            turn on and off teh background matching
+
+
     '''
 
     if path == None:
@@ -533,7 +549,7 @@ def mosaics(input_list, name, path=None):
         shutil.copy(f, path + '/temp/' + str(idx) + '.fits')
 
     montage.mosaic(path + '/temp/', path + '/mosaic_temp/',\
-    background_match=True, exact_size=True, cleanup=True)
+    background_match=background_match, exact_size=True, cleanup=True)
     shutil.copy(path + '/mosaic_temp/mosaic_area.fits',\
     path + '/mosaics/exp_' + name + '.fits')
 
