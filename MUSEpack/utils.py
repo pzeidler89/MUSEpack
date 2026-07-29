@@ -25,11 +25,15 @@ import logging
 import stsynphot as stsyn
 import synphot as syn
 from specutils import Spectrum1D
+from astropy.coordinates import SkyCoord
 
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import find_peaks
 from scipy.special import wofz
 from itertools import combinations as inter_comb
+
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle, Rectangle
 
 
 def initial_guesses(self, lines, blends=None, linestrength=100.,\
@@ -455,3 +459,115 @@ def _any_bit_in_number(arr, num):
         if elem & num:  # Check if any bit is shared
             return False
     return True
+
+
+def _make_circle_mask(shape, wcs, ra_deg, dec_deg, radius_arcsec):
+    """Boolean mask, True inside a sky-circle of given radius."""
+    coord = SkyCoord(ra=ra_deg * u.deg, dec=dec_deg * u.deg, frame="icrs")
+    x0, y0 = wcs.world_to_pixel_values(coord.ra, coord.dec)
+
+    # Pixel scale in arcsec/pix from the CD matrix (or CDELT)
+    pixscale = np.sqrt(np.abs(np.linalg.det(wcs.pixel_scale_matrix))) * 3600.0
+    radius_pix = radius_arcsec / pixscale
+    print(f"  source pixel center: ({x0:.1f}, {y0:.1f})")
+    print(f"  pixel scale: {pixscale:.4f} arcsec/pix")
+    print(f"  source radius: {radius_arcsec} arcsec = {radius_pix:.1f} pix")
+
+    yy, xx = np.ogrid[:shape[0], :shape[1]]
+    r2 = (xx - x0) ** 2 + (yy - y0) ** 2
+    return r2 < radius_pix ** 2, (x0, y0, radius_pix)
+
+
+def _make_rectangle_mask(shape, wcs, ra_deg, dec_deg,
+                         pa_deg, length_arcsec, width_arcsec):
+    """
+    Boolean mask, True inside a rotated rectangle centered on (ra, dec).
+    pa_deg is the position angle of the rectangle's long axis,
+    measured east of north on the sky.
+    """
+    coord = SkyCoord(ra=ra_deg * u.deg, dec=dec_deg * u.deg, frame="icrs")
+    x0, y0 = wcs.world_to_pixel_values(coord.ra, coord.dec)
+
+    pixscale = np.sqrt(np.abs(np.linalg.det(wcs.pixel_scale_matrix))) * 3600.0
+    L = length_arcsec / pixscale
+    W = width_arcsec  / pixscale
+
+    # Determine the on-image angle corresponding to PA on the sky.
+    # We compute it numerically: take a small step north (delta-Dec > 0)
+    # from the source, see where it lands in pixel coordinates, and that
+    # gives us the "north" direction in the image. Then PA is measured
+    # east of north.
+    step_arcsec = 1.0
+    north = SkyCoord(ra=ra_deg * u.deg,
+                     dec=(dec_deg + step_arcsec / 3600.0) * u.deg,
+                     frame="icrs")
+    xn, yn = wcs.world_to_pixel_values(north.ra, north.dec)
+    # angle of "north" in image coords (radians, measured from +x axis CCW)
+    north_angle = np.arctan2(yn - y0, xn - x0)
+    # east is 90 deg CCW from north on the sky; on the image this is
+    # north_angle + pi/2 (because we're working in standard math convention)
+    pa_rad = np.deg2rad(pa_deg)
+    # rectangle long-axis direction in image coords
+    angle = north_angle + pa_rad - np.pi / 2.0  # PA east of north -> image angle
+
+    cos_a, sin_a = np.cos(angle), np.sin(angle)
+
+    yy, xx = np.mgrid[:shape[0], :shape[1]]
+    dx = xx - x0
+    dy = yy - y0
+    # Project into the rectangle's local frame
+    u_along = dx * cos_a + dy * sin_a   # along the long axis
+    v_perp  = -dx * sin_a + dy * cos_a  # perpendicular to it
+
+    inside = (np.abs(u_along) < L / 2.0) & (np.abs(v_perp) < W / 2.0)
+
+    print(f"  bleed center: ({x0:.1f}, {y0:.1f})")
+    print(f"  bleed length: {length_arcsec} arcsec = {L:.1f} pix")
+    print(f"  bleed width:  {width_arcsec} arcsec = {W:.1f} pix")
+    print(f"  bleed image-frame angle: {np.rad2deg(angle):.1f} deg")
+
+    return inside, (x0, y0, L, W, angle)
+
+def _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, outpath):
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Panel 1: white-light image with mask regions overlaid
+    finite = np.isfinite(img)
+    if finite.any():
+        vmin, vmax = np.nanpercentile(np.asarray(img[finite]), [5, 99])
+    else:
+        vmin, vmax = 0, 1
+    axes[0].imshow(img, origin="lower", cmap="gray_r", vmin=vmin, vmax=vmax)
+    axes[0].set_title("White-light image + mask outlines")
+
+    for geom_dict_key in src_geom_dict.keys():
+
+        x0, y0, R = src_geom_dict[geom_dict_key]
+
+        axes[0].add_patch(Circle((x0, y0), R, fill=False,
+                                 edgecolor="red", linewidth=1.5))
+        if bleed_geom_dict[geom_dict_key] is not None:
+            bx, by, L, W, ang = bleed_geom_dict[geom_dict_key]
+            # Rectangle patch is anchored at a corner; rotate around the corner.
+            rect = Rectangle(
+                (float(bx - L / 2), float(by - W / 2)),
+                float(L), float(W),
+                angle=float(np.rad2deg(ang)),
+                rotation_point=(float(bx), float(by)),
+                fill=False, edgecolor="orange", linewidth=1.5,
+            )
+            axes[0].add_patch(rect)
+
+    # Panel 2: the mask itself
+    axes[1].imshow(mask, origin="lower", cmap="gray", vmin=0, vmax=1)
+    axes[1].set_title("SKY_MASK (white = sky, black = excluded)")
+
+    for ax in axes:
+        ax.set_xlabel("x [pix]")
+        ax.set_ylabel("y [pix]")
+    outfile = os.path.join(outpath, 'leak_mask_diagnostic.png')
+    plt.tight_layout()
+    plt.savefig(outfile, dpi=120)
+    print(f"\nWrote {outfile}")
+
+    plt.close(fig)

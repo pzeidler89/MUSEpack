@@ -64,7 +64,8 @@
     "create_sof": true
   },
   "dither_collect":{
-    "execute": true
+    "execute": true,
+    "use_masked_pixtable": false
   },
   "exp_align":{
     "execute": true,

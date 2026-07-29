@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.0.4'
+__version__ = '2.1.0'
 
-__revision__ = '20260210'
+__revision__ = '20260722'
 
 import sys
 import shutil
@@ -123,7 +123,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Feb 11, 2026                    #####')
+        print('#####                    Jul 22, 2026                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -204,13 +204,12 @@ class musereduce:
             self.multOB_unique_pointings_ID = None
         else:
             print('   >>> All exposures per pointing are located in one OB')
-            if len(self.user_list) > 1:
+            if self.user_list[0] == 'all':
+                print('   >>> Dithering all exposures within OB folder:')
+            else:
                 print('   >>> Dithering exposures input list:')
                 for li in self.user_list:
                     print(li)
-            if len(self.user_list) == 1:
-                if self.user_list[0] == 'all':
-                    print('   >>> Dithering all exposures within OB folder:')
 
         print('')
         print('... The following modules will be executed')
@@ -389,7 +388,7 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
-                _dither_collect(self, exp_list_SCI, OB)
+                _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = self.config['dither_collect']['use_masked_pixtable'])
 
             if self.dithering_multiple_OBs:
                 if self.multOB_exp_counter == 0:
@@ -433,7 +432,7 @@ def _get_filelist(self, data_dir, filename_wildcard):
     '''
 
     os.chdir(data_dir)
-    raw_data_list = glob.glob(filename_wildcard)
+    raw_data_list = sorted(glob.glob(filename_wildcard))
     os.chdir(self.rootpath)
     return raw_data_list
 
@@ -503,7 +502,7 @@ def _create_ob_folders(self):
     for OBs in self.OB_list:
         print('       ', OBs)
 
-    if self.dithering_multiple_OBs and len(self.user_list) > 0 and self.user_list != "all":
+    if self.dithering_multiple_OBs and self.user_list[0] != "all":
         print('Currently a user list cannot be provided with multiple OBs !!!')
         sys.exit()
 
@@ -2039,7 +2038,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 + ' --filter=white',\
                 sof, esorex_kwargs=esorex_kwargs)
 
-def _dither_collect(self, exp_list_SCI, OB):
+def _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = False):
 
     '''
     This module collects the individual dither exposures for one OB to be
@@ -2062,6 +2061,9 @@ def _dither_collect(self, exp_list_SCI, OB):
 
     Kwargs:
 
+        use_masked_pixtable : :obj:`bool`:
+        :obj:`True`: the manually masked PIXTABLE_REDUCED_0001_MASKED.fits is copied
+
     '''
 
     print('... COLLECT DITHER POSTITIONS')
@@ -2078,6 +2080,12 @@ def _dither_collect(self, exp_list_SCI, OB):
     print(' ')
     print('   >>> Copying files:')
     print(' ')
+    if use_masked_pixtable:
+        print('   ... Using the manually masked PIXTABLE')
+        pixtable = 'PIXTABLE_REDUCED_0001_MASKED.fits'
+    else:
+        pixtable = 'PIXTABLE_REDUCED_0001.fits'
+
 
     if len(self.user_list) == 0:
         for expnum in range(len(exp_list_SCI)):
@@ -2086,11 +2094,9 @@ def _dither_collect(self, exp_list_SCI, OB):
                 exp_list_SCI[expnum][:-16])
                 unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) == 1:
-        if self.user_list[0] == "all":
-            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
-
-    if len(self.user_list) > 1:
+    if self.user_list[0] == "all":
+        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+    else:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2106,11 +2112,10 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
 
-        if len(self.user_list) == 1:
-            if self.user_list[0] == 'all':
-                exp_list = exp_list_SCI
 
-        if len(self.user_list) > 1:
+        if self.user_list[0] == 'all':
+            exp_list = exp_list_SCI
+        else:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
@@ -2141,11 +2146,9 @@ def _dither_collect(self, exp_list_SCI, OB):
         if len(self.user_list) == 0:
             exp_list = glob.glob(sec + '*SCI.list')
 
-        if len(self.user_list) == 1:
-            if self.user_list[0] == 'all':
-                exp_list = exp_list_SCI
-
-        if len(self.user_list) > 1:
+        if self.user_list[0] == 'all':
+            exp_list = exp_list_SCI
+        else:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
@@ -2168,7 +2171,7 @@ def _dither_collect(self, exp_list_SCI, OB):
 
             origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
                             os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001.fits'),
-                            os.path.join(exp_list[exp_num][:-9], 'PIXTABLE_REDUCED_0001.fits')
+                            os.path.join(exp_list[exp_num][:-9], pixtable)
                             ]
             destination_files = [os.path.join(combining_exposure_dir, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
                                  os.path.join(combining_exposure_dir, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
@@ -2230,11 +2233,9 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) == 1:
-        if self.user_list[0] == "all":
-            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
-
-    if len(self.user_list) > 1:
+    if self.user_list[0] == "all":
+        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+    else:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2251,11 +2252,10 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         if len(self.user_list) == 0:
             exp_list = glob.glob(os.path.join(sec, '*SCI.list'))
 
-        if len(self.user_list) == 1:
-            if self.user_list[0] == 'all':
-                exp_list = exp_list_SCI
 
-        if len(self.user_list) > 1:
+        if self.user_list[0] == 'all':
+            exp_list = exp_list_SCI
+        else:
             exp_list = []
             for user_list_element in self.user_list:
                 exp_list.append(os.path.join(self.working_dir, user_list_element + '_SCI.list'))
@@ -2288,7 +2288,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             combining_exposure_dir = os.path.join(sec)
 
 
-        exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*.fits')
+        exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*---*.fits')
         if create_sof:
             sof_file = os.path.join(combining_exposure_dir, 'exp_align.sof')
             if os.path.exists(sof_file):
@@ -2350,11 +2350,9 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) == 1:
-        if self.user_list[0] == "all":
-            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
-
-    if len(self.user_list) > 1:
+    if self.user_list[0] == "all":
+        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+    else:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     for unique_pointing_num in range(len(unique_pointings)):
@@ -2429,11 +2427,9 @@ def _cleanup(self, exp_list_SCI, include_std=False, include_combined=False, incl
                     exp_list_SCI[expnum][:-16])
                     unique_tester = unique_tester + exp_list_SCI[expnum][:-16]
 
-    if len(self.user_list) == 1:
-        if self.user_list[0] == "all":
-            unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
-
-    if len(self.user_list) > 1:
+    if self.user_list[0] == "all":
+        unique_pointings = [os.path.join(self.working_dir, exp_list_SCI[0][:-16])]
+    else:
         unique_pointings = [os.path.join(self.working_dir, self.user_list[0][:18])]
 
     if include_combined:
