@@ -2,7 +2,7 @@
 
 __version__ = '2.1.0'
 
-__revision__ = '20260722'
+__revision__ = '20260731'
 
 import sys
 import shutil
@@ -633,6 +633,9 @@ def _sort_data(self):
         # xmlraw2master_string = '\t'.join(xmlraw2master)
         #
         # xmlraw_superstring = xmlraw2raw_string + xmlraw2master_string
+
+        if OB_ids[sci_file_idx] not in self.OB_list:
+            continue
 
         working_dir_temp = os.path.join(self.reduced_dir, OB_ids[sci_file_idx])
 
