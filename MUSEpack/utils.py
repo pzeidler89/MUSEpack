@@ -3,7 +3,7 @@
 
 __version__ = '0.2.1'
 
-__revision__ = '20250606'
+__revision__ = '20260812'
 
 import sys
 import os
@@ -26,15 +26,24 @@ import stsynphot as stsyn
 import synphot as syn
 from specutils import Spectrum1D
 from astropy.coordinates import SkyCoord
+from pathlib import Path
 
 from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage import median_filter
 from scipy.signal import find_peaks
+from scipy.signal import savgol_filter
 from scipy.special import wofz
+from scipy.interpolate import UnivariateSpline
+
 from itertools import combinations as inter_comb
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle
+import matplotlib.gridspec as gridspec
 
+from dask.distributed import Client, LocalCluster
+from multiprocessing import cpu_count
+from functools import partial
 
 def initial_guesses(self, lines, blends=None, linestrength=100.,\
                     llimits=[2. * (-1), 2.]):
@@ -528,7 +537,7 @@ def _make_rectangle_mask(shape, wcs, ra_deg, dec_deg,
 
     return inside, (x0, y0, L, W, angle)
 
-def _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, outpath):
+def _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, outfile):
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
     # Panel 1: white-light image with mask regions overlaid
@@ -565,9 +574,150 @@ def _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, outpath):
     for ax in axes:
         ax.set_xlabel("x [pix]")
         ax.set_ylabel("y [pix]")
-    outfile = os.path.join(outpath, 'leak_mask_diagnostic.png')
     plt.tight_layout()
     plt.savefig(outfile, dpi=120)
     print(f"\nWrote {outfile}")
 
     plt.close(fig)
+
+def _skyfit(refsky, wav, sky, sigma=2., s=1., order=3, plot=True, plot_axis=None):
+
+    ratio = sky/refsky
+
+    median_ratio = median_filter(ratio, size=111, mode='constant', cval=0.0)
+
+    residuals = ratio - median_ratio
+    std_dev_residuals = np.std(residuals)
+
+    mask = np.abs(residuals) < (sigma * std_dev_residuals)
+    wav_c, ratio_c = wav[mask], ratio[mask]
+
+    ratio_c = median_filter(ratio_c, size=501, mode='reflect')
+    ratio_c = savgol_filter(ratio_c, window_length=21, polyorder=2)
+
+    if plot:
+        plot_axis.plot(wav_c,ratio_c,color='green', zorder=1, label='smoothed continuum')
+
+    spline = UnivariateSpline(wav_c, ratio_c, s=s, k=order)
+    yspline = spline(wav)
+
+    return yspline, spline
+
+
+def _apply_spline(pixtable_dict, spline_funct_dict, outdir, key):
+     pixtable = pixtable_dict[key]
+     pixtable_filename = Path(pixtable).name
+     print("   ... Apply continuum correction to:", pixtable.split('/')[-1])
+
+     with fits.open(pixtable) as hdu:
+         data = hdu['data'].data
+         wav = hdu['lambda'].data
+         spline_funct = spline_funct_dict[key]
+         spline = spline_funct(wav)
+
+         print("   ... dividing by spline ...")
+         data /= spline
+         hdu['data'].data = data
+
+         outfile = os.path.join(outdir, pixtable_filename.replace('.fits','_CONTCORR.fits'))
+         print("   ... writing:", outfile)
+         hdu.writeto(outfile, overwrite=True)
+
+def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot=True, n_CPU=1):
+
+    '''
+    This module is intended to correct for continuum differences between individual dithers
+    The correction is directly implemented on the PIXTABLES
+
+    Args:
+        pixtables : :obj:`list`
+                The list of input pixeltables
+
+        skycontinuum : :obj:`list`
+                The list of skycontinua that match the pixeltables
+
+    Kwargs:
+
+    '''
+
+    sky_level = {}
+    pixtable_dict = {}
+
+    for i, (sky_file, pixtab_filename) in enumerate(zip(skycontinuum, pixeltables)):
+
+        hdu_sky = fits.open(os.path.join(pixtab_dir, sky_file))
+        sky_level[pixtab_filename] = hdu_sky[1].data
+        pixtable_dict[pixtab_filename] = os.path.join(pixtab_dir, pixtab_filename)
+
+    sky_level_cube = np.vstack([sky_level[pixeltables[0]]['flux'], sky_level[pixeltables[1]]['flux'], sky_level[pixeltables[2]]['flux']])
+
+    refsky = np.mean(sky_level_cube, axis=0)
+
+    if plot:
+        print('   ... creating the plot')
+
+        plt.figure('median_slice', figsize=(20, 20))
+
+        plotgrid = gridspec.GridSpec(5, 1)
+        ax0 = plt.subplot(plotgrid[0, 0])
+        ax1 = plt.subplot(plotgrid[1, 0])
+        ax2 = plt.subplot(plotgrid[2, 0])
+        ax3 = plt.subplot(plotgrid[3, 0])
+        ax4 = plt.subplot(plotgrid[4, 0])
+        spline_ax = [ax1, ax2, ax3]
+
+    spline_dict = {}
+    spline_funct_dict = {}
+
+    for ax, skyname in zip(spline_ax, np.sort(list(sky_level.keys()))):
+        wav = sky_level[skyname]['lambda']
+        sky = sky_level[skyname]['flux']
+
+        print('   ... calculating the spline for: ', skyname)
+
+        skyspline, spline_funct = _skyfit(refsky, wav, sky, sigma=1, s=0.1, order=5, plot=True, plot_axis=ax)
+        spline_dict[skyname] = skyspline
+        spline_funct_dict[skyname] = spline_funct
+
+        if plot:
+            ax.plot(wav, sky / refsky, c='k', zorder=0, label='continuum')
+            ax.plot(wav, skyspline, c='red', zorder=2, label='spline')
+            ax.set_ylim(0.5, 1.5)
+            ax.set_ylabel('rel. flux')
+
+            ax.legend()
+
+            ax0.plot(wav, sky / np.median(sky), alpha=0.5)
+            ax4.plot(wav, sky / skyspline / np.median(sky / skyspline), alpha=0.5)
+
+            ax0.set_ylim(0.5, 1.5)
+            ax4.set_ylim(0.5, 1.5)
+            ax4.set_xlabel('wavelength [A]')
+            ax0.set_ylabel('norm. flux')
+            ax4.set_ylabel('cor. norm. flux')
+
+            ax0.set_title(skyname)
+
+    if plot:
+        print('   ... saving the plot:', os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'))
+        plt.savefig(os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'), dpi=300)
+
+    for keys_to_process in list(sky_level.keys()):
+        _apply_spline(pixtable_dict, spline_funct_dict, pixtab_dir, keys_to_process)
+
+    # try:
+    #     client.close()
+    #     cluster.close()
+    #     client.shutdown()
+    # except:
+    #     pass
+    #
+    # cluster = LocalCluster(n_workers=n_CPU, threads_per_worker=1, memory_limit='32GB',
+    #                        dashboard_address=':8787', processes=True)
+    # client = Client(cluster)
+    #
+    # keys_to_process = list(sky_level.keys())
+    # bound_apply_spline = partial(_apply_spline, pixtable_dict, spline_funct_dict, pixtab_dir, keys_to_process)
+    #
+    # futures = client.map(bound_apply_spline, keys_to_process)
+    # results = client.gather(futures)

@@ -2,7 +2,7 @@
 
 __version__ = '0.3.0'
 
-__revision__ = '20260727'
+__revision__ = '20260812'
 
 import sys
 import os
@@ -591,7 +591,7 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
 
     '''
 
-    print('   >>> loading the mask and pixel table')
+    print('   ... loading the mask and pixel table')
     pixtable_filename = Path(pixtable).name
     pixtable_path = Path(pixtable).parent
 
@@ -601,7 +601,7 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
 
     pix = PixTable(pixtable)
 
-    print('   >>> creating the coordinate transforms')
+    print('   ... creating the coordinate transforms')
 
     ra, dec = pix.get_pos_sky()
 
@@ -614,7 +614,7 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
     valid_bounds = ((x_idx >= 0) & (x_idx < mask_data.shape[1]) &
                     (y_idx >= 0) & (y_idx < mask_data.shape[0]))
 
-    print('   >>> masking the PIXTABLE')
+    print('   ... masking the PIXTABLE')
 
     pix_sel = np.ones(len(ra), dtype=bool)
     pix_sel[valid_bounds] = ~mask_data[y_idx[valid_bounds], x_idx[valid_bounds]]
@@ -624,11 +624,11 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
     pix.set_dq(dq)
 
     pix_tab_out = os.path.join(pixtable_path, pixtable_filename.replace('.fits', '_MASKED.fits'))
-    print('   >>> saving the PIXTABLE: ', pix_tab_out)
+    print('   ... saving the PIXTABLE: ', pix_tab_out)
     pix.write(pix_tab_out)
 
 
-def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_length, r_source=None):
+def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_length, r_source=None, mask_source=False, offset_list=None):
 
     '''
     This module is intended to create the external leak mask.
@@ -645,8 +645,14 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
 
     Kwargs:
         r_source : :obj:`np.array` (optional, default: `None')
-                The source radius to be masked. If `None' the source remains unmasked
+                The source radius to be masked. If `None' the source radius matches the bleed_mask
 
+        mask_source : :obj:`bool` (option, default: `False')
+                If true the source is also masked.
+
+        offset_list : :obj:`str` (optional, default: `None')
+                The path to the OFFSET_LIST.fits file created in the cube align step of teh MUSE pipeline.
+                If provided it will correct the mask location for possiple shifts between different dithers
     '''
 
     print('   >>> load whitelight image')
@@ -658,9 +664,22 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
 
     wcs2d = WCS(img_header)
     bleed_pa = img_hdu[0].header['HIERARCH ESO INS DROT POSANG']
+    date_obs = img_hdu[0].header['DATE-OBS']
 
     shape = img.data.shape
     print(f"Image shape: {shape}")
+
+    if offset_list != None:
+        offset_list_hdu = fits.open(offset_list)
+        offset_tab = Table(offset_list_hdu[1].data)
+
+        offset_select = np.where(date_obs == offset_tab['DATE_OBS'])
+        offset_ra = offset_tab['RA_OFFSET'][offset_select].value[0]
+        offset_dec = offset_tab['DEC_OFFSET'][offset_select].value[0]
+
+    else:
+        offset_ra = 0.
+        offset_dec = 0.
 
     print('   >>> initiate the mask')
     mask = np.ones(shape, dtype=np.int32)
@@ -671,11 +690,20 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
     bleed_mask_dict = {}
 
     for imask, (ra, dec, width, length) in enumerate(zip(ra_cent, dec_cent, bleed_width, bleend_length)):
+
+        print(ra)
+        ra += offset_ra * np.cos(dec/180.*np.pi)
+        dec += offset_dec
+        print(ra)
+
         if r_source==None:
             print('   ... no radius is given, source will not be masked')
             r= width / np.sqrt(2)
         else:
-            r = r_source[imask]
+            if isinstance(r_source, float):
+                r = r_source
+            else:
+                r = r_source[imask]
 
         src_mask, src_geom = _make_circle_mask(shape, wcs2d, ra, dec, r)
         bleed_mask, bleed_geom = _make_rectangle_mask(shape, wcs2d, ra, dec, bleed_pa, length, width)
@@ -689,10 +717,10 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
         mask[bleed_mask] = 0
 
     for mask_dict_key in src_mask_dict.keys():
-        if r_source==None:
-            mask[src_mask_dict[mask_dict_key]] = 1
-        else:
+        if mask_source:
             mask[src_mask_dict[mask_dict_key]] = 0
+        else:
+            mask[src_mask_dict[mask_dict_key]] = 1
 
     n_total = mask.size
     n_sky   = int(mask.sum())
@@ -713,11 +741,11 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
     primary = fits.PrimaryHDU()
     image_hdu = fits.ImageHDU(data=mask, header=img_header, name="DATA")
     hdul = fits.HDUList([primary, image_hdu])
-    leak_mask_file = os.path.join(whitelight_path, 'LEAK_MASK.fits')
+    leak_mask_file = whitelight_image.replace('IMAGE_FOV', 'LEAK_MASK')
     hdul.writeto(leak_mask_file, overwrite=True)
     print(f"\nWrote {leak_mask_file}")
 
-    _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, whitelight_path)
+    _make_diagnostic_plot(img, mask, src_geom_dict, bleed_geom_dict, whitelight_image.replace('IMAGE_FOV', 'LEAK_MASK').replace('fits','png'))
 
 
 def unmask_overlapping_leak_mask(prime_mask_file, sec_mask_file ,mask_val=0, unmask_val=1):

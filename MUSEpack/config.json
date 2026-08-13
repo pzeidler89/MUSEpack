@@ -64,8 +64,7 @@
     "create_sof": true
   },
   "dither_collect":{
-    "execute": true,
-    "use_masked_pixtable": false
+    "execute": true
   },
   "exp_align":{
     "execute": true,
@@ -77,6 +76,8 @@
   "exp_combine":{
     "execute": true,
     "weight": "exptime",
+    "use_pixtable_mask": false,
+    "intra_cube_continuum_correction": false,
     "esorex_kwargs": null,
     "create_sof": true
   }

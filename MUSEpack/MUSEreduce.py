@@ -2,7 +2,7 @@
 
 __version__ = '2.1.0'
 
-__revision__ = '20260731'
+__revision__ = '20260805'
 
 import sys
 import shutil
@@ -18,6 +18,9 @@ from astropy.utils import xml
 from datetime import datetime, timedelta
 import time
 import json
+
+from MUSEpack.cubes import apply_leak_mask
+from MUSEpack.utils import _intra_cube_continuum_correction
 
 
 class musereduce:
@@ -388,7 +391,7 @@ class musereduce:
                 _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=self.config['sci_post']['esorex_kwargs'])
 
             if self.config['dither_collect']['execute']:
-                _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = self.config['dither_collect']['use_masked_pixtable'])
+                _dither_collect(self, exp_list_SCI, OB)
 
             if self.dithering_multiple_OBs:
                 if self.multOB_exp_counter == 0:
@@ -398,7 +401,9 @@ class musereduce:
 
                     if self.config['exp_combine']['execute']:
                         create_sof = self.config['exp_combine']['create_sof']
-                        _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+                        _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=self.config['exp_combine']['esorex_kwargs'],
+                                     mask_pixtable=self.config['exp_combine']['use_pixtable_mask'],
+                                     intra_cube_continuum_correction=self.config['exp_combine']['intra_cube_continuum_correction'])
             else:
                 if self.config['exp_align']['execute']:
                     create_sof = self.config['exp_align']['create_sof']
@@ -408,7 +413,9 @@ class musereduce:
                 if self.config['exp_combine']['execute']:
                     create_sof = self.config['exp_combine']['create_sof']
                     _exp_combine(self, exp_list_SCI, create_sof,
-                                 esorex_kwargs=self.config['exp_combine']['esorex_kwargs'])
+                                 esorex_kwargs=self.config['exp_combine']['esorex_kwargs'],
+                                 mask_pixtable=self.config['exp_combine']['use_pixtable_mask'],
+                                 intra_cube_continuum_correction=self.config['exp_combine']['intra_cube_continuum_correction'])
 
 
             if self.dithering_multiple_OBs:
@@ -2041,7 +2048,7 @@ def _scipost(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
                 + ' --filter=white',\
                 sof, esorex_kwargs=esorex_kwargs)
 
-def _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = False):
+def _dither_collect(self, exp_list_SCI, OB):
 
     '''
     This module collects the individual dither exposures for one OB to be
@@ -2064,9 +2071,6 @@ def _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = False):
 
     Kwargs:
 
-        use_masked_pixtable : :obj:`bool`:
-        :obj:`True`: the manually masked PIXTABLE_REDUCED_0001_MASKED.fits is copied
-
     '''
 
     print('... COLLECT DITHER POSTITIONS')
@@ -2083,11 +2087,8 @@ def _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = False):
     print(' ')
     print('   >>> Copying files:')
     print(' ')
-    if use_masked_pixtable:
-        print('   ... Using the manually masked PIXTABLE')
-        pixtable = 'PIXTABLE_REDUCED_0001_MASKED.fits'
-    else:
-        pixtable = 'PIXTABLE_REDUCED_0001.fits'
+
+    pixtable = 'PIXTABLE_REDUCED_0001.fits'
 
 
     if len(self.user_list) == 0:
@@ -2172,11 +2173,13 @@ def _dither_collect(self, exp_list_SCI, OB, use_masked_pixtable = False):
 
         for exp_num in range(len(exp_list)):
 
-            origin_files = [os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
+            origin_files = [os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits'),
+                            os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
                             os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001.fits'),
                             os.path.join(exp_list[exp_num][:-9], pixtable)
                             ]
-            destination_files = [os.path.join(combining_exposure_dir, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+            destination_files = [os.path.join(combining_exposure_dir, 'SKY_CONTINUUM_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                                 os.path.join(combining_exposure_dir, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
                                  os.path.join(combining_exposure_dir, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
                                  os.path.join(combining_exposure_dir, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
                                  ]
@@ -2304,7 +2307,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
         if not self.debug:
             _call_esorex(self, combining_exposure_dir, esorex_cmd, sof, esorex_kwargs=esorex_kwargs)
 
-def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
+def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None, mask_pixtable=False, intra_cube_continuum_correction=False):
 
     '''
     This module calls *ESORex'* ``muse_exp_combine``
@@ -2321,6 +2324,11 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
             by the user
 
     Kwargs:
+
+        mask_pixtable: :obj:`bool`
+            If set to true a leak mask will be applied to the pixel table. This requires the existance of a
+            LEAK_MASK for each dither postition.
+
          esorex_kwargs: :obj:`str`
             Additional keywords that should be passed for special processing. These should be passed
             as one string
@@ -2380,7 +2388,35 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None):
         if not self.dithering_multiple_OBs:
             combining_exposure_dir = os.path.join(sec)
 
-        pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*.fits')
+        if intra_cube_continuum_correction:
+            print(' ')
+            print('   >>> The intra cube continuum correction will be applied before combining the dither')
+            print(' ')
+            pixtable_tocorrect_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
+            sky_continuum_list = _get_filelist(self, combining_exposure_dir, 'SKY_CONTINUUM_*_??.fits')
+
+            _intra_cube_continuum_correction(pixtable_tocorrect_list, sky_continuum_list, combining_exposure_dir, n_CPU=self.n_CPU, plot=True)
+
+        if mask_pixtable:
+            print(' ')
+            print('   >>> A leak mask will be applied to the pixel table before combining the dither')
+            print(' ')
+            if intra_cube_continuum_correction:
+                pixtable_tomask_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_CONTCORR.fits')
+            else:
+                pixtable_tomask_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
+            leakmask_list = _get_filelist(self, combining_exposure_dir, 'LEAK_MASK_*.fits')
+
+            for (leakmask, pixtable) in zip(leakmask_list, pixtable_tomask_list):
+                apply_leak_mask(os.path.join(combining_exposure_dir, leakmask), os.path.join(combining_exposure_dir, pixtable))
+            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*MASKED.fits')
+
+        else:
+            if intra_cube_continuum_correction:
+                pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_CONTCORR.fits')
+            else:
+                pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
+
         if create_sof:
             sof_file = os.path.join(combining_exposure_dir, 'exp_combine.sof')
             if os.path.exists(sof_file):
