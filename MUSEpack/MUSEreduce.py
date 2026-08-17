@@ -19,6 +19,9 @@ from datetime import datetime, timedelta
 import time
 import json
 
+import dask
+from dask.distributed import Client, progress, wait
+
 from MUSEpack.cubes import apply_leak_mask
 from MUSEpack.utils import _intra_cube_continuum_correction
 
@@ -2171,23 +2174,37 @@ def _dither_collect(self, exp_list_SCI, OB):
                     ident_pos[idx2] = ident
                     ident += 1
 
-        for exp_num in range(len(exp_list)):
+        with Client(n_workers=self.n_CPU, threads_per_worker=1, memory_limit='24GB') as client:
 
-            origin_files = [os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits'),
-                            os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
-                            os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001.fits'),
-                            os.path.join(exp_list[exp_num][:-9], pixtable)
-                            ]
-            destination_files = [os.path.join(combining_exposure_dir, 'SKY_CONTINUUM_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                 os.path.join(combining_exposure_dir, 'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                 os.path.join(combining_exposure_dir, 'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
-                                 os.path.join(combining_exposure_dir, 'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
-                                 ]
+            tasks = [dask.delayed(_dither_collect_copy_helper)(exp_list, pixtable, combining_exposure_dir, OB, ident_pos, exp_num) for exp_num in range(len(exp_list))]
+            futures = client.compute(tasks)
+            progress(futures)
+            wait(futures)
 
-            for (origin_file, destination_file) in zip(origin_files, destination_files):
-                print(origin_file + ' ==> ' + destination_file)
-                shutil.copy(origin_file, destination_file)
+def _dither_collect_copy_helper(exp_list, pixtable, combining_exposure_dir, OB, ident_pos, exp_num):
 
+    origin_files = [os.path.join(exp_list[exp_num][:-9], 'SKY_CONTINUUM.fits'),
+                    os.path.join(exp_list[exp_num][:-9], 'DATACUBE_FINAL.fits'),
+                    os.path.join(exp_list[exp_num][:-9], 'IMAGE_FOV_0001.fits'),
+                    os.path.join(exp_list[exp_num][:-9], pixtable)
+                    ]
+    destination_files = [os.path.join(combining_exposure_dir,
+                                      'SKY_CONTINUUM_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(
+                                          int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                         os.path.join(combining_exposure_dir,
+                                      'DATACUBE_FINAL_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(
+                                          int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                         os.path.join(combining_exposure_dir,
+                                      'IMAGE_FOV_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(
+                                          int(ident_pos[exp_num])).rjust(2, '0') + '.fits'),
+                         os.path.join(combining_exposure_dir,
+                                      'PIXTABLE_REDUCED_' + OB + '_' + exp_list[exp_num][-20:-12] + '_' + str(
+                                          int(ident_pos[exp_num])).rjust(2, '0') + '.fits')
+                         ]
+
+    for (origin_file, destination_file) in zip(origin_files, destination_files):
+        print(origin_file + ' ==> ' + destination_file)
+        shutil.copy(origin_file, destination_file)
 
 def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
 
@@ -2395,7 +2412,7 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None, mask_pixtab
             pixtable_tocorrect_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
             sky_continuum_list = _get_filelist(self, combining_exposure_dir, 'SKY_CONTINUUM_*_??.fits')
 
-            _intra_cube_continuum_correction(pixtable_tocorrect_list, sky_continuum_list, combining_exposure_dir, n_CPU=self.n_CPU, plot=True)
+            _intra_cube_continuum_correction(pixtable_tocorrect_list, sky_continuum_list, combining_exposure_dir, plot=True, n_CPU=self.n_CPU)
 
         if mask_pixtable:
             print(' ')
@@ -2407,15 +2424,28 @@ def _exp_combine(self, exp_list_SCI, create_sof, esorex_kwargs=None, mask_pixtab
                 pixtable_tomask_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
             leakmask_list = _get_filelist(self, combining_exposure_dir, 'LEAK_MASK_*.fits')
 
-            for (leakmask, pixtable) in zip(leakmask_list, pixtable_tomask_list):
-                apply_leak_mask(os.path.join(combining_exposure_dir, leakmask), os.path.join(combining_exposure_dir, pixtable))
-            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*MASKED.fits')
+            # for (leakmask, pixtable) in zip(leakmask_list, pixtable_tomask_list):
 
+            with Client(n_workers=self.n_CPU, threads_per_worker=1, memory_limit=None) as client:
+                tasks = [dask.delayed(apply_leak_mask)(os.path.join(combining_exposure_dir, leakmask), os.path.join(combining_exposure_dir, pixtable))
+                        for (leakmask, pixtable) in zip(leakmask_list, pixtable_tomask_list)]
+                futures = client.compute(tasks)
+                progress(futures)
+                wait(futures)
+
+            # with ProgressBar():
+            #     results = dask.compute(*result, num_workers=self.n_CPU, scheduler='processes')
+
+                # apply_leak_mask(os.path.join(combining_exposure_dir, leakmask), os.path.join(combining_exposure_dir, pixtable))
+
+        if mask_pixtable and intra_cube_continuum_correction:
+            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??_CONTCORR_MASKED.fits')
+        elif not mask_pixtable and intra_cube_continuum_correction:
+            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??_CONTCORR.fits')
+        elif mask_pixtable and not intra_cube_continuum_correction:
+            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??_MASKED.fits')
         else:
-            if intra_cube_continuum_correction:
-                pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_CONTCORR.fits')
-            else:
-                pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
+            pixtable_list = _get_filelist(self, combining_exposure_dir, 'PIXTABLE_REDUCED_*_??.fits')
 
         if create_sof:
             sof_file = os.path.join(combining_exposure_dir, 'exp_combine.sof')

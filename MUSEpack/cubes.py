@@ -2,11 +2,12 @@
 
 __version__ = '0.3.0'
 
-__revision__ = '20260812'
+__revision__ = '20260814'
 
 import sys
 import os
 import glob
+import gc
 import shutil
 import numpy as np
 from astropy.io import ascii
@@ -595,7 +596,7 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
     pixtable_filename = Path(pixtable).name
     pixtable_path = Path(pixtable).parent
 
-    with fits.open(leak_mask) as mask_hdu:
+    with fits.open(leak_mask, memmap=False) as mask_hdu:
         mask_data = mask_hdu[1].data.astype(bool)
         mask_wcs = WCS(mask_hdu[1].header)
 
@@ -626,6 +627,9 @@ def apply_leak_mask(leak_mask, pixtable, flag_bad_pix = 1):
     pix_tab_out = os.path.join(pixtable_path, pixtable_filename.replace('.fits', '_MASKED.fits'))
     print('   ... saving the PIXTABLE: ', pix_tab_out)
     pix.write(pix_tab_out)
+
+    del pixtable, leak_mask, pix
+    gc.collect()
 
 
 def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_length, r_source=None, mask_source=False, offset_list=None):
@@ -660,7 +664,6 @@ def build_leak_mask(whitelight_image, ra_cent, dec_cent, bleed_width, bleend_len
     img_hdu = fits.open(whitelight_image)
     img = img_hdu[1].data
     img_header = img_hdu[1].header
-
 
     wcs2d = WCS(img_header)
     bleed_pa = img_hdu[0].header['HIERARCH ESO INS DROT POSANG']

@@ -3,10 +3,11 @@
 
 __version__ = '0.2.1'
 
-__revision__ = '20260812'
+__revision__ = '20260814'
 
 import sys
 import os
+import gc
 import shutil
 import warnings
 import pyspeckit
@@ -41,9 +42,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Rectangle
 import matplotlib.gridspec as gridspec
 
-from dask.distributed import Client, LocalCluster
-from multiprocessing import cpu_count
-from functools import partial
+import dask
+from dask.distributed import Client, progress, wait
 
 def initial_guesses(self, lines, blends=None, linestrength=100.,\
                     llimits=[2. * (-1), 2.]):
@@ -604,10 +604,9 @@ def _skyfit(refsky, wav, sky, sigma=2., s=1., order=3, plot=True, plot_axis=None
     return yspline, spline
 
 
-def _apply_spline(pixtable_dict, spline_funct_dict, outdir, key):
-     pixtable = pixtable_dict[key]
+def _apply_spline(pixtable, spline_funct_dict, outdir, key):
      pixtable_filename = Path(pixtable).name
-     print("   ... Apply continuum correction to:", pixtable.split('/')[-1])
+     print("   ... Apply continuum correction to:", pixtable_filename)
 
      with fits.open(pixtable) as hdu:
          data = hdu['data'].data
@@ -622,6 +621,9 @@ def _apply_spline(pixtable_dict, spline_funct_dict, outdir, key):
          outfile = os.path.join(outdir, pixtable_filename.replace('.fits','_CONTCORR.fits'))
          print("   ... writing:", outfile)
          hdu.writeto(outfile, overwrite=True)
+
+     del pixtable, spline_funct_dict
+     gc.collect()
 
 def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot=True, n_CPU=1):
 
@@ -702,22 +704,18 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         print('   ... saving the plot:', os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'))
         plt.savefig(os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'), dpi=300)
 
-    for keys_to_process in list(sky_level.keys()):
-        _apply_spline(pixtable_dict, spline_funct_dict, pixtab_dir, keys_to_process)
+    pixtable_dict_corr = {}
 
-    # try:
-    #     client.close()
-    #     cluster.close()
-    #     client.shutdown()
-    # except:
-    #     pass
-    #
-    # cluster = LocalCluster(n_workers=n_CPU, threads_per_worker=1, memory_limit='32GB',
-    #                        dashboard_address=':8787', processes=True)
-    # client = Client(cluster)
-    #
-    # keys_to_process = list(sky_level.keys())
-    # bound_apply_spline = partial(_apply_spline, pixtable_dict, spline_funct_dict, pixtab_dir, keys_to_process)
-    #
-    # futures = client.map(bound_apply_spline, keys_to_process)
-    # results = client.gather(futures)
+    # for key_to_process in list(sky_level.keys()):
+
+        # pixtable = pixtable_dict[key_to_process]
+        # pixtable_filename = Path(pixtable).name
+    with Client(n_workers=n_CPU, threads_per_worker=1, memory_limit='24GB') as client:
+
+        pixtable_future = client.scatter(pixtable_dict)
+
+        tasks = [dask.delayed(_apply_spline)(pixtable_future[key_to_process], spline_funct_dict, pixtab_dir, key_to_process) for key_to_process in list(sky_level.keys())]
+        futures = client.compute(tasks)
+        progress(futures)
+        wait(futures)
+        # results = client.gather(futures)
