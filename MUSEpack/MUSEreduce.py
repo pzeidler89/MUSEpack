@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-__version__ = '2.1.0'
+__version__ = '3.0.0'
 
-__revision__ = '20260805'
+__revision__ = '20260817'
 
 import sys
 import shutil
