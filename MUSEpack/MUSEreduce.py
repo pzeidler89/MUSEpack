@@ -2,7 +2,7 @@
 
 __version__ = '3.0.0'
 
-__revision__ = '20260817'
+__revision__ = '20260820'
 
 import sys
 import shutil
@@ -314,6 +314,10 @@ class musereduce:
 
         for OB in self.OB_list:
             self.working_dir = os.path.join(self.reduced_dir, OB)
+            self.calibration_dir = os.path.join(self.working_dir, 'calibrations')
+            self.ESO_calibration_dir = os.path.join(self.working_dir, 'ESO_calibrations')
+            self.static_calibration_dir = os.path.join(self.working_dir, 'static_calibration_files')
+
             if not self.using_specific_exposure_time:
                 exp_list_SCI =\
                 np.concatenate([glob.glob(os.path.join(self.working_dir, '*_SCI.list')),\
