@@ -697,12 +697,12 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
             ax4.set_xlabel('wavelength [A]')
             ax0.set_ylabel('norm. flux')
             ax4.set_ylabel('cor. norm. flux')
-
             ax0.set_title(skyname)
 
     if plot:
         print('   ... saving the plot:', os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'))
         plt.savefig(os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'), dpi=300)
+        plt.close()
 
     pixtable_dict_corr = {}
 
