@@ -638,7 +638,16 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         skycontinuum : :obj:`list`
                 The list of skycontinua that match the pixeltables
 
+        pixtab_dir : :obj:`str`
+                The directory where the PIXELTABLES are located
+
     Kwargs:
+
+        plot : :obj:`bool`
+                If set to true plots will be created (default: :obj:`true`)
+
+        n_CPU : :obj:`int`
+                The number of cores used for the multicore processing (default: 1)
 
     '''
 
@@ -704,12 +713,6 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         plt.savefig(os.path.join(pixtab_dir, 'intra_cube_flux_cor.png'), dpi=300)
         plt.close()
 
-    pixtable_dict_corr = {}
-
-    # for key_to_process in list(sky_level.keys()):
-
-        # pixtable = pixtable_dict[key_to_process]
-        # pixtable_filename = Path(pixtable).name
     with Client(n_workers=n_CPU, threads_per_worker=1, memory_limit='24GB') as client:
 
         pixtable_future = client.scatter(pixtable_dict)
@@ -718,4 +721,3 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         futures = client.compute(tasks)
         progress(futures)
         wait(futures)
-        # results = client.gather(futures)
