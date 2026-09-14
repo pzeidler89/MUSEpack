@@ -2,7 +2,7 @@
 
 __version__ = '1.0.0'
 
-__revision__ = '20260814'
+__revision__ = '20260914'
 
 import sys
 import os
@@ -288,63 +288,63 @@ def wcs_cor(input_fits, offset_input, path=None, offset_path=None,
                 muse_mag_list = np.array(cat_mag_list) - np.array(del_mag_list)
             if len (del_mag_list) == 0:
                 print()
-                sys.exit('No sources were slected. Please adjust SNR or make sure any sources are in the Cube'.upper())
-
-            flux_cor_tab = Table([starid_list, muse_mag_list, cat_mag_list, del_mag_list, snrspec_list, qltflag_list],
-                                 names=('spec_id', 'muse_mag', 'cat_mag', 'dmag', 'spec_snr', 'DQ'))
-            flux_cor_tab['spec_id'].info.format = '5.0f'
-            flux_cor_tab['muse_mag'].info.format = '5.2f'
-            flux_cor_tab['cat_mag'].info.format = '5.2f'
-            flux_cor_tab['dmag'].info.format = '5.2f'
-            flux_cor_tab['spec_snr'].info.format = '5.1f'
-            flux_cor_tab['DQ'].info.format = '3.0f'
-
-            clippend_del_mag = sigma_clip(del_mag_list, sigma=2, cenfunc = np.ma.median)
-            if man_multiplier == None:
-                fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
+                print('No sources were selected. Please adjust SNR or make sure any sources are in the Cube'.upper())
             else:
-                fmultipl = man_multiplier
+                flux_cor_tab = Table([starid_list, muse_mag_list, cat_mag_list, del_mag_list, snrspec_list, qltflag_list],
+                                     names=('spec_id', 'muse_mag', 'cat_mag', 'dmag', 'spec_snr', 'DQ'))
+                flux_cor_tab['spec_id'].info.format = '5.0f'
+                flux_cor_tab['muse_mag'].info.format = '5.2f'
+                flux_cor_tab['cat_mag'].info.format = '5.2f'
+                flux_cor_tab['dmag'].info.format = '5.2f'
+                flux_cor_tab['spec_snr'].info.format = '5.1f'
+                flux_cor_tab['DQ'].info.format = '3.0f'
 
-            flux_cor_tab.add_column(np.ma.getmask(clippend_del_mag), name='masked')
-            flux_cor_tab.sort('spec_id')
-            flux_cor_tab.write(os.path.join(output_path, 'flux_cor_info.tab'), format='ascii.rst', overwrite=True)
-
-            if debug == True:
-                print(flux_cor_tab)
-                print()
-
-            print('The magnitude difference:')
-            print('cat - MUSE [mag]: ',\
-            '{:.2f}'.format(np.ma.median(clippend_del_mag)))
-            print('sigma cat - MUSE [mag]: ',\
-            '{:.2f}'.format(np.ma.std(clippend_del_mag)))
-            if man_multiplier != None:
-                print("WARNING: using manual multiplyer")
-            print('The flux multiplicator [f_catalog / f_MUSE]: ',\
-            '{:.2f}'.format(fmultipl))
-            print('number of sources: ',\
-            '{:.0f}'.format(clippend_del_mag.count()))
-
-            with open(os.path.join(output_path, 'flux_cor_info.tab'),"a+") as f:
-                f.write("\n")
-                f.write('cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.median(clippend_del_mag)) + '\n')
-                f.write('sigma cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.std(clippend_del_mag)) + '\n')
-                if man_multiplier != None:
-                    f.write(("WARNING: using manual multiplyer \n"))
-                f.write('The flux multiplicator [f_catalog / f_MUSE]: ' + '{:.2f}'.format(fmultipl) + '\n')
-                f.write('N sources: ' + '{:.0f}'.format(clippend_del_mag.count()))
-
-            cube['DATA'].data *= fmultipl
-            cube['STAT'].data *= fmultipl ** 2
-
-            if save_output == True:
-                if output_file == None:
-                    offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
-                    offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
-
+                clippend_del_mag = sigma_clip(del_mag_list, sigma=2, cenfunc = np.ma.median)
+                if man_multiplier == None:
+                    fmultipl = 10 ** ((-1) * 0.4 * np.ma.median(clippend_del_mag))
                 else:
-                    shutil.copyfile(offset_path + '/' + offset_input,\
-                    offset_path + '/' + output_file)
+                    fmultipl = man_multiplier
+
+                flux_cor_tab.add_column(np.ma.getmask(clippend_del_mag), name='masked')
+                flux_cor_tab.sort('spec_id')
+                flux_cor_tab.write(os.path.join(output_path, 'flux_cor_info.tab'), format='ascii.rst', overwrite=True)
+
+                if debug == True:
+                    print(flux_cor_tab)
+                    print()
+
+                print('The magnitude difference:')
+                print('cat - MUSE [mag]: ',\
+                '{:.2f}'.format(np.ma.median(clippend_del_mag)))
+                print('sigma cat - MUSE [mag]: ',\
+                '{:.2f}'.format(np.ma.std(clippend_del_mag)))
+                if man_multiplier != None:
+                    print("WARNING: using manual multiplyer")
+                print('The flux multiplicator [f_catalog / f_MUSE]: ',\
+                '{:.2f}'.format(fmultipl))
+                print('number of sources: ',\
+                '{:.0f}'.format(clippend_del_mag.count()))
+
+                with open(os.path.join(output_path, 'flux_cor_info.tab'),"a+") as f:
+                    f.write("\n")
+                    f.write('cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.median(clippend_del_mag)) + '\n')
+                    f.write('sigma cat - MUSE [mag]: ' + '{:.2f}'.format(np.ma.std(clippend_del_mag)) + '\n')
+                    if man_multiplier != None:
+                        f.write(("WARNING: using manual multiplyer \n"))
+                    f.write('The flux multiplicator [f_catalog / f_MUSE]: ' + '{:.2f}'.format(fmultipl) + '\n')
+                    f.write('N sources: ' + '{:.0f}'.format(clippend_del_mag.count()))
+
+                cube['DATA'].data *= fmultipl
+                cube['STAT'].data *= fmultipl ** 2
+
+                if save_output == True:
+                    if output_file == None:
+                        offset[0].header['HIERARCH PAMPELMUSE global prefix'] = offset_input[:-9] + '_cor'
+                        offset.writeto(offset_path + '/' + offset_input[:-9] + '_cor.prm.fits', overwrite=True)
+
+                    else:
+                        shutil.copyfile(offset_path + '/' + offset_input,\
+                        offset_path + '/' + output_file)
 
     if offset_type == 'eso':
 
