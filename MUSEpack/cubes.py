@@ -19,7 +19,7 @@ from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
 from astropy.stats import sigma_clip
 from spectral_cube import SpectralCube
-import montage_wrapper as montage
+# import montage_wrapper as montage
 from mpdaf.drs import PixTable
 from pathlib import Path
 from reproject import reproject_interp
