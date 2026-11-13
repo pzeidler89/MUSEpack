@@ -660,22 +660,41 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         sky_level[pixtab_filename] = hdu_sky[1].data
         pixtable_dict[pixtab_filename] = os.path.join(pixtab_dir, pixtab_filename)
 
-    sky_level_cube = np.vstack([sky_level[pixeltables[0]]['flux'], sky_level[pixeltables[1]]['flux'], sky_level[pixeltables[2]]['flux']])
+        print(pixtable_dict)
+
+    # sky_level_cube = np.vstack([sky_level[pixeltables[0]]['flux'], sky_level[pixeltables[1]]['flux'], sky_level[pixeltables[2]]['flux']])
+    sky_level_cube = np.vstack([sky_level[pt]['flux'] for pt in pixeltables])
 
     refsky = np.mean(sky_level_cube, axis=0)
+
+    # if plot:
+    #     print('   ... creating the plot')
+    #
+    #     plt.figure('median_slice', figsize=(20, 20))
+    #
+    #     plotgrid = gridspec.GridSpec(5, 1)
+    #     ax0 = plt.subplot(plotgrid[0, 0])
+    #     ax1 = plt.subplot(plotgrid[1, 0])
+    #     ax2 = plt.subplot(plotgrid[2, 0])
+    #     ax3 = plt.subplot(plotgrid[3, 0])
+    #     ax4 = plt.subplot(plotgrid[4, 0])
+    #     spline_ax = [ax1, ax2, ax3]
+
+    skynames = np.sort(list(sky_level.keys()))
+    n = len(skynames)
 
     if plot:
         print('   ... creating the plot')
 
         plt.figure('median_slice', figsize=(20, 20))
 
-        plotgrid = gridspec.GridSpec(5, 1)
+        plotgrid = gridspec.GridSpec(n + 2, 1)
         ax0 = plt.subplot(plotgrid[0, 0])
-        ax1 = plt.subplot(plotgrid[1, 0])
-        ax2 = plt.subplot(plotgrid[2, 0])
-        ax3 = plt.subplot(plotgrid[3, 0])
-        ax4 = plt.subplot(plotgrid[4, 0])
-        spline_ax = [ax1, ax2, ax3]
+        spline_ax = [plt.subplot(plotgrid[i + 1, 0]) for i in range(n)]
+        ax4 = plt.subplot(plotgrid[n + 1, 0])
+    else:
+        spline_ax = [None] * n
+
 
     spline_dict = {}
     spline_funct_dict = {}
