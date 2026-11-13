@@ -2,7 +2,7 @@
 
 __version__ = '3.0.0'
 
-__revision__ = '20260820'
+__revision__ = '20261113'
 
 import sys
 import shutil
@@ -129,7 +129,7 @@ class musereduce:
         print('#####        MUSE data reduction pipeline wrapper        #####')
         print('#####   Must be used with ESORex and ESO MUSE pipeline   #####')
         print('#####      author: Peter Zeidler (zeidler@stsci.edu)     #####')
-        print('#####                    Jul 22, 2026                    #####')
+        print('#####                    Nov 13, 2026                    #####')
         print('#####                   Version: '+str(__version__)+'   \
                 #####')
         print('#####                                                    #####')
@@ -2315,7 +2315,7 @@ def _exp_align(self, exp_list_SCI, create_sof, OB, esorex_kwargs=None):
             combining_exposure_dir = os.path.join(sec)
 
 
-        exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*---*.fits')
+        exp_list = _get_filelist(self, combining_exposure_dir, 'IMAGE_FOV_*_??.fits')
         if create_sof:
             sof_file = os.path.join(combining_exposure_dir, 'exp_align.sof')
             if os.path.exists(sof_file):
