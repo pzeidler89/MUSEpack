@@ -660,8 +660,6 @@ def _intra_cube_continuum_correction(pixeltables, skycontinuum, pixtab_dir, plot
         sky_level[pixtab_filename] = hdu_sky[1].data
         pixtable_dict[pixtab_filename] = os.path.join(pixtab_dir, pixtab_filename)
 
-        print(pixtable_dict)
-
     # sky_level_cube = np.vstack([sky_level[pixeltables[0]]['flux'], sky_level[pixeltables[1]]['flux'], sky_level[pixeltables[2]]['flux']])
     sky_level_cube = np.vstack([sky_level[pt]['flux'] for pt in pixeltables])
 
